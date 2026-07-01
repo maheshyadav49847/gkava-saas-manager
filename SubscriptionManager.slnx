@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="SubscriptionManager.Api/SubscriptionManager.Api.csproj" />
+  <Project Path="SubscriptionManager.Application/SubscriptionManager.Application.csproj" />
+  <Project Path="SubscriptionManager.Domain/SubscriptionManager.Domain.csproj" />
+  <Project Path="SubscriptionManager.Infrastructure/SubscriptionManager.Infrastructure.csproj" />
+</Solution>
