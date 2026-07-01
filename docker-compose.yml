@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: ghcr.io/${GITHUB_REPOSITORY}/subscription-frontend:${IMAGE_TAG:-latest}
+    restart: always
+    ports:
+      - "${FRONTEND_PORT:-9000}:80"
+    environment:
+      - NODE_ENV=production
+
+  backend:
+    image: ghcr.io/${GITHUB_REPOSITORY}/subscription-backend:${IMAGE_TAG:-latest}
+    restart: always
+    network_mode: "host"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNET_ENV:-Production}
+      - ASPNETCORE_URLS=http://+:${BACKEND_PORT:-9080}
+      - AllowedOrigins=http://${VPS_IP}
+      - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING:-Host=localhost;Database=GkavaSaasDb_Prod;Username=postgres;Password=sa}

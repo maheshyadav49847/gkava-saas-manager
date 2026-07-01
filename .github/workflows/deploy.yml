@@ -1,0 +1,140 @@
+name: Deploy SaaS Manager to VPS (Docker)
+
+on:
+  push:
+    branches:
+      - main # Change to master if your default branch is master
+  workflow_dispatch:
+    inputs:
+      target_env:
+        description: 'Select Environment to Deploy'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - dev
+          - sandbox
+          - prod
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: set lower case owner name
+        run: |
+          echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build & Push Frontend
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./SubscriptionManager.Frontend
+          push: true
+          no-cache: true
+          build-args: |
+            VITE_API_URL=/api
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/subscription-frontend:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/subscription-frontend:${{ github.sha }}
+
+      # Build & Push Backend
+      - name: Build and push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./SubscriptionManager.Api/Dockerfile
+          push: true
+          no-cache: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/subscription-backend:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/subscription-backend:${{ github.sha }}
+
+  deploy-to-vps:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.target_env || 'prod' }}
+    
+    steps:
+      - name: Checkout repository (for docker-compose.yml)
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose.yml to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: root
+          password: ${{ secrets.VPS_PASSWORD }}
+          source: "docker-compose.yml"
+          target: "~/gkavasaas"
+
+      - name: Execute Docker Compose on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: root
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            # Create directory if doesn't exist
+            mkdir -p ~/gkavasaas
+            cd ~/gkavasaas
+            
+            # Login to GitHub Container Registry so VPS can pull private packages
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            
+            # Determine ports based on environment
+            TARGET_ENV="${{ github.event.inputs.target_env || 'prod' }}"
+            if [ "$TARGET_ENV" = "prod" ]; then
+              export FRONTEND_PORT=9000
+              export BACKEND_PORT=9080
+            elif [ "$TARGET_ENV" = "dev" ]; then
+              export FRONTEND_PORT=9002
+              export BACKEND_PORT=9082
+            elif [ "$TARGET_ENV" = "sandbox" ]; then
+              export FRONTEND_PORT=9001
+              export BACKEND_PORT=9081
+            fi
+            
+            # Export variables for docker-compose file to resolve
+            export GITHUB_REPOSITORY=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+            
+            # Capitalize first letter of target env (e.g. dev -> Dev, prod -> Prod)
+            CAP_ENV="$(echo "$TARGET_ENV" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')"
+            # Replace the Database name dynamically to isolate databases per environment
+            export DB_CONNECTION_STRING=$(echo "${{ secrets.DB_CONNECTION_STRING }}" | sed -E "s/Database=[^;]+/Database=GkavaSaasDb_${CAP_ENV}/")
+            
+            export VPS_IP="${{ secrets.VPS_IP }}"
+            export IMAGE_TAG="${{ github.sha }}"
+            
+            export ASPNET_ENV="Production"
+            if [ "$TARGET_ENV" = "dev" ] || [ "$TARGET_ENV" = "sandbox" ]; then
+              export ASPNET_ENV="Development"
+            fi
+            
+            # Clean up only the containers for the current target environment
+            docker compose -p "gkava-$TARGET_ENV" down || true
+            
+            echo "Pulling completely fresh images..."
+            docker compose -p "gkava-$TARGET_ENV" pull
+            
+            echo "Starting containers..."
+            docker compose -p "gkava-$TARGET_ENV" up -d
+            
+            # Prune old dangling images to save disk space
+            docker image prune -f
