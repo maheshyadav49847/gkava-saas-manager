@@ -11,6 +11,7 @@ on:
 jobs:
   setup-nginx-ssl:
     runs-on: ubuntu-latest
+    environment: prod
     steps:
       - name: Setup Nginx and Generate SSL
         uses: appleboy/ssh-action@v1.0.3
