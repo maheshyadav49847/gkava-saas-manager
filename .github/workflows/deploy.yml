@@ -9,7 +9,7 @@ on:
       target_env:
         description: 'Select Environment to Deploy'
         required: true
-        default: 'prod'
+        default: 'sandbox'
         type: choice
         options:
           - dev
@@ -98,7 +98,7 @@ jobs:
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
             # Determine ports based on environment
-            TARGET_ENV="${{ github.event.inputs.target_env || 'prod' }}"
+            TARGET_ENV="${{ github.event.inputs.target_env || 'sandbox' }}"
             if [ "$TARGET_ENV" = "prod" ]; then
               export FRONTEND_PORT=9000
               export BACKEND_PORT=9080
