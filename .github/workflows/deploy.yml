@@ -69,7 +69,6 @@ jobs:
   deploy-to-vps:
     needs: build-and-push
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.target_env || 'prod' }}
     
     steps:
       - name: Checkout repository (for docker-compose.yml)
