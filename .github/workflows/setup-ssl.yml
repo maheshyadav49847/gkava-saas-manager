@@ -52,10 +52,10 @@ jobs:
             }
             EOF
             
-            echo "Creating Nginx configuration for Sandbox (gkava.sandbox.com)..."
+            echo "Creating Nginx configuration for Sandbox (sandbox.gkava.com)..."
             cat << 'EOF' > /etc/nginx/sites-available/gkava-sandbox
             server {
-                server_name gkava.sandbox.com;
+                server_name sandbox.gkava.com;
 
                 location / {
                     proxy_pass http://localhost:9001;
@@ -89,6 +89,6 @@ jobs:
             
             echo "Generating SSL Certificates via Certbot..."
             certbot --nginx --non-interactive --agree-tos -m "${{ github.event.inputs.email }}" -d gkava.com -d www.gkava.com
-            certbot --nginx --non-interactive --agree-tos -m "${{ github.event.inputs.email }}" -d gkava.sandbox.com
+            certbot --nginx --non-interactive --agree-tos -m "${{ github.event.inputs.email }}" -d sandbox.gkava.com
             
             echo "Setup Complete! SSL applied successfully."
