@@ -22,7 +22,12 @@ public class GetApplicationsQueryHandler : IRequestHandler<GetApplicationsQuery,
                 Id = a.Id,
                 Name = a.Name,
                 AppKey = a.AppKey,
-                WebhookUrl = a.WebhookUrl
+                WebhookUrl = a.WebhookUrl,
+                Description = a.Description,
+                Icon = a.Icon,
+                ImageUrl = a.ImageUrl,
+                Badge = a.Badge,
+                IsReady = a.IsReady
             })
             .OrderBy(a => a.Name)
             .ToListAsync(cancellationToken);

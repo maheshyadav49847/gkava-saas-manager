@@ -1,8 +1,13 @@
 import { motion } from 'framer-motion';
 import { Shield, Target, Zap, HeartHandshake, ArrowRight, Code2, Rocket } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useWebsiteConfigStore } from '../store/useWebsiteConfigStore';
 
 export const AboutPage = () => {
+  const { config } = useWebsiteConfigStore();
+  const { hero, mission, vision, values, cta } = config.about;
+
   return (
     <div className="relative z-10 pb-24 font-sans bg-gray-50/30">
       {/* Hero Section */}
@@ -12,7 +17,7 @@ export const AboutPage = () => {
           animate={{ opacity: 1, y: 0 }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-widest mb-8 border border-indigo-100"
         >
-          Our Story
+          {hero.tagline}
         </motion.div>
         
         <motion.h1 
@@ -21,7 +26,7 @@ export const AboutPage = () => {
           transition={{ delay: 0.1 }}
           className="text-5xl md:text-7xl font-black text-slate-900 tracking-tight mb-8 leading-[1.1]"
         >
-          Engineering the <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">Future</span> of Business.
+          {hero.title} <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">{hero.titleHighlight}</span>
         </motion.h1>
         
         <motion.p 
@@ -30,7 +35,7 @@ export const AboutPage = () => {
           transition={{ delay: 0.2 }}
           className="text-xl text-slate-600 font-medium max-w-3xl mx-auto leading-relaxed mb-10"
         >
-          Gkava Software Solutions is on a mission to eliminate operational friction. We build foundational, highly scalable software infrastructure that powers the next generation of agile enterprises.
+          {hero.subtitle}
         </motion.p>
       </section>
 
@@ -47,9 +52,9 @@ export const AboutPage = () => {
               <Target className="w-48 h-48 text-white" />
             </div>
             <div className="relative z-10">
-              <h2 className="text-3xl font-black text-white mb-6">Our Mission</h2>
+              <h2 className="text-3xl font-black text-white mb-6">{mission.title}</h2>
               <p className="text-slate-300 font-medium text-lg leading-relaxed">
-                To democratize enterprise-grade technology. We believe that every business, regardless of size, deserves access to intelligent, secure, and beautiful software that scales with their ambition.
+                {mission.desc}
               </p>
             </div>
           </motion.div>
@@ -64,9 +69,9 @@ export const AboutPage = () => {
               <Rocket className="w-48 h-48 text-indigo-900" />
             </div>
             <div className="relative z-10">
-              <h2 className="text-3xl font-black text-slate-900 mb-6">Our Vision</h2>
+              <h2 className="text-3xl font-black text-slate-900 mb-6">{vision.title}</h2>
               <p className="text-slate-600 font-medium text-lg leading-relaxed">
-                To become the default operating system for modern business management globally. From custom engineering to our flagship SaaS products, we are building the digital backbone of tomorrow's economy.
+                {vision.desc}
               </p>
             </div>
           </motion.div>
@@ -76,43 +81,42 @@ export const AboutPage = () => {
       {/* Core Values */}
       <section className="px-4 sm:px-6 max-w-7xl mx-auto mb-24">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Our Core Values</h2>
+          <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">{values.title}</h2>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { icon: Zap, title: "Performance First", desc: "Speed is a feature. We engineer systems that respond in milliseconds." },
-            { icon: Shield, title: "Uncompromising Security", desc: "Bank-grade encryption and privacy-by-design in everything we build." },
-            { icon: Code2, title: "Engineering Excellence", desc: "Clean code, robust architecture, and rigorous testing methodologies." },
-            { icon: HeartHandshake, title: "Client Partnership", desc: "We don't just write code; we partner in our clients' success." }
-          ].map((val, idx) => (
-            <motion.div 
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 * idx }}
-              className="bg-white rounded-3xl p-8 border-2 border-slate-200 hover:border-indigo-400 transition-all shadow-sm hover:shadow-md text-center flex flex-col items-center group"
-            >
-              <div className="w-16 h-16 rounded-full border-2 border-indigo-100 bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-                <val.icon className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3">{val.title}</h3>
-              <p className="text-sm font-medium text-slate-600 leading-relaxed">{val.desc}</p>
-            </motion.div>
-          ))}
+          {values.items.map((val, idx) => {
+            const iconName = val.icon || ['Zap', 'Shield', 'Code2', 'HeartHandshake'][idx % 4];
+            const Icon = (LucideIcons as any)[iconName] || LucideIcons.Zap;
+            return (
+              <motion.div 
+                key={val.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 * idx }}
+                className="bg-white rounded-3xl p-8 border-2 border-slate-200 hover:border-indigo-400 transition-all shadow-sm hover:shadow-md text-center flex flex-col items-center group"
+              >
+                <div className="w-16 h-16 rounded-full border-2 border-indigo-100 bg-indigo-50 flex items-center justify-center text-indigo-600 mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 overflow-hidden p-2">
+                  {val.imageUrl ? <img src={val.imageUrl} alt="" className="w-full h-full object-contain rounded-full" /> : <Icon className="w-8 h-8" />}
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">{val.title}</h3>
+                <p className="text-sm font-medium text-slate-600 leading-relaxed">{val.desc}</p>
+              </motion.div>
+            )
+          })}
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="px-4 sm:px-6 max-w-4xl mx-auto text-center">
         <div className="bg-indigo-50 border-2 border-indigo-100 rounded-3xl p-12 md:p-16 relative overflow-hidden">
-          <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6 relative z-10">Ready to build the future?</h2>
+          <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6 relative z-10">{cta.title}</h2>
           <p className="text-lg text-slate-600 font-medium mb-10 max-w-2xl mx-auto relative z-10">
-            Whether you're looking for a bespoke software solution or want to implement our flagship products, our team is ready to help.
+            {cta.subtitle}
           </p>
           <Link to="/book-demo" className="inline-flex items-center justify-center px-8 py-4 bg-indigo-600 text-white rounded-full text-base font-bold hover:bg-indigo-700 transition-colors shadow-lg relative z-10">
-            Get in Touch <ArrowRight className="w-5 h-5 ml-2" />
+            {cta.buttonText} <ArrowRight className="w-5 h-5 ml-2" />
           </Link>
         </div>
       </section>

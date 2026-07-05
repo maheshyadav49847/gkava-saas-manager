@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { CheckCircle2, Clock, CalendarCheck, ShieldCheck, Send } from 'lucide-react';
+import { useWebsiteConfigStore } from '../store/useWebsiteConfigStore';
 
 export const BookDemo = () => {
+  const { config } = useWebsiteConfigStore();
+  const { hero } = config.bookDemo;
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -32,10 +35,10 @@ export const BookDemo = () => {
 
             <div className="relative z-10">
               <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-6 leading-tight">
-                Transform your business with Gkava.
+                {hero.title}
               </h1>
               <p className="text-indigo-100 text-lg mb-10 leading-relaxed">
-                Join hundreds of forward-thinking organizations that use our SaaS solutions to automate workflows and scale operations.
+                {hero.subtitle}
               </p>
 
               <div className="space-y-6">
@@ -146,10 +149,11 @@ export const BookDemo = () => {
 
                   <div>
                     <label htmlFor="product" className="block text-sm font-semibold text-gray-700">Product of Interest</label>
-                    <select id="product" required className="mt-2 block w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors shadow-sm bg-white">
-                      <option value="" disabled selected>Select a product...</option>
-                      <option value="myqcare">MyQCare (Clinic Management)</option>
-                      <option value="docappointment">DocAppointment</option>
+                    <select id="product" required defaultValue="" className="mt-2 block w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors shadow-sm bg-white">
+                      <option value="" disabled>Select a product...</option>
+                      {config.products.items.map(product => (
+                        <option key={product.id} value={product.id}>{product.title}</option>
+                      ))}
                       <option value="other">Other / General Inquiry</option>
                     </select>
                   </div>
@@ -187,6 +191,23 @@ export const BookDemo = () => {
           </div>
         </div>
       </main>
+
+      {/* FAQ Section */}
+      {config.bookDemo.faq && config.bookDemo.faq.length > 0 && (
+        <section className="py-16 bg-white border-t border-gray-100">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center text-gray-900 mb-10">Frequently Asked Questions</h2>
+            <div className="space-y-6">
+              {config.bookDemo.faq.map((item, idx) => (
+                <div key={idx} className="bg-slate-50 rounded-xl p-6 border border-slate-100">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{item.question}</h3>
+                  <p className="text-gray-600">{item.answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 };

@@ -19,6 +19,7 @@ public class ApplicationsController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ApplicationDto>>> Get()
     {
         var applications = await _mediator.Send(new GetApplicationsQuery());

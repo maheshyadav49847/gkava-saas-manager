@@ -45,7 +45,10 @@ export const ApplicationList = () => {
     
     setIsCreating(true);
     try {
-      await createApplication({ name: newAppName, webhookUrl: newAppWebhook });
+      await createApplication({ 
+        name: newAppName, 
+        webhookUrl: newAppWebhook
+      });
       setNewAppName('');
       setNewAppWebhook('');
       setIsModalOpen(false);
@@ -67,7 +70,7 @@ export const ApplicationList = () => {
       await updateApplication(editingApp.id, { 
         id: editingApp.id, 
         name: editingApp.name, 
-        webhookUrl: editingApp.webhookUrl 
+        webhookUrl: editingApp.webhookUrl
       });
       setIsEditModalOpen(false);
       setEditingApp(null);
@@ -148,6 +151,11 @@ export const ApplicationList = () => {
                     <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
                       <LinkIcon className="w-3 h-3" /> {app.webhookUrl || "No webhook set"}
                     </p>
+                    {app.badge && (
+                      <span className="inline-block mt-2 px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold uppercase rounded-full">
+                        {app.badge}
+                      </span>
+                    )}
                   </div>
                 </div>
                 
@@ -239,6 +247,7 @@ export const ApplicationList = () => {
                   placeholder="https://api.myapp.com/webhook"
                 />
               </div>
+
               <div className="flex justify-end gap-3 pt-4">
                 <button 
                   type="button" 
@@ -301,6 +310,7 @@ export const ApplicationList = () => {
                   placeholder="https://api.myapp.com/webhook"
                 />
               </div>
+
               <div className="flex justify-end gap-3 pt-4">
                 <button 
                   type="button" 

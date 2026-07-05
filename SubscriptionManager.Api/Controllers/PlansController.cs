@@ -22,6 +22,7 @@ namespace SubscriptionManager.Api.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<List<PlanDto>>> GetPlans()
         {
             var plans = await _mediator.Send(new GetPlansQuery());
@@ -29,6 +30,7 @@ namespace SubscriptionManager.Api.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<Guid>> CreatePlan([FromBody] CreatePlanCommand command)
         {
             var planId = await _mediator.Send(command);
