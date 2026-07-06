@@ -66,6 +66,17 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/subscription-backend:latest
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/subscription-backend:${{ github.sha }}
 
+      # Build & Push Website
+      - name: Build and push Website
+        uses: docker/build-push-action@v5
+        with:
+          context: ./SubscriptionManager.Website
+          push: true
+          no-cache: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/subscription-website:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/subscription-website:${{ github.sha }}
+
   deploy-to-vps:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -102,12 +113,15 @@ jobs:
             if [ "$TARGET_ENV" = "prod" ]; then
               export FRONTEND_PORT=9000
               export BACKEND_PORT=9080
+              export WEBSITE_PORT=9100
             elif [ "$TARGET_ENV" = "dev" ]; then
               export FRONTEND_PORT=9002
               export BACKEND_PORT=9082
+              export WEBSITE_PORT=9102
             elif [ "$TARGET_ENV" = "sandbox" ]; then
               export FRONTEND_PORT=9001
               export BACKEND_PORT=9081
+              export WEBSITE_PORT=9101
             fi
             
             # Export variables for docker-compose file to resolve

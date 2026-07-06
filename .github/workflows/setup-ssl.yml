@@ -33,6 +33,19 @@ jobs:
                 server_name gkava.com www.gkava.com;
 
                 location / {
+                    proxy_pass http://localhost:9100;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection 'upgrade';
+                    proxy_set_header Host $host;
+                    proxy_cache_bypass $http_upgrade;
+                }
+            }
+
+            server {
+                server_name app.gkava.com;
+
+                location / {
                     proxy_pass http://localhost:9000;
                     proxy_http_version 1.1;
                     proxy_set_header Upgrade $http_upgrade;
@@ -56,6 +69,19 @@ jobs:
             cat << 'EOF' > /etc/nginx/sites-available/gkava-sandbox
             server {
                 server_name sandbox.gkava.com;
+
+                location / {
+                    proxy_pass http://localhost:9101;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection 'upgrade';
+                    proxy_set_header Host $host;
+                    proxy_cache_bypass $http_upgrade;
+                }
+            }
+
+            server {
+                server_name app.sandbox.gkava.com;
 
                 location / {
                     proxy_pass http://localhost:9001;
@@ -88,7 +114,7 @@ jobs:
             systemctl restart nginx
             
             echo "Generating SSL Certificates via Certbot..."
-            certbot --nginx --non-interactive --agree-tos -m "${{ github.event.inputs.email }}" -d gkava.com -d www.gkava.com --redirect
-            certbot --nginx --non-interactive --agree-tos -m "${{ github.event.inputs.email }}" -d sandbox.gkava.com --redirect
+            certbot --nginx --non-interactive --agree-tos -m "${{ github.event.inputs.email }}" -d gkava.com -d www.gkava.com -d app.gkava.com --redirect
+            certbot --nginx --non-interactive --agree-tos -m "${{ github.event.inputs.email }}" -d sandbox.gkava.com -d app.sandbox.gkava.com --redirect
             
             echo "Setup Complete! SSL applied successfully."

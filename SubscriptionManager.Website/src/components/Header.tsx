@@ -62,8 +62,14 @@ export function Header() {
           
           {/* Actions moved inside nav for mobile view */}
           <div className="header-actions">
-            <a href="http://localhost:5180/login" className="btn btn-outline" target="_blank" rel="noreferrer">Log In</a>
-            <a href="http://localhost:5180/login" className="btn btn-primary" target="_blank" rel="noreferrer">Get Started</a>
+            <a 
+              href={window.location.hostname === 'localhost' ? 'http://localhost:5173/login' : `https://app.${window.location.hostname.replace('www.', '')}/login`} 
+              className="btn btn-outline"
+            >Log In</a>
+            <a 
+              href={window.location.hostname === 'localhost' ? 'http://localhost:5173/register' : `https://app.${window.location.hostname.replace('www.', '')}/register`} 
+              className="btn btn-primary"
+            >Get Started</a>
           </div>
         </nav>
       </div>

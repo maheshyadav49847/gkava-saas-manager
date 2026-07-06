@@ -9,6 +9,14 @@ services:
     environment:
       - NODE_ENV=production
 
+  website:
+    image: ghcr.io/${GITHUB_REPOSITORY}/subscription-website:${IMAGE_TAG:-latest}
+    restart: always
+    ports:
+      - "${WEBSITE_PORT:-9100}:80"
+    environment:
+      - NODE_ENV=production
+
   backend:
     image: ghcr.io/${GITHUB_REPOSITORY}/subscription-backend:${IMAGE_TAG:-latest}
     restart: always
