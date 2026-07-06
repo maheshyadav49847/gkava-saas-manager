@@ -13,9 +13,10 @@ import { AuthProvider } from "./contexts/AuthContext";
 export function AppRoutes() {
   return (
     <Routes>
+      {/* Redirect root to dashboard */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      
-      {/* Standalone Route without MarketingLayout */}
+
+      {/* Standalone Route */}
       <Route path="/login" element={<LoginPage />} />
       
       {/* Protected App Routes */}

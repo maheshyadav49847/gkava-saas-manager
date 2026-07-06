@@ -20,11 +20,6 @@ public class CreateApplicationCommandHandler : IRequestHandler<CreateApplication
             Name = request.Name,
             WebhookUrl = request.WebhookUrl,
             AppKey = Guid.NewGuid().ToString("N"),
-            Description = request.Description,
-            Icon = request.Icon,
-            ImageUrl = request.ImageUrl,
-            Badge = request.Badge,
-            IsReady = request.IsReady
         };
 
         _context.Applications.Add(entity);

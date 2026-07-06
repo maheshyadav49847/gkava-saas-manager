@@ -20,11 +20,6 @@ public class UpdateApplicationCommandHandler : IRequestHandler<UpdateApplication
 
         application.Name = request.Name;
         application.WebhookUrl = request.WebhookUrl;
-        application.Description = request.Description;
-        application.Icon = request.Icon;
-        application.ImageUrl = request.ImageUrl;
-        application.Badge = request.Badge;
-        application.IsReady = request.IsReady;
 
         await _context.SaveChangesAsync(cancellationToken);
         return true;
