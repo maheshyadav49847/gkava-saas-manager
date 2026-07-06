@@ -1,0 +1,298 @@
+/* --- Eye-Catching Light Indigo Theme (Products) --- */
+
+.corporate-page {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #ffffff;
+  color: #1e1b4b;
+  min-height: 100vh;
+}
+
+/* Page Header */
+.products-header {
+  padding: 8rem 2rem 6rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.products-title {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.products-subtitle {
+  font-size: 1.25rem;
+  color: #475569;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Alternating Rows Section */
+.products-list {
+  padding: 8rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10rem;
+  /* Massive clean spacing */
+}
+
+.product-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .product-row {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .product-row:nth-child(even) {
+    flex-direction: row-reverse;
+  }
+}
+
+.product-content {
+  flex: 1;
+  max-width: 500px;
+}
+
+.product-name {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.04em;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+.product-description {
+  font-size: 1.125rem;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+
+/* Technical Specs List (3D Layered Box) */
+.product-specs {
+  background-color: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+  /* Tactile Block Shadow */
+  box-shadow: 6px 6px 0px 0px #e2e8f0;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out !important;
+}
+
+.product-specs:hover {
+  transform: translate(-4px, -4px) !important;
+  border-color: #6366f1;
+  box-shadow: 10px 10px 0px 0px #6366f1;
+}
+
+.spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.spec-item:last-child {
+  margin-bottom: 0;
+}
+
+.spec-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.spec-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875rem;
+  color: #1e1b4b;
+  word-break: break-all;
+}
+
+.spec-link {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.spec-link:hover {
+  text-decoration: underline;
+  color: #4338ca;
+}
+
+/* Product Graphic Area (Clean Abstract UI - Tactile Block) */
+.product-graphic {
+  flex: 1;
+  width: 100%;
+  max-width: 550px;
+  aspect-ratio: 4 / 3;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  /* Flat Block Shadow */
+  box-shadow: 12px 12px 0px 0px #e2e8f0;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out !important;
+}
+
+.product-graphic:hover {
+  transform: translate(-6px, -6px) !important;
+  border-color: #4f46e5;
+  box-shadow: 18px 18px 0px 0px #4f46e5;
+}
+
+/* Background aesthetic shapes */
+.product-graphic::before {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 60%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.graphic-inner {
+  position: relative;
+  width: 75%;
+  height: 65%;
+  background: #ffffff;
+  border-radius: 16px;
+  /* 3D Pop for inner element */
+  box-shadow:
+    0 15px 35px rgba(15, 23, 42, 0.15),
+    inset 0 1px 2px white;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  transform: translateZ(30px);
+  /* Works with perspective on parent */
+}
+
+.graphic-header {
+  height: 32px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 8px;
+}
+
+.graphic-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #cbd5e1;
+}
+
+.graphic-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+}
+
+/* Buttons (3D Tactile Look) */
+.btn-primary-large {
+  background-color: #4f46e5;
+  color: white;
+  font-weight: 600;
+  font-size: 1.125rem;
+  padding: 1rem 2.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  /* 3D Depth */
+  box-shadow:
+    0 6px 0 #3730a3,
+    0 10px 20px rgba(79, 70, 229, 0.4);
+  transform: translateY(0);
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.btn-primary-large:hover {
+  background-color: #4338ca;
+}
+
+.btn-primary-large:active {
+  box-shadow:
+    0 0px 0 #3730a3,
+    0 4px 10px rgba(79, 70, 229, 0.4);
+  transform: translateY(6px);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .products-hero h1 {
+    font-size: 4rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .products-hero {
+    padding: 6rem 1rem 4rem;
+  }
+  
+  .products-hero h1 {
+    font-size: 3rem;
+  }
+  
+  .products-hero p {
+    font-size: 1.125rem;
+    padding: 0 1rem;
+  }
+  
+  .products-list {
+    padding: 4rem 1rem;
+    gap: 4rem;
+  }
+  
+  .product-row {
+    flex-direction: column !important;
+    gap: 2rem;
+  }
+  
+  .product-name {
+    font-size: 2.25rem;
+  }
+  
+  .product-feature-list li {
+    font-size: 1rem;
+  }
+  
+  .product-graphic {
+    min-height: 250px;
+  }
+}

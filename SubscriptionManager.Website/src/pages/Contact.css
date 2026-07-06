@@ -1,0 +1,255 @@
+/* --- Contact Page - Tactile 3D Theme --- */
+
+/* Header */
+.contact-header {
+  padding: 8rem 2rem 5rem;
+  background-color: #ffffff;
+  text-align: center;
+}
+
+.contact-title {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.contact-subtitle {
+  font-size: 1.25rem;
+  color: #475569;
+  line-height: 1.7;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Two Column Layout */
+.contact-layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 5rem 2rem 6rem;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+
+/* Left: Contact Info Cards */
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contact-info-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 6px 6px 0px 0px #e2e8f0;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
+}
+
+.contact-info-card:hover {
+  transform: translate(-3px, -3px);
+  border-color: #6366f1;
+  box-shadow: 9px 9px 0px 0px #6366f1;
+}
+
+.contact-info-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-info-icon.indigo {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.contact-info-icon.emerald {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.contact-info-icon.amber {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.contact-info-text h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.2rem;
+}
+
+.contact-info-text p {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.contact-info-text a {
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.contact-info-text a:hover {
+  text-decoration: underline;
+}
+
+/* Right: Contact Form Card */
+.contact-form-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 10px 10px 0px 0px #e2e8f0;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
+}
+
+.contact-form-card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 10px 10px 0px 0px #c7d2fe;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  color: #0f172a;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
+}
+
+.form-input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  background: #ffffff;
+}
+
+.form-input::placeholder {
+  color: #94a3b8;
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 500px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Submit Button */
+.contact-submit {
+  display: block;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  color: #ffffff;
+  background-color: #4f46e5;
+  border: 2px solid #4f46e5;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 4px 4px 0px 0px #3730a3;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+  margin-top: 0.5rem;
+}
+
+.contact-submit:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #3730a3;
+}
+
+.contact-submit:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #3730a3;
+}
+
+/* Reveal */
+.contact-page .reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.contact-page .reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   Responsive Design (Additional)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .contact-hero {
+    padding: 6rem 1rem 4rem;
+  }
+  
+  .contact-title {
+    font-size: 3rem;
+  }
+  
+  .contact-subtitle {
+    font-size: 1.125rem;
+    padding: 0 1rem;
+  }
+  
+  /* Ensure form inputs don't cause zoom on iOS (font-size 16px min) */
+  .form-input {
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,347 @@
+/* --- Pricing Page - Tactile 3D Theme --- */
+
+/* Page Header */
+.pricing-header {
+  padding: 8rem 2rem 5rem;
+  background-color: #ffffff;
+  text-align: center;
+}
+
+.pricing-title {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.pricing-subtitle {
+  font-size: 1.25rem;
+  color: #475569;
+  line-height: 1.7;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Toggle (Monthly / Annual) */
+.pricing-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.pricing-toggle span {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.pricing-toggle span.active-toggle {
+  color: #0f172a;
+}
+
+.toggle-switch {
+  width: 56px;
+  height: 30px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid #cbd5e1;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.toggle-switch.toggled {
+  background: #4f46e5;
+  border-color: #4338ca;
+}
+
+.toggle-knob {
+  width: 22px;
+  height: 22px;
+  background: #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-switch.toggled .toggle-knob {
+  transform: translateX(26px);
+}
+
+.save-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #10b981;
+  background: #ecfdf5;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid #a7f3d0;
+}
+
+/* Pricing Grid */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 1100px;
+  margin: 4rem auto 0;
+  padding: 0 2rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+  }
+}
+
+/* Pricing Card Base */
+.pricing-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 2.5rem;
+  position: relative;
+  box-shadow: 8px 8px 0px 0px #e2e8f0;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
+}
+
+.pricing-card:hover {
+  transform: translate(-4px, -4px);
+  border-color: #6366f1;
+  box-shadow: 12px 12px 0px 0px #6366f1;
+}
+
+/* Popular Card */
+.pricing-card.popular {
+  border-color: #4f46e5;
+  box-shadow: 8px 8px 0px 0px #4f46e5;
+}
+
+.pricing-card.popular:hover {
+  transform: translate(-6px, -6px);
+  box-shadow: 14px 14px 0px 0px #4f46e5;
+}
+
+.popular-badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4f46e5;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.35rem 1.25rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+/* Card Content */
+.pricing-plan-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.pricing-plan-desc {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.pricing-amount {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.pricing-currency {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.pricing-value {
+  font-size: 4rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.pricing-period {
+  font-size: 1rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.pricing-billed {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-bottom: 2rem;
+}
+
+/* Divider inside card */
+.pricing-divider {
+  border: 0;
+  height: 1px;
+  background: #e2e8f0;
+  margin: 1.5rem 0;
+}
+
+/* Feature list */
+.pricing-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.pricing-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+.pricing-features li svg {
+  flex-shrink: 0;
+  color: #10b981;
+}
+
+/* CTA Buttons */
+.pricing-btn-primary {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: #4f46e5;
+  border: 2px solid #4f46e5;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 4px 4px 0px 0px #3730a3;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+}
+
+.pricing-btn-primary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #3730a3;
+}
+
+.pricing-btn-primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #3730a3;
+}
+
+.pricing-btn-secondary {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  background-color: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 4px 4px 0px 0px #e2e8f0;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
+}
+
+.pricing-btn-secondary:hover {
+  transform: translate(-2px, -2px);
+  border-color: #6366f1;
+  color: #4f46e5;
+  box-shadow: 6px 6px 0px 0px #6366f1;
+}
+
+.pricing-btn-secondary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #e2e8f0;
+}
+
+/* Bottom CTA Section */
+.pricing-bottom-cta {
+  text-align: center;
+  padding: 6rem 2rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.pricing-bottom-cta h2 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+
+.pricing-bottom-cta p {
+  font-size: 1.125rem;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+/* Reveal on scroll (shared with other pages) */
+.pricing-page .reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.pricing-page .reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+@media (max-width: 768px) {
+  .pricing-hero {
+    padding: 6rem 1rem 4rem;
+  }
+  
+  .pricing-title {
+    font-size: 3rem;
+  }
+  
+  .pricing-subtitle {
+    font-size: 1.125rem;
+    padding: 0 1rem;
+  }
+  
+  .pricing-bottom-cta {
+    padding: 4rem 1rem;
+  }
+  
+  .pricing-bottom-cta h2 {
+    font-size: 2.25rem;
+  }
+}
