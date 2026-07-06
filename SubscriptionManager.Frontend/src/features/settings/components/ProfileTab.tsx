@@ -75,7 +75,7 @@ export const ProfileTab = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-12 pr-4 py-3.5 bg-transparent border-2 border-slate-200 dark:border-slate-800 rounded-2xl focus:ring-0 focus:border-indigo-500 text-slate-900 dark:text-white transition-all text-base hover:border-slate-300 dark:hover:border-slate-700"
-                placeholder="admin@antigravity.com"
+                placeholder="admin@myqcare.com"
               />
             </div>
           </div>

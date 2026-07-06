@@ -19,7 +19,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Subscription> Subscriptions { get; set; } = null!;
     public DbSet<AdminUser> AdminUsers { get; set; } = null!;
     public DbSet<Coupon> Coupons { get; set; } = null!;
-    public DbSet<WebsiteConfig> WebsiteConfigs { get; set; } = null!;
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,11 +33,6 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.HasIndex(e => e.AppKey).IsUnique();
         });
 
-        modelBuilder.Entity<WebsiteConfig>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.JsonData).IsRequired();
-        });
 
         modelBuilder.Entity<Plan>(entity =>
         {

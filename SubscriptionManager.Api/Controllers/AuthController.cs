@@ -21,8 +21,15 @@ namespace SubscriptionManager.Api.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginCommand command)
         {
-            var response = await _mediator.Send(command);
-            return Ok(response);
+            try
+            {
+                var response = await _mediator.Send(command);
+                return Ok(response);
+            }
+            catch (System.UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
         }
 
         [HttpGet("create-admin")]

@@ -1,11 +1,10 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, AppWindow, Blocks, ListTodo, LogOut, Home, ChevronRight, ChevronDown, User, Tag, ChevronLeft } from 'lucide-react';
+import { LayoutDashboard, Users, Blocks, ListTodo, LogOut, Home, ChevronRight, ChevronDown, User, Tag, ChevronLeft } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Website Builder", href: "/website-builder", icon: AppWindow },
   { name: "Applications", href: "/applications", icon: Blocks },
   { name: "Plans", href: "/plans", icon: ListTodo },
   { name: "Coupons", href: "/coupons", icon: Tag },
