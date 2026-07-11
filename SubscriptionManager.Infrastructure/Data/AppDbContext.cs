@@ -19,8 +19,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Subscription> Subscriptions { get; set; } = null!;
     public DbSet<AdminUser> AdminUsers { get; set; } = null!;
     public DbSet<Coupon> Coupons { get; set; } = null!;
-    
-
+    public DbSet<ApplicationModule> ApplicationModules { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -31,6 +30,18 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.AppKey).IsRequired().HasMaxLength(200);
             entity.HasIndex(e => e.AppKey).IsUnique();
+        });
+
+        modelBuilder.Entity<ApplicationModule>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Icon).HasMaxLength(50);
+            
+            entity.HasOne(e => e.Application)
+                .WithMany(a => a.Modules)
+                .HasForeignKey(e => e.ApplicationId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
 

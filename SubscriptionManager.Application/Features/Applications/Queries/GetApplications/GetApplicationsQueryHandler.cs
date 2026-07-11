@@ -21,10 +21,23 @@ public class GetApplicationsQueryHandler : IRequestHandler<GetApplicationsQuery,
             {
                 Id = a.Id,
                 Name = a.Name,
+                Subtitle = a.Subtitle,
                 AppKey = a.AppKey,
                 WebhookUrl = a.WebhookUrl,
+                Description = a.Description,
+                ImageBase64 = a.ImageBase64,
+                DisplayOrder = a.DisplayOrder,
+                Modules = a.Modules.Select(m => new ApplicationModuleDto
+                {
+                    Id = m.Id,
+                    Name = m.Name,
+                    Description = m.Description,
+                    Icon = m.Icon,
+                    DisplayOrder = m.DisplayOrder
+                }).OrderBy(m => m.DisplayOrder).ToList()
             })
-            .OrderBy(a => a.Name)
+            .OrderBy(a => a.DisplayOrder)
+            .ThenBy(a => a.Name)
             .ToListAsync(cancellationToken);
     }
 }

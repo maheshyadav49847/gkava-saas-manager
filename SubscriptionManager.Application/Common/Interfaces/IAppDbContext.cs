@@ -12,7 +12,7 @@ public interface IAppDbContext
     DbSet<Subscription> Subscriptions { get; }
     DbSet<AdminUser> AdminUsers { get; }
     DbSet<Coupon> Coupons { get; }
-
+    DbSet<ApplicationModule> ApplicationModules { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

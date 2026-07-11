@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SubscriptionManager.Infrastructure.Data;
@@ -11,9 +12,11 @@ using SubscriptionManager.Infrastructure.Data;
 namespace SubscriptionManager.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260709185524_AddApplicationMarketingFields")]
+    partial class AddApplicationMarketingFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,8 +72,9 @@ namespace SubscriptionManager.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
+                    b.PrimitiveCollection<string[]>("Features")
+                        .IsRequired()
+                        .HasColumnType("text[]");
 
                     b.Property<string>("ImageBase64")
                         .IsRequired()
@@ -80,10 +84,6 @@ namespace SubscriptionManager.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
-
-                    b.Property<string>("Subtitle")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("WebhookUrl")
                         .IsRequired()
@@ -95,39 +95,6 @@ namespace SubscriptionManager.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Applications");
-                });
-
-            modelBuilder.Entity("SubscriptionManager.Domain.Entities.ApplicationModule", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ApplicationId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("DisplayOrder")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Icon")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationId");
-
-                    b.ToTable("ApplicationModules");
                 });
 
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.Coupon", b =>
@@ -294,17 +261,6 @@ namespace SubscriptionManager.Infrastructure.Migrations
                     b.ToTable("Tenants");
                 });
 
-            modelBuilder.Entity("SubscriptionManager.Domain.Entities.ApplicationModule", b =>
-                {
-                    b.HasOne("SubscriptionManager.Domain.Entities.Application", "Application")
-                        .WithMany("Modules")
-                        .HasForeignKey("ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Application");
-                });
-
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.Plan", b =>
                 {
                     b.HasOne("SubscriptionManager.Domain.Entities.Application", "Application")
@@ -355,8 +311,6 @@ namespace SubscriptionManager.Infrastructure.Migrations
 
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.Application", b =>
                 {
-                    b.Navigation("Modules");
-
                     b.Navigation("Plans");
                 });
 

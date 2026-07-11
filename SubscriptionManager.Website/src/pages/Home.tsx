@@ -13,22 +13,7 @@ export function Home() {
     const fetchApps = async () => {
       try {
         const data = await getApplications();
-        // Add two custom imaginative products to make the page look full and premium
-        const imaginedProducts = [
-          {
-            id: 'imagined-1',
-            name: 'GKAVA Nexus',
-            appKey: 'NKX-8932-XYZ',
-            webhookUrl: 'https://nexus.gkava.com/integrate'
-          },
-          {
-            id: 'imagined-2',
-            name: 'GKAVA Sentinel',
-            appKey: 'SNT-4401-ABC',
-            webhookUrl: 'https://sentinel.gkava.com/security'
-          }
-        ];
-        setApplications([...data, ...imaginedProducts]);
+        setApplications(data);
         setLoading(false);
       } catch (error) {
         console.error('Failed to fetch applications:', error);
@@ -270,9 +255,13 @@ export function Home() {
                   </div>
                   <h3 className="card-title">{app.name}</h3>
                 </div>
-                
+                {app.subtitle && (
+                  <p className="card-subtitle" style={{ fontSize: '0.85rem', color: '#6366f1', fontWeight: 600, marginBottom: '0.5rem' }}>
+                    {app.subtitle}
+                  </p>
+                )}
                 <p className="card-desc">
-                  A comprehensive SaaS platform designed to streamline operations and enhance productivity. Built with enterprise-grade security and reliability.
+                  {app.description || 'A comprehensive SaaS platform designed to streamline operations and enhance productivity.'}
                 </p>
                 
                 <div className="card-footer">

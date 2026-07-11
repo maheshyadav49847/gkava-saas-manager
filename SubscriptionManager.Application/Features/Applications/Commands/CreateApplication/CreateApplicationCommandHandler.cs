@@ -18,8 +18,19 @@ public class CreateApplicationCommandHandler : IRequestHandler<CreateApplication
         var entity = new SubscriptionManager.Domain.Entities.Application
         {
             Name = request.Name,
+            Subtitle = request.Subtitle,
             WebhookUrl = request.WebhookUrl,
             AppKey = Guid.NewGuid().ToString("N"),
+            Description = request.Description,
+            ImageBase64 = request.ImageBase64,
+            DisplayOrder = request.DisplayOrder,
+            Modules = request.Modules?.Select(m => new ApplicationModule
+            {
+                Name = m.Name,
+                Description = m.Description,
+                Icon = m.Icon,
+                DisplayOrder = m.DisplayOrder
+            }).ToList() ?? new List<ApplicationModule>()
         };
 
         _context.Applications.Add(entity);

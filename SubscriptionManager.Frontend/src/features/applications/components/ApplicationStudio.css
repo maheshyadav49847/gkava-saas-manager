@@ -9,7 +9,7 @@
 
 /* Page Header */
 .products-header {
-  padding: 4rem 2rem 6rem;
+  padding: 8rem 2rem 6rem;
   background-color: #ffffff;
   border-bottom: 1px solid #e2e8f0;
   text-align: center;
@@ -22,10 +22,6 @@
   letter-spacing: -0.04em;
   margin-bottom: 1.5rem;
   line-height: 1.1;
-}
-
-.highlight-solid {
-  color: #5b21b6;
 }
 
 .products-subtitle {
@@ -76,7 +72,7 @@
 
 .product-intro {
   flex: 1;
-  max-width: 600px;
+  max-width: 500px;
 }
 
 .product-details-section {

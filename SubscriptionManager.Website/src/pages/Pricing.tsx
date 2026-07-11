@@ -1,66 +1,37 @@
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams, Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
+import { getPlans, getApplications, type Plan, type Application } from '../services/api';
 import './Pricing.css';
 
-const plans = [
-  {
-    name: 'Starter',
-    desc: 'Perfect for indie developers and early-stage startups.',
-    monthly: 0,
-    annual: 0,
-    popular: false,
-    cta: 'Start Free',
-    ctaStyle: 'pricing-btn-secondary',
-    features: [
-      'Up to 3 Applications',
-      '1,000 API Requests / day',
-      'Basic Webhook Support',
-      'Community Support',
-      'Standard Analytics',
-    ],
-  },
-  {
-    name: 'Pro',
-    desc: 'For growing businesses that need power and flexibility.',
-    monthly: 99,
-    annual: 79,
-    popular: true,
-    cta: 'Go Pro',
-    ctaStyle: 'pricing-btn-primary',
-    features: [
-      'Unlimited Applications',
-      '100,000 API Requests / day',
-      'Advanced Webhooks & Events',
-      'Priority Email Support',
-      'Real-time Analytics',
-      'Custom Branding',
-      'Team Collaboration (5 seats)',
-    ],
-  },
-  {
-    name: 'Enterprise',
-    desc: 'For large-scale operations requiring dedicated support.',
-    monthly: null,
-    annual: null,
-    popular: false,
-    cta: 'Contact Sales',
-    ctaStyle: 'pricing-btn-secondary',
-    features: [
-      'Everything in Pro',
-      'Unlimited API Requests',
-      'Dedicated Account Manager',
-      'Custom SLA & Uptime Guarantee',
-      'SSO & Advanced Security',
-      'On-premise Deployment Option',
-      'White-glove Onboarding',
-      '24/7 Phone & Chat Support',
-    ],
-  },
-];
-
 export function Pricing() {
+  const [searchParams] = useSearchParams();
+  const appId = searchParams.get('appId');
+
   const [isAnnual, setIsAnnual] = useState(false);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [loading, setLoading] = useState(true);
   const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [fetchedPlans, fetchedApps] = await Promise.all([
+          getPlans(),
+          getApplications()
+        ]);
+        
+        setPlans(fetchedPlans);
+        setApplications(fetchedApps);
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch pricing data:', error);
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
@@ -83,7 +54,11 @@ export function Pricing() {
         observerRef.current.disconnect();
       }
     };
-  }, []);
+  }, [plans]); // Re-run when plans update
+
+  // Filter plans based on the selected application (if provided)
+  const displayPlans = appId ? plans.filter(p => p.applicationId === appId) : plans;
+  const appName = appId ? applications.find(a => a.id === appId)?.name : null;
 
   return (
     <div className="pricing-page">
@@ -97,8 +72,9 @@ export function Pricing() {
           PRICING PLANS
         </div>
         <h1 className="pricing-title">
-          Simple, Transparent{' '}
-          <span className="highlight-solid">Pricing.</span>
+          {appName ? `Pricing for ${appName}.` : (
+            <>Simple, Transparent <span className="highlight-solid">Pricing.</span></>
+          )}
         </h1>
         <p className="pricing-subtitle">
           No hidden fees. No surprises. Choose the plan that fits your stage and
@@ -121,67 +97,68 @@ export function Pricing() {
 
       {/* Pricing Cards */}
       <div className="pricing-grid">
-        {plans.map((plan, index) => (
-          <div
-            key={plan.name}
-            className={`pricing-card reveal-on-scroll ${plan.popular ? 'popular' : ''}`}
-            style={{ transitionDelay: `${index * 0.12}s` }}
-          >
-            {plan.popular && (
-              <span className="popular-badge">Most Popular</span>
-            )}
-
-            <h3 className="pricing-plan-name">{plan.name}</h3>
-            <p className="pricing-plan-desc">{plan.desc}</p>
-
-            {plan.monthly !== null ? (
-              <>
-                <div className="pricing-amount">
-                  <span className="pricing-currency">$</span>
-                  <span className="pricing-value">
-                    {isAnnual ? plan.annual : plan.monthly}
-                  </span>
-                </div>
-                <p className="pricing-period">
-                  per month{isAnnual ? ', billed annually' : ''}
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="pricing-amount">
-                  <span className="pricing-value" style={{ fontSize: '3rem' }}>
-                    Custom
-                  </span>
-                </div>
-                <p className="pricing-period">tailored to your needs</p>
-              </>
-            )}
-
-            <hr className="pricing-divider" />
-
-            <ul className="pricing-features">
-              {plan.features.map((feature) => (
-                <li key={feature}>
-                  <Check size={18} />
-                  {feature}
-                </li>
-              ))}
-            </ul>
-
-            <a
-              href={
-                plan.name === 'Enterprise'
-                  ? '/contact'
-                  : 'http://localhost:5180/login'
-              }
-              className={plan.ctaStyle}
-              target={plan.name !== 'Enterprise' ? '_blank' : undefined}
-              rel={plan.name !== 'Enterprise' ? 'noreferrer' : undefined}
-            >
-              {plan.cta}
-            </a>
+        {loading ? (
+          <div className="text-center w-full" style={{ padding: '4rem', color: '#6b7280' }}>
+            Loading plans...
           </div>
-        ))}
+        ) : displayPlans.length === 0 ? (
+          <div className="text-center w-full" style={{ padding: '4rem', color: '#6b7280' }}>
+            No plans available.
+          </div>
+        ) : (
+          displayPlans.map((plan, index) => (
+            <div
+              key={plan.id}
+              className={`pricing-card reveal-on-scroll ${plan.isPopular ? 'popular' : ''}`}
+              style={{ transitionDelay: `${index * 0.12}s` }}
+            >
+              {plan.isPopular && (
+                <span className="popular-badge">Most Popular</span>
+              )}
+
+              {/* Show which app this is for, if viewing all plans */}
+              {!appId && (
+                <span className="text-xs font-semibold text-indigo-600 block mb-2 uppercase tracking-wide">
+                  {applications.find(a => a.id === plan.applicationId)?.name || 'Product'}
+                </span>
+              )}
+
+              <h3 className="pricing-plan-name">{plan.name}</h3>
+              <p className="pricing-plan-desc">{plan.description}</p>
+
+              <div className="pricing-amount">
+                <span className="pricing-currency">$</span>
+                <span className="pricing-value">
+                  {isAnnual ? plan.yearlyPrice : plan.monthlyPrice}
+                </span>
+              </div>
+              <p className="pricing-period">
+                per month{isAnnual ? ', billed annually' : ''}
+              </p>
+
+              <hr className="pricing-divider" />
+
+              <ul className="pricing-features">
+                {plan.features && plan.features.map((feature, i) => (
+                  <li key={i}>
+                    <Check size={18} />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+
+              {/* Route to the SaaS dashboard register page with URL params */}
+              <a
+                href={`http://localhost:5180/register?planId=${plan.id}&appId=${plan.applicationId}`}
+                className={plan.isPopular ? 'pricing-btn-primary' : 'pricing-btn-secondary'}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Subscribe Now
+              </a>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Bottom CTA */}
@@ -191,9 +168,9 @@ export function Pricing() {
           We work with enterprises of all sizes to build tailored solutions.
           Let's discuss what GKAVA Studios can do for your business.
         </p>
-        <a href="/contact" className="pricing-btn-primary" style={{ display: 'inline-block', width: 'auto', padding: '1rem 2.5rem' }}>
+        <Link to="/contact" className="pricing-btn-primary" style={{ display: 'inline-block', width: 'auto', padding: '1rem 2.5rem' }}>
           Talk to Our Team
-        </a>
+        </Link>
       </section>
     </div>
   );

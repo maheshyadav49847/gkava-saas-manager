@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Application } from '../types';
 import { getApplications, createApplication, updateApplication, deleteApplication } from '../api';
-import { AppWindow, Plus, Copy, Link as LinkIcon, LayoutGrid, Edit2, Trash2, MoreVertical, Terminal, X, Loader2, Save } from 'lucide-react';
+import { AppWindow, Plus, Copy, Link as LinkIcon, LayoutGrid, Edit2, Trash2, MoreVertical, X, Loader2 } from 'lucide-react';
+import { ApplicationStudio } from './ApplicationStudio';
 
 export const ApplicationList = () => {
   const [applications, setApplications] = useState<Application[]>([]);
@@ -9,13 +10,8 @@ export const ApplicationList = () => {
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newAppName, setNewAppName] = useState('');
-  const [newAppWebhook, setNewAppWebhook] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
-
   const [editingApp, setEditingApp] = useState<Application | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const [deletingApp, setDeletingApp] = useState<Application | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -26,7 +22,7 @@ export const ApplicationList = () => {
     setIsLoading(true);
     getApplications()
       .then((data) => {
-        setApplications(data);
+        setApplications(data.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0)));
         setIsLoading(false);
       })
       .catch((error) => {
@@ -38,50 +34,6 @@ export const ApplicationList = () => {
   useEffect(() => {
     fetchApps();
   }, []);
-
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newAppName.trim()) return;
-    
-    setIsCreating(true);
-    try {
-      await createApplication({ 
-        name: newAppName, 
-        webhookUrl: newAppWebhook
-      });
-      setNewAppName('');
-      setNewAppWebhook('');
-      setIsModalOpen(false);
-      fetchApps(); // Refresh the list
-    } catch (error) {
-      console.error("Failed to create application", error);
-      alert("Error creating application");
-    } finally {
-      setIsCreating(false);
-    }
-  };
-
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingApp || !editingApp.name.trim()) return;
-    
-    setIsUpdating(true);
-    try {
-      await updateApplication(editingApp.id, { 
-        id: editingApp.id, 
-        name: editingApp.name, 
-        webhookUrl: editingApp.webhookUrl
-      });
-      setIsEditModalOpen(false);
-      setEditingApp(null);
-      fetchApps();
-    } catch (error) {
-      console.error("Failed to update application", error);
-      alert("Error updating application");
-    } finally {
-      setIsUpdating(false);
-    }
-  };
 
   const handleDelete = async () => {
     if (!deletingApp) return;
@@ -151,11 +103,6 @@ export const ApplicationList = () => {
                     <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
                       <LinkIcon className="w-3 h-3" /> {app.webhookUrl || "No webhook set"}
                     </p>
-                    {app.badge && (
-                      <span className="inline-block mt-2 px-2 py-0.5 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 text-[10px] font-bold uppercase rounded-full">
-                        {app.badge}
-                      </span>
-                    )}
                   </div>
                 </div>
                 
@@ -213,134 +160,38 @@ export const ApplicationList = () => {
         )}
       </div>
 
-      {/* Create Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <div className="p-2 bg-indigo-100 dark:bg-indigo-500/20 rounded-xl">
-                  <Terminal className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                </div>
-                Create Application
-              </h3>
-            </div>
-            <form onSubmit={handleCreate} className="p-6 space-y-4 bg-slate-50/50 dark:bg-slate-900/50">
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Application Name</label>
-                <input 
-                  type="text" 
-                  value={newAppName}
-                  onChange={e => setNewAppName(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-0 focus:border-indigo-500 transition-all text-slate-900 dark:text-white placeholder-slate-400"
-                  placeholder="e.g. My Awesome App"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Webhook URL <span className="text-slate-400 font-normal">(Optional)</span></label>
-                <input 
-                  type="url" 
-                  value={newAppWebhook}
-                  onChange={e => setNewAppWebhook(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-0 focus:border-indigo-500 transition-all text-slate-900 dark:text-white placeholder-slate-400"
-                  placeholder="https://api.myapp.com/webhook"
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4">
-                <button 
-                  type="button" 
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
-                >
-                  <X className="w-4 h-4" /> Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  disabled={isCreating}
-                  className="px-4 py-2 text-sm font-medium flex items-center gap-2 text-indigo-600 dark:text-indigo-400 bg-transparent hover:bg-indigo-50 dark:hover:bg-indigo-500/10 border-2 border-indigo-600 dark:border-indigo-500 rounded-lg transition-colors disabled:opacity-50"
-                >
-                  {isCreating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" /> Creating...
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="w-4 h-4" /> Create App
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Modal */}
-      {isEditModalOpen && editingApp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <div className="p-2 bg-indigo-100 dark:bg-indigo-500/20 rounded-xl">
-                  <Edit2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                </div>
-                Edit Application
-              </h3>
-            </div>
-            <form onSubmit={handleUpdate} className="p-6 space-y-4 bg-slate-50/50 dark:bg-slate-900/50">
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Application Name</label>
-                <input 
-                  type="text" 
-                  value={editingApp.name}
-                  onChange={e => setEditingApp({ ...editingApp, name: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-0 focus:border-indigo-500 transition-all text-slate-900 dark:text-white placeholder-slate-400"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Webhook URL <span className="text-slate-400 font-normal">(Optional)</span></label>
-                <input 
-                  type="url" 
-                  value={editingApp.webhookUrl || ""}
-                  onChange={e => setEditingApp({ ...editingApp, webhookUrl: e.target.value })}
-                  className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-0 focus:border-indigo-500 transition-all text-slate-900 dark:text-white placeholder-slate-400"
-                  placeholder="https://api.myapp.com/webhook"
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4">
-                <button 
-                  type="button" 
-                  onClick={() => {
-                    setIsEditModalOpen(false);
-                    setEditingApp(null);
-                  }}
-                  className="px-4 py-2 text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-lg transition-colors"
-                >
-                  <X className="w-4 h-4" /> Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  disabled={isUpdating}
-                  className="px-4 py-2 text-sm font-medium flex items-center gap-2 text-indigo-600 dark:text-indigo-400 bg-transparent hover:bg-indigo-50 dark:hover:bg-indigo-500/10 border-2 border-indigo-600 dark:border-indigo-500 rounded-lg transition-colors disabled:opacity-50"
-                >
-                  {isUpdating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" /> Saving...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-4 h-4" /> Save Changes
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+      {/* Application Studio (Create/Edit) */}
+      {(isModalOpen || isEditModalOpen) && (
+        <ApplicationStudio
+          application={isEditModalOpen ? editingApp : null}
+          onSave={async (data) => {
+            if (isEditModalOpen && editingApp) {
+              try {
+                await updateApplication(editingApp.id, data as any);
+                setIsEditModalOpen(false);
+                setEditingApp(null);
+                fetchApps();
+              } catch (error) {
+                console.error("Failed to update application", error);
+                alert("Error updating application");
+              }
+            } else {
+              try {
+                await createApplication(data as any);
+                setIsModalOpen(false);
+                fetchApps();
+              } catch (error) {
+                console.error("Failed to create application", error);
+                alert("Error creating application");
+              }
+            }
+          }}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setIsEditModalOpen(false);
+            setEditingApp(null);
+          }}
+        />
       )}
 
       {/* Delete Modal */}

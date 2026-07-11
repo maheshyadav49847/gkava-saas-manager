@@ -5,7 +5,7 @@ import { Dashboard } from "./features/dashboard";
 import { PlansList } from "./features/plans";
 import { TenantsList } from "./features/tenants";
 import { CouponsList } from "./features/coupons";
-import { LoginPage } from "./features/auth";
+import { LoginPage, RegisterPage } from "./features/auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Settings } from "./features/settings";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -18,6 +18,7 @@ export function AppRoutes() {
 
       {/* Standalone Route */}
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
       
       {/* Protected App Routes */}
       <Route element={

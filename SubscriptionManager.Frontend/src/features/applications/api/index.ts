@@ -1,10 +1,5 @@
 import { apiClient } from '@/lib/apiClient';
-import { Application } from '../types';
-
-export interface CreateApplicationDto {
-  name: string;
-  webhookUrl: string;
-}
+import { Application, CreateApplicationDTO, UpdateApplicationDTO } from '../types';
 
 export const getApplications = (): Promise<Application[]> => {
   return apiClient.get('/applications');
@@ -14,17 +9,11 @@ export const getApplication = (id: string): Promise<Application> => {
   return apiClient.get(`/applications/${id}`);
 };
 
-export const createApplication = (data: CreateApplicationDto): Promise<string> => {
+export const createApplication = (data: CreateApplicationDTO): Promise<string> => {
   return apiClient.post('/applications', data);
 };
 
-export interface UpdateApplicationDto {
-  id: string;
-  name: string;
-  webhookUrl: string;
-}
-
-export const updateApplication = (id: string, data: UpdateApplicationDto): Promise<void> => {
+export const updateApplication = (id: string, data: UpdateApplicationDTO): Promise<void> => {
   return apiClient.put(`/applications/${id}`, data);
 };
 
