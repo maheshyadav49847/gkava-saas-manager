@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Building, Phone, Loader2, AlertCircle, Check } from 'lucide-react';
 import axios from 'axios';
+import { appsettings } from '../../../config/appsettings';
 
 export const RegisterPage = () => {
   const [searchParams] = useSearchParams();
@@ -26,7 +27,7 @@ export const RegisterPage = () => {
 
     try {
       // Create tenant registration logic
-      await axios.post('http://localhost:5048/api/auth/register', {
+      await axios.post(`${appsettings.apiUrl}/auth/register`, {
         name: company || name,
         email,
         phone,

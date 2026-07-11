@@ -63,11 +63,11 @@ export function Header() {
           {/* Actions moved inside nav for mobile view */}
           <div className="header-actions">
             <a 
-              href={window.location.hostname === 'localhost' ? 'http://localhost:5180/login' : `https://app.${window.location.hostname.replace('www.', '')}/login`} 
+              href={`${import.meta.env.VITE_APP_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5180' : `https://app.${window.location.hostname.replace('www.', '').replace('app.', '')}`)}/login`} 
               className="btn btn-outline"
             >Log In</a>
             <a 
-              href={window.location.hostname === 'localhost' ? 'http://localhost:5180/register' : `https://app.${window.location.hostname.replace('www.', '')}/register`} 
+              href={`${import.meta.env.VITE_APP_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5180' : `https://app.${window.location.hostname.replace('www.', '').replace('app.', '')}`)}/register`} 
               className="btn btn-primary"
             >Get Started</a>
           </div>

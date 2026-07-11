@@ -5,8 +5,8 @@ import { Lock, Mail, Loader2, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const LoginPage = () => {
-  const [email, setEmail] = useState('test@admin.com');
-  const [password, setPassword] = useState('Admin@123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
@@ -40,7 +40,7 @@ export const LoginPage = () => {
             <Lock className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Welcome Back</h1>
-          <p className="text-slate-500 mt-2 text-sm">Sign in to the MyQcare Admin Panel</p>
+          <p className="text-slate-500 mt-2 text-sm">Sign in to the GKAVA Admin Panel</p>
         </div>
 
         {error && (
@@ -63,7 +63,7 @@ export const LoginPage = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-0 focus:border-indigo-500 text-slate-900 dark:text-white transition-all"
-                placeholder="admin@myqcare.com"
+                placeholder="admin@gkava.com"
               />
             </div>
           </div>

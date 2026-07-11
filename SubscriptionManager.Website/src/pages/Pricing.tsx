@@ -149,7 +149,7 @@ export function Pricing() {
 
               {/* Route to the SaaS dashboard register page with URL params */}
               <a
-                href={`http://localhost:5180/register?planId=${plan.id}&appId=${plan.applicationId}`}
+                href={`${import.meta.env.VITE_APP_URL || 'http://localhost:5180'}/register?planId=${plan.id}&appId=${plan.applicationId}`}
                 className={plan.isPopular ? 'pricing-btn-primary' : 'pricing-btn-secondary'}
                 target="_blank"
                 rel="noreferrer"
