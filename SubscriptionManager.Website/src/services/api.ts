@@ -40,9 +40,14 @@ export interface Plan {
   isPopular: boolean;
 }
 
+let cachedApplications: Application[] | null = null;
+let cachedPlans: Plan[] | null = null;
+
 export const getApplications = async (): Promise<Application[]> => {
+  if (cachedApplications) return cachedApplications;
   try {
     const response = await axios.get(`${API_BASE_URL}/Website/applications`);
+    cachedApplications = response.data;
     return response.data;
   } catch (error) {
     console.error('Failed to fetch applications:', error);
@@ -51,8 +56,10 @@ export const getApplications = async (): Promise<Application[]> => {
 };
 
 export const getPlans = async (): Promise<Plan[]> => {
+  if (cachedPlans) return cachedPlans;
   try {
     const response = await axios.get(`${API_BASE_URL}/Website/plans`);
+    cachedPlans = response.data;
     return response.data;
   } catch (error) {
     console.error('Failed to fetch plans:', error);
