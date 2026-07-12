@@ -127,7 +127,7 @@ export function Pricing() {
               <p className="pricing-plan-desc">{plan.description}</p>
 
               <div className="pricing-amount">
-                <span className="pricing-currency">$</span>
+                <span className="pricing-currency">₹</span>
                 <span className="pricing-value">
                   {isAnnual ? plan.yearlyPrice : plan.monthlyPrice}
                 </span>
