@@ -42,7 +42,7 @@ export interface Plan {
 
 export const getApplications = async (): Promise<Application[]> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/applications`);
+    const response = await axios.get(`${API_BASE_URL}/Website/applications`);
     return response.data;
   } catch (error) {
     console.error('Failed to fetch applications:', error);
@@ -52,7 +52,7 @@ export const getApplications = async (): Promise<Application[]> => {
 
 export const getPlans = async (): Promise<Plan[]> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/plans`);
+    const response = await axios.get(`${API_BASE_URL}/Website/plans`);
     return response.data;
   } catch (error) {
     console.error('Failed to fetch plans:', error);
