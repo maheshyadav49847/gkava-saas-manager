@@ -122,7 +122,7 @@ export const PlansList = () => {
               
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white">{plan.name}</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 h-10">{plan.description}</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 min-h-[5rem]">{plan.description}</p>
               </div>
 
               <div className="mb-6 flex items-baseline text-slate-900 dark:text-white">
