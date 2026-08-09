@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Blocks, ListTodo, LogOut, Home, ChevronRight, ChevronDown, User, Tag, ChevronLeft } from 'lucide-react';
+import { LayoutDashboard, Users, Blocks, ListTodo, LogOut, Home, ChevronRight, ChevronDown, User, Tag, ChevronLeft, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
 
@@ -9,6 +9,11 @@ const navigation = [
   { name: "Plans", href: "/plans", icon: ListTodo },
   { name: "Coupons", href: "/coupons", icon: Tag },
   { name: "Tenants", href: "/tenants", icon: Users },
+];
+
+const websiteNavigation = [
+  { name: "Platform Settings", href: "/settings", icon: Settings },
+  { name: "Team Members", href: "/team-members", icon: User },
 ];
 
 export default function DashboardLayout() {
@@ -48,6 +53,36 @@ export default function DashboardLayout() {
 
         <nav className={`flex-1 ${isCollapsed ? 'px-2' : 'px-3'} py-6 space-y-1 overflow-y-auto`}>
           {navigation.map((item) => {
+            const isActive = location.pathname === item.href || (item.href !== '/' && location.pathname.startsWith(item.href));
+            return (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`group relative flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2.5'} rounded-lg text-sm font-medium transition-all duration-200 ${isActive
+                    ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400"
+                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200"
+                  }`}
+              >
+                <item.icon className={`w-5 h-5 shrink-0 ${isActive ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"}`} />
+                {!isCollapsed && <span className="truncate">{item.name}</span>}
+                
+                {/* Popover Tooltip for Collapsed State */}
+                {isCollapsed && (
+                  <div className="absolute left-full ml-4 px-3 py-2 bg-slate-800 dark:bg-slate-700 text-white text-xs font-bold rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
+                    {item.name}
+                    {/* Tooltip Arrow */}
+                    <div className="absolute top-1/2 -left-1 -mt-1 w-2 h-2 bg-slate-800 dark:bg-slate-700 rotate-45"></div>
+                  </div>
+                )}
+              </Link>
+            );
+          })}
+          
+          <div className={`pt-4 pb-2 ${isCollapsed ? 'hidden' : 'px-3'}`}>
+            <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Website</p>
+          </div>
+          
+          {websiteNavigation.map((item) => {
             const isActive = location.pathname === item.href || (item.href !== '/' && location.pathname.startsWith(item.href));
             return (
               <Link

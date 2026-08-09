@@ -1,8 +1,18 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { getPlatformSettings, type PlatformSettings } from '../services/api';
 import './Legal.css';
 
 export function Privacy() {
+  const [settings, setSettings] = useState<PlatformSettings | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const data = await getPlatformSettings();
+      setSettings(data);
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
@@ -111,7 +121,7 @@ export function Privacy() {
             <li>Data portability</li>
             <li>Withdraw consent at any time</li>
           </ul>
-          <p>To exercise any of these rights, please contact us at <a href="mailto:privacy@gkava.com">privacy@gkava.com</a>.</p>
+          <p>To exercise any of these rights, please contact us at <a href={`mailto:${settings?.privacyEmail || 'privacy@gkava.com'}`}>{settings?.privacyEmail || 'privacy@gkava.com'}</a>.</p>
         </div>
 
         <div className="legal-section reveal-on-scroll">
@@ -121,7 +131,7 @@ export function Privacy() {
           </p>
           <p>
             <strong>GKAVA Studios</strong><br />
-            Email: <a href="mailto:privacy@gkava.com">privacy@gkava.com</a><br />
+            Email: <a href={`mailto:${settings?.privacyEmail || 'privacy@gkava.com'}`}>{settings?.privacyEmail || 'privacy@gkava.com'}</a><br />
             Address: Bengaluru, Karnataka, India
           </p>
         </div>

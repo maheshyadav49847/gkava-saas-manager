@@ -55,6 +55,8 @@ builder.Services.AddScoped<IAppDbContext>(provider => provider.GetRequiredServic
 
 // Add Services & Caching
 builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient<IWebhookService, SubscriptionManager.Infrastructure.Services.WebhookService>();
+builder.Services.AddScoped<IPaymentService, SubscriptionManager.Infrastructure.Services.StripePaymentService>();
 
 var app = builder.Build();
 

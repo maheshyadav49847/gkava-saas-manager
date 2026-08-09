@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Layers, Menu, X, ChevronRight } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Layers, Menu, X, ChevronRight, LogOut, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Header.css';
 
 export function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
 
   // Close menu when route changes
   useEffect(() => {
@@ -21,12 +24,23 @@ export function Header() {
     }
   }, [isMobileMenuOpen]);
 
-  const navLinks = [
+  const publicNavLinks = [
     { name: 'Home', path: '/' },
     { name: 'Products', path: '/products' },
     { name: 'Pricing', path: '/pricing' },
     { name: 'About Us', path: '/about' },
   ];
+
+  const authNavLinks = [
+    { name: 'Dashboard', path: '/dashboard' }
+  ];
+
+  const navLinks = isAuthenticated ? [...publicNavLinks, ...authNavLinks] : publicNavLinks;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <header className={`header ${isMobileMenuOpen ? 'menu-open' : ''}`}>
@@ -62,14 +76,17 @@ export function Header() {
           
           {/* Actions moved inside nav for mobile view */}
           <div className="header-actions">
-            <a 
-              href={`${import.meta.env.VITE_APP_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5180' : `https://app.${window.location.hostname.replace('www.', '').replace('app.', '')}`)}/login`} 
-              className="btn btn-outline"
-            >Log In</a>
-            <a 
-              href={`${import.meta.env.VITE_APP_URL || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5180' : `https://app.${window.location.hostname.replace('www.', '').replace('app.', '')}`)}/register`} 
-              className="btn btn-primary"
-            >Get Started</a>
+            {!isAuthenticated ? (
+              <>
+                <Link to="/login" className="btn btn-outline">Log In</Link>
+                <Link to="/register" className="btn btn-primary">Get Started</Link>
+              </>
+            ) : (
+              <button onClick={handleLogout} className="btn btn-outline">
+                <LogOut size={18} style={{ marginRight: '8px' }} />
+                Log Out
+              </button>
+            )}
           </div>
         </nav>
       </div>

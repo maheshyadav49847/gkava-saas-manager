@@ -15,6 +15,9 @@ public class Subscription
     public DateTime EndDate { get; set; }
     public SubscriptionStatus Status { get; set; }
     
+    public bool CancelAtPeriodEnd { get; set; }
+    public string? PaymentProviderSubscriptionId { get; set; } // Stripe Sub ID
+    
     public Guid? CouponId { get; set; }
     
     // Navigation properties

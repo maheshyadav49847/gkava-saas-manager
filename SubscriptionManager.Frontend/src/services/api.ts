@@ -11,11 +11,10 @@ const api = axios.create({
 // Request Interceptor
 api.interceptors.request.use(
   (config) => {
-    // We can add the Auth Token here later for Admin APIs
-    // const token = localStorage.getItem('adminToken');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    const token = localStorage.getItem('token'); // Note: Using 'token' instead of 'adminToken' based on common practice, I should check AuthContext.tsx
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => Promise.reject(error)

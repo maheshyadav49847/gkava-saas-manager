@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using SubscriptionManager.Application.Features.Applications.Queries.GetApplications;
 using SubscriptionManager.Application.Features.Plans.Queries.GetPlans;
+using SubscriptionManager.Application.Features.PlatformSettings.Queries.GetPlatformSettings;
+using SubscriptionManager.Application.Features.TeamMembers.Queries.GetTeamMembers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -61,5 +63,41 @@ public class WebsiteController : ControllerBase
         }
         
         return Ok(plans);
+    }
+
+    [HttpGet("contact-settings")]
+    public async Task<ActionResult<PlatformSettingsDto>> GetContactSettings()
+    {
+        var cacheKey = "Website_ContactSettings";
+        
+        if (!_cache.TryGetValue(cacheKey, out PlatformSettingsDto? settings))
+        {
+            settings = await _mediator.Send(new GetPlatformSettingsQuery());
+            
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(CacheDuration);
+                
+            _cache.Set(cacheKey, settings, cacheEntryOptions);
+        }
+        
+        return Ok(settings);
+    }
+
+    [HttpGet("team-members")]
+    public async Task<ActionResult<List<TeamMemberDto>>> GetTeamMembers()
+    {
+        var cacheKey = "Website_TeamMembers";
+        
+        if (!_cache.TryGetValue(cacheKey, out List<TeamMemberDto>? teamMembers))
+        {
+            teamMembers = await _mediator.Send(new GetTeamMembersQuery());
+            
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(CacheDuration);
+                
+            _cache.Set(cacheKey, teamMembers, cacheEntryOptions);
+        }
+        
+        return Ok(teamMembers);
     }
 }

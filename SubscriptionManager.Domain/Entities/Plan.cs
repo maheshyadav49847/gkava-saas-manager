@@ -10,6 +10,8 @@ public class Plan
     public decimal YearlyPrice { get; set; }
     public bool IsPopular { get; set; }
     
+    public string? PaymentProviderPriceId { get; set; } // Stripe Price ID
+    
     // Navigation properties
     public Application Application { get; set; } = null!;
     public ICollection<PlanFeature> Features { get; set; } = new List<PlanFeature>();

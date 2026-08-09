@@ -1,9 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Mail, MapPin, Phone } from 'lucide-react';
+import { getPlatformSettings, type PlatformSettings } from '../services/api';
 import './Contact.css';
 
 export function Contact() {
+  const [settings, setSettings] = useState<PlatformSettings | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const data = await getPlatformSettings();
+      setSettings(data);
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
@@ -59,7 +69,9 @@ export function Contact() {
             <div className="contact-info-text">
               <h4>Email Us</h4>
               <p>For general inquiries and support</p>
-              <a href="mailto:hello@gkava.com">hello@gkava.com</a>
+              <a href={`mailto:${settings?.supportEmail || 'hello@gkava.com'}`}>
+                {settings?.supportEmail || 'hello@gkava.com'}
+              </a>
             </div>
           </div>
 
@@ -70,7 +82,9 @@ export function Contact() {
             <div className="contact-info-text">
               <h4>Call Us</h4>
               <p>Mon–Fri, 9 AM – 6 PM IST</p>
-              <a href="tel:+919876543210">+91 98765 43210</a>
+              <a href={`tel:${settings?.contactPhone || '+919876543210'}`}>
+                {settings?.contactPhone || '+91 98765 43210'}
+              </a>
             </div>
           </div>
 

@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { getPlans, getApplications, type Plan, type Application } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import './Pricing.css';
 
 export function Pricing() {
   const [searchParams] = useSearchParams();
   const appId = searchParams.get('appId');
+  const { isAuthenticated } = useAuth();
 
   const [isAnnual, setIsAnnual] = useState(false);
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -147,15 +149,27 @@ export function Pricing() {
                 ))}
               </ul>
 
-              {/* Route to the SaaS dashboard register page with URL params */}
-              <a
-                href={`${import.meta.env.VITE_APP_URL || 'http://localhost:5180'}/register?planId=${plan.id}&appId=${plan.applicationId}`}
-                className={plan.isPopular ? 'pricing-btn-primary' : 'pricing-btn-secondary'}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Subscribe Now
-              </a>
+              <div className="pricing-actions">
+                <Link
+                  to={isAuthenticated 
+                    ? `/checkout?planId=${plan.id}&appId=${plan.applicationId}` 
+                    : `/register?planId=${plan.id}&appId=${plan.applicationId}`}
+                  className={plan.isPopular ? 'pricing-btn-primary' : 'pricing-btn-secondary'}
+                >
+                  {isAuthenticated ? 'Subscribe Now' : 'Sign Up to Subscribe'}
+                </Link>
+                
+                {!isAuthenticated && (
+                  <div style={{ textAlign: 'center', marginTop: '12px' }}>
+                    <Link 
+                      to={`/login?planId=${plan.id}&appId=${plan.applicationId}`}
+                      style={{ fontSize: '0.9rem', color: 'var(--color-text-light)', textDecoration: 'underline' }}
+                    >
+                      Log in to subscribe
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           ))
         )}

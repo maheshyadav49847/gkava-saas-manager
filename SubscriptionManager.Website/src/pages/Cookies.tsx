@@ -1,8 +1,18 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { getPlatformSettings, type PlatformSettings } from '../services/api';
 import './Legal.css';
 
 export function Cookies() {
+  const [settings, setSettings] = useState<PlatformSettings | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const data = await getPlatformSettings();
+      setSettings(data);
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
@@ -107,7 +117,7 @@ export function Cookies() {
           </p>
           <p>
             <strong>GKAVA Studios</strong><br />
-            Email: <a href="mailto:privacy@gkava.com">privacy@gkava.com</a><br />
+            Email: <a href={`mailto:${settings?.privacyEmail || 'privacy@gkava.com'}`}>{settings?.privacyEmail || 'privacy@gkava.com'}</a><br />
             Address: Bengaluru, Karnataka, India
           </p>
         </div>

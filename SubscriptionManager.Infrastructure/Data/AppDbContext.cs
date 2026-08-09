@@ -20,6 +20,9 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<AdminUser> AdminUsers { get; set; } = null!;
     public DbSet<Coupon> Coupons { get; set; } = null!;
     public DbSet<ApplicationModule> ApplicationModules { get; set; } = null!;
+    public DbSet<PlatformSetting> PlatformSettings { get; set; } = null!;
+    public DbSet<TeamMember> TeamMembers { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -114,5 +117,46 @@ public class AppDbContext : DbContext, IAppDbContext
             Name = "System Admin",
             PasswordHash = "$2a$11$z/bW8QS/Yv7SS2yran4T/eh.yL1aNQlK2cfqgaNZ8ha0OE6rkVl5K"
         });
+
+        // Seed Default Platform Settings
+        modelBuilder.Entity<PlatformSetting>().HasData(new PlatformSetting
+        {
+            Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+            SupportEmail = "support@gkava.com",
+            PrivacyEmail = "privacy@gkava.com",
+            LegalEmail = "legal@gkava.com",
+            ContactPhone = "+91 98765 43210",
+            UpdatedAt = new DateTime(2023, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+        });
+
+        modelBuilder.Entity<TeamMember>().HasData(
+            new TeamMember
+            {
+                Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+                Name = "Mahesh Kumar",
+                Role = "Founder & CEO",
+                Bio = "Visionary engineer with a passion for simplifying complex SaaS workflows and building scalable platforms.",
+                Initials = "MK",
+                DisplayOrder = 1
+            },
+            new TeamMember
+            {
+                Id = Guid.Parse("00000000-0000-0000-0000-000000000002"),
+                Name = "Ananya Patel",
+                Role = "Lead Engineer",
+                Bio = "Full-stack architect who designs the APIs and infrastructure that power thousands of businesses daily.",
+                Initials = "AP",
+                DisplayOrder = 2
+            },
+            new TeamMember
+            {
+                Id = Guid.Parse("00000000-0000-0000-0000-000000000003"),
+                Name = "Rohan Verma",
+                Role = "Head of Product",
+                Bio = "Product strategist focused on translating customer feedback into features that developers actually love.",
+                Initials = "RV",
+                DisplayOrder = 3
+            }
+        );
     }
 }

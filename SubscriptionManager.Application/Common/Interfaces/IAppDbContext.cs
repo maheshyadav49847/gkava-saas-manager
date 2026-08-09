@@ -13,6 +13,8 @@ public interface IAppDbContext
     DbSet<AdminUser> AdminUsers { get; }
     DbSet<Coupon> Coupons { get; }
     DbSet<ApplicationModule> ApplicationModules { get; }
+    DbSet<PlatformSetting> PlatformSettings { get; }
+    DbSet<TeamMember> TeamMembers { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

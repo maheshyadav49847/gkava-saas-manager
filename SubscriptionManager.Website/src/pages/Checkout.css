@@ -1,0 +1,351 @@
+/* --- Checkout Page - Tactile 3D Theme --- */
+
+.checkout-container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.checkout-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.checkout-header h1 {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 1rem;
+  letter-spacing: -0.04em;
+}
+
+.checkout-header p {
+  color: #475569;
+  font-size: 1.125rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.checkout-form-section h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+/* Tactile Form Card */
+.checkout-form {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 2.5rem;
+  position: relative;
+  box-shadow: 8px 8px 0px 0px #e2e8f0;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
+}
+
+.checkout-form:hover {
+  transform: translate(-2px, -2px);
+  border-color: #cbd5e1;
+  box-shadow: 10px 10px 0px 0px #cbd5e1;
+}
+
+.payment-method-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+/* Tactile Tabs */
+.payment-tab {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  flex: 1;
+  box-shadow: 4px 4px 0px 0px #e2e8f0;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out, color 0.1s ease-out;
+}
+
+.payment-tab:hover:not(.active) {
+  transform: translate(-2px, -2px);
+  border-color: #94a3b8;
+  color: #0f172a;
+  box-shadow: 6px 6px 0px 0px #94a3b8;
+}
+
+.payment-tab:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #e2e8f0;
+}
+
+.payment-tab.active {
+  background: #ffffff;
+  color: #4f46e5;
+  border-color: #4f46e5;
+  box-shadow: 4px 4px 0px 0px #4f46e5;
+  transform: translate(-1px, -1px);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.checkout-form label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+/* Tactile Inputs */
+.checkout-form input,
+.checkout-form select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #0f172a;
+  background-color: #ffffff;
+  box-shadow: 2px 2px 0px 0px #e2e8f0;
+  transition: all 0.15s ease-out;
+}
+
+.checkout-form input:focus,
+.checkout-form select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 4px 4px 0px 0px #4f46e5;
+  transform: translate(-2px, -2px);
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon input {
+  padding-right: 48px;
+}
+
+.input-icon {
+  position: absolute;
+  right: 16px;
+  color: #64748b;
+}
+
+/* Tactile Primary Button */
+.checkout-submit-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 32px;
+  padding: 1rem 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  background-color: #4f46e5;
+  border: 2px solid #4f46e5;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px 0px #3730a3;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+}
+
+.checkout-submit-btn:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #3730a3;
+}
+
+.checkout-submit-btn:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #3730a3;
+}
+
+.checkout-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 4px 4px 0px 0px #3730a3;
+}
+
+.checkout-security-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Tactile Summary Card (Modeled after Popular Pricing Card) */
+.checkout-summary-section {
+  position: sticky;
+  top: 40px;
+}
+
+.summary-card {
+  background: #ffffff;
+  border: 2px solid #4f46e5; /* Primary color border like the Popular plan */
+  border-radius: 20px;
+  padding: 2.5rem;
+  position: relative;
+  box-shadow: 8px 8px 0px 0px #4f46e5;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+}
+
+.summary-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 10px 10px 0px 0px #4f46e5;
+}
+
+.summary-card h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  color: #0f172a;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.summary-plan-name {
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: #0f172a;
+}
+
+.summary-plan-price {
+  color: #475569;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.summary-divider {
+  border: 0;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 24px 0;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin-bottom: 32px;
+  color: #0f172a;
+}
+
+.summary-total span:last-child {
+  color: #4f46e5;
+}
+
+.summary-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.summary-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: #334155;
+  font-weight: 600;
+}
+
+.summary-features li svg {
+  flex-shrink: 0;
+  color: #10b981; /* Green checkmark matching pricing page */
+}
+
+.summary-guarantee {
+  display: flex;
+  gap: 16px;
+  padding-top: 24px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.summary-guarantee svg {
+  color: #4f46e5;
+  flex-shrink: 0;
+}
+
+.summary-guarantee strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.summary-guarantee p {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 500;
+}
+
+.checkout-loading, .checkout-error-state {
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.checkout-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: 2px solid #fecaca;
+  box-shadow: 4px 4px 0px 0px #fecaca;
+}
+
+@media (max-width: 900px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+  .checkout-summary-section {
+    position: static;
+  }
+}

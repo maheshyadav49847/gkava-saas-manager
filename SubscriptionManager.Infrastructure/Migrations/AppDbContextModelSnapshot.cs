@@ -198,6 +198,9 @@ namespace SubscriptionManager.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("PaymentProviderPriceId")
+                        .HasColumnType("text");
+
                     b.Property<decimal>("YearlyPrice")
                         .HasColumnType("decimal(18,2)");
 
@@ -233,17 +236,64 @@ namespace SubscriptionManager.Infrastructure.Migrations
                     b.ToTable("PlanFeatures");
                 });
 
+            modelBuilder.Entity("SubscriptionManager.Domain.Entities.PlatformSetting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContactPhone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LegalEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PrivacyEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SupportEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PlatformSettings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                            ContactPhone = "+91 98765 43210",
+                            LegalEmail = "legal@gkava.com",
+                            PrivacyEmail = "privacy@gkava.com",
+                            SupportEmail = "support@gkava.com",
+                            UpdatedAt = new DateTime(2023, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
+                });
+
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.Subscription", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("CancelAtPeriodEnd")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid?>("CouponId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PaymentProviderSubscriptionId")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("PlanId")
                         .HasColumnType("uuid");
@@ -269,6 +319,65 @@ namespace SubscriptionManager.Infrastructure.Migrations
                     b.ToTable("Subscriptions");
                 });
 
+            modelBuilder.Entity("SubscriptionManager.Domain.Entities.TeamMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Initials")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TeamMembers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
+                            Bio = "Visionary engineer with a passion for simplifying complex SaaS workflows and building scalable platforms.",
+                            DisplayOrder = 1,
+                            Initials = "MK",
+                            Name = "Mahesh Kumar",
+                            Role = "Founder & CEO"
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000002"),
+                            Bio = "Full-stack architect who designs the APIs and infrastructure that power thousands of businesses daily.",
+                            DisplayOrder = 2,
+                            Initials = "AP",
+                            Name = "Ananya Patel",
+                            Role = "Lead Engineer"
+                        },
+                        new
+                        {
+                            Id = new Guid("00000000-0000-0000-0000-000000000003"),
+                            Bio = "Product strategist focused on translating customer feedback into features that developers actually love.",
+                            DisplayOrder = 3,
+                            Initials = "RV",
+                            Name = "Rohan Verma",
+                            Role = "Head of Product"
+                        });
+                });
+
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.Tenant", b =>
                 {
                     b.Property<Guid>("Id")
@@ -284,6 +393,13 @@ namespace SubscriptionManager.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PaymentProviderCustomerId")
+                        .HasColumnType("text");
 
                     b.Property<string>("Phone")
                         .IsRequired()

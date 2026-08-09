@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Settings as SettingsIcon, User, ShieldCheck } from 'lucide-react';
+import { Settings as SettingsIcon, User, ShieldCheck, Globe } from 'lucide-react';
 import { ProfileTab } from './ProfileTab';
 import { SecurityTab } from './SecurityTab';
+import { PlatformSettingsTab } from './PlatformSettingsTab';
 
 export const Settings = () => {
-  const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'platform'>('profile');
 
   return (
     <div className="space-y-8 pb-12">
@@ -51,6 +52,18 @@ export const Settings = () => {
               <ShieldCheck className={`w-5 h-5 ${activeTab === 'security' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
               Security & Password
             </button>
+            
+            <button
+              onClick={() => setActiveTab('platform')}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors whitespace-nowrap text-left ${
+                activeTab === 'platform'
+                  ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Globe className={`w-5 h-5 ${activeTab === 'platform' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
+              Platform Settings
+            </button>
           </nav>
         </div>
 
@@ -59,6 +72,7 @@ export const Settings = () => {
           <div className="animate-in fade-in slide-in-from-right-4 duration-500 max-w-2xl mx-auto">
             {activeTab === 'profile' && <ProfileTab />}
             {activeTab === 'security' && <SecurityTab />}
+            {activeTab === 'platform' && <PlatformSettingsTab />}
           </div>
         </div>
       </div>

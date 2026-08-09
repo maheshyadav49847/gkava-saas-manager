@@ -40,8 +40,27 @@ export interface Plan {
   isPopular: boolean;
 }
 
+export interface PlatformSettings {
+  id: string;
+  supportEmail: string;
+  privacyEmail: string;
+  legalEmail: string;
+  contactPhone: string;
+  updatedAt: string;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  initials: string;
+  displayOrder: number;
+}
+
 let cachedApplications: Application[] | null = null;
 let cachedPlans: Plan[] | null = null;
+let cachedPlatformSettings: PlatformSettings | null = null;
 
 export const getApplications = async (): Promise<Application[]> => {
   if (cachedApplications) return cachedApplications;
@@ -65,4 +84,59 @@ export const getPlans = async (): Promise<Plan[]> => {
     console.error('Failed to fetch plans:', error);
     return [];
   }
+};
+
+export const getPlatformSettings = async (): Promise<PlatformSettings | null> => {
+  if (cachedPlatformSettings) return cachedPlatformSettings;
+  try {
+    const response = await axios.get(`${API_BASE_URL}/Website/contact-settings`);
+    cachedPlatformSettings = response.data;
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch platform settings:', error);
+    return null;
+  }
+};
+
+export const getTeamMembers = async (): Promise<TeamMember[]> => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/Website/team-members`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch team members:', error);
+    return [];
+  }
+};
+
+export const registerSubscriber = async (data: any) => {
+  const response = await axios.post(`${API_BASE_URL}/SubscriberAuth/register`, data);
+  return response.data;
+};
+
+export const loginSubscriber = async (data: any) => {
+  const response = await axios.post(`${API_BASE_URL}/SubscriberAuth/login`, data);
+  return response.data;
+};
+
+export const getSubscriberDashboard = async (token: string) => {
+  const response = await axios.get(`${API_BASE_URL}/SubscriberDashboard/summary`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+};
+
+export const subscribeToPlan = async (planId: string, token: string) => {
+  const response = await axios.post(`${API_BASE_URL}/SubscriberDashboard/subscribe`, 
+    { planId },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
+};
+
+export const unsubscribeFromPlan = async (subscriptionId: string, token: string) => {
+  const response = await axios.post(`${API_BASE_URL}/SubscriberDashboard/unsubscribe/${subscriptionId}`, 
+    {},
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  return response.data;
 };

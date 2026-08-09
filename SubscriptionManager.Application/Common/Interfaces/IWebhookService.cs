@@ -1,0 +1,9 @@
+using System;
+using System.Threading.Tasks;
+
+namespace SubscriptionManager.Application.Common.Interfaces;
+
+public interface IWebhookService
+{
+    Task NotifySubscriptionCreatedAsync(string webhookUrl, Guid tenantId, Guid planId, string applicationKey);
+}

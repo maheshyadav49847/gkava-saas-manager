@@ -1,9 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Users, Zap, ShieldCheck, Globe, Heart, Rocket } from 'lucide-react';
+import { getTeamMembers, type TeamMember } from '../services/api';
 import './About.css';
 
 export function About() {
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      const data = await getTeamMembers();
+      setTeamMembers(data.sort((a, b) => a.displayOrder - b.displayOrder));
+    };
+    fetchTeamMembers();
+  }, []);
 
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
@@ -26,7 +36,7 @@ export function About() {
         observerRef.current.disconnect();
       }
     };
-  }, []);
+  }, [teamMembers]); // re-run observer when team members load
 
   return (
     <div className="about-page">
@@ -157,24 +167,14 @@ export function About() {
           <p>A small, focused team obsessed with building exceptional developer tools.</p>
         </div>
         <div className="team-grid">
-          <div className="team-card reveal-on-scroll" style={{ transitionDelay: '0.1s' }}>
-            <div className="team-avatar av-1">MK</div>
-            <h3>Mahesh Kumar</h3>
-            <p className="team-role">Founder & CEO</p>
-            <p>Visionary engineer with a passion for simplifying complex SaaS workflows and building scalable platforms.</p>
-          </div>
-          <div className="team-card reveal-on-scroll" style={{ transitionDelay: '0.2s' }}>
-            <div className="team-avatar av-2">AP</div>
-            <h3>Ananya Patel</h3>
-            <p className="team-role">Lead Engineer</p>
-            <p>Full-stack architect who designs the APIs and infrastructure that power thousands of businesses daily.</p>
-          </div>
-          <div className="team-card reveal-on-scroll" style={{ transitionDelay: '0.3s' }}>
-            <div className="team-avatar av-3">RV</div>
-            <h3>Rohan Verma</h3>
-            <p className="team-role">Head of Product</p>
-            <p>Product strategist focused on translating customer feedback into features that developers actually love.</p>
-          </div>
+          {teamMembers.map((member, index) => (
+            <div key={member.id} className="team-card reveal-on-scroll" style={{ transitionDelay: `${(index + 1) * 0.1}s` }}>
+              <div className={`team-avatar av-${(index % 3) + 1}`}>{member.initials}</div>
+              <h3>{member.name}</h3>
+              <p className="team-role">{member.role}</p>
+              <p>{member.bio}</p>
+            </div>
+          ))}
         </div>
       </section>
 

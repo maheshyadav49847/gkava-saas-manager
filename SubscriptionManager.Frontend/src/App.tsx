@@ -9,6 +9,7 @@ import { LoginPage, RegisterPage } from "./features/auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Settings } from "./features/settings";
 import { AuthProvider } from "./contexts/AuthContext";
+import { TeamMembersList } from "./features/team-members";
 
 export function AppRoutes() {
   return (
@@ -32,6 +33,7 @@ export function AppRoutes() {
         <Route path="/tenants" element={<TenantsList />} />
         <Route path="/coupons" element={<CouponsList />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/team-members" element={<TeamMembersList />} />
       </Route>
     </Routes>
   );
