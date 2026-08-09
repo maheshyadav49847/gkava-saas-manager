@@ -114,7 +114,10 @@ jobs:
             systemctl restart nginx
             
             echo "Generating SSL Certificates via Certbot..."
-            certbot --nginx --non-interactive --agree-tos -m "${{ github.event.inputs.email }}" -d gkava.com -d www.gkava.com -d app.gkava.com --redirect
-            certbot --nginx --non-interactive --agree-tos -m "${{ github.event.inputs.email }}" -d sandbox.gkava.com -d app.sandbox.gkava.com --redirect
+            certbot --nginx --non-interactive --agree-tos --expand -m "${{ github.event.inputs.email }}" -d gkava.com -d www.gkava.com --redirect
+            certbot --nginx --non-interactive --agree-tos --expand -m "${{ github.event.inputs.email }}" -d app.gkava.com --redirect
+            
+            certbot --nginx --non-interactive --agree-tos --expand -m "${{ github.event.inputs.email }}" -d sandbox.gkava.com --redirect
+            certbot --nginx --non-interactive --agree-tos --expand -m "${{ github.event.inputs.email }}" -d app.sandbox.gkava.com --redirect
             
             echo "Setup Complete! SSL applied successfully."
