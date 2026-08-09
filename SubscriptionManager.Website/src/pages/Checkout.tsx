@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Navigate } from 'react-router-dom';
 import { getPlans, subscribeToPlan, type Plan } from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { CreditCard, Lock, ShieldCheck, CheckCircle } from 'lucide-react';
+import { Lock, ShieldCheck, CheckCircle } from 'lucide-react';
 import './Checkout.css';
 
 export function Checkout() {
@@ -15,18 +15,6 @@ export function Checkout() {
   const [error, setError] = useState('');
   const { token, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-
-  // Mock form state
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal' | 'upi' | 'netbanking'>('card');
-  const [cardName, setCardName] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiry, setExpiry] = useState('');
-  const [cvc, setCvc] = useState('');
-  
-  // Alternative payment states
-  const [paypalEmail, setPaypalEmail] = useState('');
-  const [upiId, setUpiId] = useState('');
-  const [bank, setBank] = useState('');
 
   useEffect(() => {
     async function loadPlan() {

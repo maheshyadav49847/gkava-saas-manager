@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Layers, Menu, X, ChevronRight, LogOut, User } from 'lucide-react';
+import { Layers, Menu, X, ChevronRight, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Header.css';
 
