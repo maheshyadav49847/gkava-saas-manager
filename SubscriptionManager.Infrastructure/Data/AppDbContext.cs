@@ -25,7 +25,13 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<AuditLog> AuditLogs { get; set; } = null!;
     public DbSet<ApiKey> ApiKeys { get; set; } = null!;
     public DbSet<StripeEventIdempotency> StripeEventIdempotencies { get; set; } = null!;
-
+    public DbSet<Invoice> Invoices { get; set; } = null!;
+    public DbSet<InvoiceLineItem> InvoiceLineItems { get; set; } = null!;
+    public DbSet<Ticket> Tickets { get; set; } = null!;
+    public DbSet<TicketMessage> TicketMessages { get; set; } = null!;
+    public DbSet<TenantEntitlementOverride> TenantEntitlementOverrides { get; set; } = null!;
+    public DbSet<WebhookEndpoint> WebhookEndpoints { get; set; } = null!;
+    public DbSet<WebhookDeliveryLog> WebhookDeliveryLogs { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -113,6 +119,82 @@ public class AppDbContext : DbContext, IAppDbContext
                 .WithMany()
                 .HasForeignKey(e => e.CouponId)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        // Phase 6 Entities Configurations
+        modelBuilder.Entity<Invoice>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.Status).HasConversion<string>(); // Store enum as string
+            entity.HasOne(e => e.Tenant)
+                .WithMany() 
+                .HasForeignKey(e => e.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<InvoiceLineItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Amount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.TaxAmount).HasColumnType("decimal(18,2)");
+            entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18,2)");
+            entity.HasOne(e => e.Invoice)
+                .WithMany(i => i.LineItems)
+                .HasForeignKey(e => e.InvoiceId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Ticket>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Status).HasConversion<string>();
+            entity.Property(e => e.Priority).HasConversion<string>();
+            entity.Property(e => e.Category).HasConversion<string>();
+            entity.HasOne(e => e.Tenant)
+                .WithMany()
+                .HasForeignKey(e => e.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<TicketMessage>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Ticket)
+                .WithMany(t => t.Messages)
+                .HasForeignKey(e => e.TicketId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<TenantEntitlementOverride>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Tenant)
+                .WithMany()
+                .HasForeignKey(e => e.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.CreatedByAdmin)
+                .WithMany()
+                .HasForeignKey(e => e.CreatedByAdminId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<WebhookEndpoint>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Tenant)
+                .WithMany()
+                .HasForeignKey(e => e.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<WebhookDeliveryLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.WebhookEndpoint)
+                .WithMany(w => w.DeliveryLogs)
+                .HasForeignKey(e => e.WebhookEndpointId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Seed Admin User

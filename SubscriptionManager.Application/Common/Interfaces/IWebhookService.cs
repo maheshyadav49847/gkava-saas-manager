@@ -6,4 +6,5 @@ namespace SubscriptionManager.Application.Common.Interfaces;
 public interface IWebhookService
 {
     Task NotifySubscriptionCreatedAsync(string webhookUrl, Guid tenantId, Guid planId, string applicationKey);
+    Task<bool> SendWebhookAsync(string url, string secret, string payload);
 }

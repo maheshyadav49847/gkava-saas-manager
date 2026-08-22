@@ -77,12 +77,12 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
       <div className="bg-white  rounded-sm shadow-xl w-full max-w-md border border-[#E3E8EE]  animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between p-6 border-b border-[#E3E8EE] ">
           <h2 className="text-xl font-bold text-[#0A2540]  flex items-center gap-2">
-            <div className="p-2 bg-slate-100  rounded">
+            <div className="p-2 bg-slate-100  rounded-sm">
               <Users className="w-5 h-5 text-[#0A2540] " />
             </div>
             Add New Tenant
           </h2>
-          <button type="button" onClick={onClose} className="p-2 text-slate-400 hover:text-[#425466] rounded-full hover:bg-slate-100 transition-colors">
+          <button type="button" onClick={onClose} className="p-2 text-slate-400 hover:text-[#425466] rounded-sm hover:bg-slate-100 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -95,7 +95,7 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
               placeholder="Acme Corp"
             />
           </div>
@@ -107,7 +107,7 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
               placeholder="admin@acme.com"
             />
           </div>
@@ -118,7 +118,7 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
               placeholder="+1 (555) 000-0000"
             />
           </div>
@@ -129,7 +129,7 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
               required
               value={formData.planId}
               onChange={(e) => setFormData({ ...formData, planId: e.target.value })}
-              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
             >
               <option value="">Select a plan</option>
               {plans.map(plan => (
@@ -151,14 +151,14 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
                     setAppliedCoupon(null);
                   }
                 }}
-                className="flex-1 px-4 py-2.5 bg-[#F6F9FC]  border border-[#E3E8EE]  rounded focus:outline-none focus:ring-0 focus:border-[#E3E8EE] text-[#0A2540]  transition-all font-mono uppercase"
+                className="flex-1 px-4 py-2.5 bg-[#F6F9FC]  border border-[#E3E8EE]  rounded-sm focus:outline-none focus:ring-0 focus:border-[#E3E8EE] text-[#0A2540]  transition-all font-mono uppercase"
                 placeholder="e.g. SUMMER20"
               />
               <button
                 type="button"
                 onClick={handleValidateCoupon}
                 disabled={!formData.couponCode || validateCouponMutation.isPending || appliedCoupon?.code === formData.couponCode}
-                className="px-4 py-2.5 text-sm font-medium text-[#0A2540]  bg-[#F6F9FC]  rounded hover:bg-slate-100 transition-colors disabled:opacity-50"
+                className="px-4 py-2.5 text-sm font-medium text-[#0A2540]  bg-[#F6F9FC]  rounded-sm hover:bg-slate-100 transition-colors disabled:opacity-50"
               >
                 {validateCouponMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Apply'}
               </button>
@@ -177,14 +177,14 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-[#425466] bg-white hover:bg-[#F6F9FC] border border-[#E3E8EE] rounded transition-colors shadow-sm"
+              className="px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-[#425466] bg-white hover:bg-[#F6F9FC] border border-[#E3E8EE] rounded-sm transition-colors shadow-sm"
             >
               <X className="w-4 h-4" /> Cancel
             </button>
             <button
               type="submit"
               disabled={createMutation.isPending}
-              className="px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-white bg-[#635BFF] hover:bg-[#0A2540] border border-transparent rounded shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-white bg-[#635BFF] hover:bg-[#0A2540] border border-transparent rounded-sm shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {createMutation.isPending ? (
                 <>

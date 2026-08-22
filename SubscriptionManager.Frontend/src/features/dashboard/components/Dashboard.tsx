@@ -8,11 +8,11 @@ const COLORS = ['#4f46e5', '#0ea5e9', '#8b5cf6'];
 const StatCard = ({ title, value, icon: Icon, trend, isLoading }: any) => (
   <div className="bg-white p-6 rounded-sm border border-[#EAEAEA] shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-shadow">
     <div className="flex justify-between items-start mb-4">
-      <div className="p-2.5 bg-[#F6F9FC] border border-[#E3E8EE] rounded">
+      <div className="p-2.5 bg-[#F6F9FC] border border-[#E3E8EE] rounded-sm">
         <Icon className="w-5 h-5 text-[#425466]" />
       </div>
       {trend && !isLoading && (
-        <span className="flex items-center text-[12px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+        <span className="flex items-center text-[12px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-sm border border-emerald-100">
           <ArrowUpRight className="w-3 h-3 mr-0.5" /> {trend}
         </span>
       )}
@@ -20,8 +20,8 @@ const StatCard = ({ title, value, icon: Icon, trend, isLoading }: any) => (
     
     {isLoading ? (
       <div className="space-y-2">
-        <div className="h-8 w-2/3 bg-slate-100 rounded animate-pulse"></div>
-        <div className="h-4 w-1/3 bg-[#F6F9FC] rounded animate-pulse"></div>
+        <div className="h-8 w-2/3 bg-slate-100 rounded-sm animate-pulse"></div>
+        <div className="h-4 w-1/3 bg-[#F6F9FC] rounded-sm animate-pulse"></div>
       </div>
     ) : (
       <div>
@@ -74,7 +74,7 @@ export function Dashboard() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
       <div className="flex items-center gap-4">
-        <div className="p-3 bg-white rounded shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
+        <div className="p-3 bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
           <Activity className="w-6 h-6" strokeWidth={1.5} />
         </div>
         <div>
@@ -112,7 +112,7 @@ export function Dashboard() {
         <div className="lg:col-span-2 bg-white p-6 rounded-sm border border-[#EAEAEA] shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-[15px] font-semibold tracking-tight text-[#0A2540]">MRR Growth (12 Months)</h3>
-            <span className="text-[12px] font-medium px-2.5 py-1 bg-[#F6F9FC] text-[#425466] rounded border border-[#E3E8EE]">Trailing</span>
+            <span className="text-[12px] font-medium px-2.5 py-1 bg-[#F6F9FC] text-[#425466] rounded-sm border border-[#E3E8EE]">Trailing</span>
           </div>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
@@ -183,24 +183,24 @@ export function Dashboard() {
           <div className="space-y-4">
             {[1, 2, 3].map(i => (
               <div key={i} className="flex items-center gap-4 py-3 border-b border-slate-50 last:border-0 animate-pulse">
-                <div className="w-10 h-10 bg-slate-100 rounded-full"></div>
+                <div className="w-10 h-10 bg-slate-100 rounded-sm"></div>
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 w-1/3 bg-slate-100 rounded"></div>
-                  <div className="h-3 w-1/4 bg-[#F6F9FC] rounded"></div>
+                  <div className="h-4 w-1/3 bg-slate-100 rounded-sm"></div>
+                  <div className="h-3 w-1/4 bg-[#F6F9FC] rounded-sm"></div>
                 </div>
               </div>
             ))}
           </div>
         ) : (!stats?.recentActivities || stats.recentActivities.length === 0) ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-[#E3E8EE] rounded bg-[#F6F9FC]">
+          <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-[#E3E8EE] rounded-sm bg-[#F6F9FC]">
             <Box className="w-10 h-10 text-slate-300 mb-3" />
             <p className="text-[14px] text-[#425466] font-medium">No recent activity found.</p>
           </div>
         ) : (
           <div className="space-y-1">
             {stats?.recentActivities?.map(activity => (
-              <div key={activity.id} className="flex items-start gap-4 p-3 -mx-3 rounded hover:bg-[#F6F9FC] transition-colors">
-                <div className="w-10 h-10 bg-[#F6F9FC] text-[#0A2540] rounded-full flex items-center justify-center shrink-0 border border-[#E3E8EE]/50">
+              <div key={activity.id} className="flex items-start gap-4 p-3 -mx-3 rounded-sm hover:bg-[#F6F9FC] transition-colors">
+                <div className="w-10 h-10 bg-[#F6F9FC] text-[#0A2540] rounded-sm flex items-center justify-center shrink-0 border border-[#E3E8EE]/50">
                   <Activity className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0 pt-0.5">

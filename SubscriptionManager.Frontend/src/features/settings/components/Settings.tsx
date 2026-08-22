@@ -1,17 +1,18 @@
 ﻿import { useState } from 'react';
-import { User, ShieldCheck, Globe , Settings as SettingsIcon } from 'lucide-react';
+import { User, ShieldCheck, Globe , Settings as SettingsIcon, Terminal } from 'lucide-react';
 import { ProfileTab } from './ProfileTab';
 import { SecurityTab } from './SecurityTab';
 import { PlatformSettingsTab } from './PlatformSettingsTab';
+import { WebhooksTab } from '../../webhooks/components/WebhooksTab';
 
 export const Settings = () => {
-  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'platform'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'platform' | 'webhooks'>('profile');
 
   return (
             <div className="space-y-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8 border-b border-[#E3E8EE] pb-6">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-white rounded shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
+          <div className="p-3 bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
             <SettingsIcon className="w-6 h-6" strokeWidth={1.5} />
           </div>
           <div>
@@ -32,7 +33,7 @@ export const Settings = () => {
           <nav className="flex lg:flex-col gap-2 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab('profile')}
-              className={`flex items-center gap-3 px-4 py-3 rounded font-medium transition-colors whitespace-nowrap text-left ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-sm font-medium transition-colors whitespace-nowrap text-left ${
                 activeTab === 'profile'
                   ? 'bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-[#635BFF]'
                   : 'text-[#425466]  hover:bg-slate-100 hover:text-[#0A2540]'
@@ -44,7 +45,7 @@ export const Settings = () => {
             
             <button
               onClick={() => setActiveTab('security')}
-              className={`flex items-center gap-3 px-4 py-3 rounded font-medium transition-colors whitespace-nowrap text-left ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-sm font-medium transition-colors whitespace-nowrap text-left ${
                 activeTab === 'security'
                   ? 'bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-[#635BFF]'
                   : 'text-[#425466]  hover:bg-slate-100 hover:text-[#0A2540]'
@@ -56,7 +57,7 @@ export const Settings = () => {
             
             <button
               onClick={() => setActiveTab('platform')}
-              className={`flex items-center gap-3 px-4 py-3 rounded font-medium transition-colors whitespace-nowrap text-left ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-sm font-medium transition-colors whitespace-nowrap text-left ${
                 activeTab === 'platform'
                   ? 'bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-[#635BFF]'
                   : 'text-[#425466]  hover:bg-slate-100 hover:text-[#0A2540]'
@@ -64,6 +65,18 @@ export const Settings = () => {
             >
               <Globe className={`w-5 h-5 ${activeTab === 'platform' ? 'text-[#0A2540] ' : 'text-[#425466]/60'}`} />
               Platform Settings
+            </button>
+
+            <button
+              onClick={() => setActiveTab('webhooks')}
+              className={`flex items-center gap-3 px-4 py-3 rounded-sm font-medium transition-colors whitespace-nowrap text-left ${
+                activeTab === 'webhooks'
+                  ? 'bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-[#635BFF]'
+                  : 'text-[#425466] hover:bg-slate-100 hover:text-[#0A2540]'
+              }`}
+            >
+              <Terminal className={`w-5 h-5 ${activeTab === 'webhooks' ? 'text-[#0A2540]' : 'text-[#425466]/60'}`} />
+              Developer & Webhooks
             </button>
           </nav>
         </div>
@@ -74,6 +87,7 @@ export const Settings = () => {
             {activeTab === 'profile' && <ProfileTab />}
             {activeTab === 'security' && <SecurityTab />}
             {activeTab === 'platform' && <PlatformSettingsTab />}
+            {activeTab === 'webhooks' && <WebhooksTab />}
           </div>
         </div>
       </div>

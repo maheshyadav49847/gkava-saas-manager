@@ -18,6 +18,15 @@ public interface IAppDbContext
     DbSet<AuditLog> AuditLogs { get; }
     DbSet<ApiKey> ApiKeys { get; }
     DbSet<StripeEventIdempotency> StripeEventIdempotencies { get; }
+    
+    // Phase 6 Entities
+    DbSet<Invoice> Invoices { get; }
+    DbSet<InvoiceLineItem> InvoiceLineItems { get; }
+    DbSet<Ticket> Tickets { get; }
+    DbSet<TicketMessage> TicketMessages { get; }
+    DbSet<TenantEntitlementOverride> TenantEntitlementOverrides { get; }
+    DbSet<WebhookEndpoint> WebhookEndpoints { get; }
+    DbSet<WebhookDeliveryLog> WebhookDeliveryLogs { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

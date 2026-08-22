@@ -81,7 +81,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
               setSelectedIndex(0);
             }}
           />
-          <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-slate-100 rounded text-xs font-medium text-slate-500 border border-slate-200">
+          <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-slate-100 rounded-sm text-xs font-medium text-slate-500 border border-slate-200">
             ESC
           </kbd>
         </div>

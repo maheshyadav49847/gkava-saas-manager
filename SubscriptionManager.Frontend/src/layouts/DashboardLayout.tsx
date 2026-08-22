@@ -1,5 +1,5 @@
 ﻿import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, Blocks, ListTodo, LogOut, Home, ChevronRight, ChevronDown, User, Tag, ChevronLeft, Settings, Search, Bell, Activity } from 'lucide-react';
+import { LayoutDashboard, Users, Blocks, ListTodo, LogOut, Home, ChevronRight, ChevronDown, User, Tag, ChevronLeft, Settings, Search, Bell, Activity, Receipt, MessageSquare } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
 import { CommandPalette } from '../components/CommandPalette';
@@ -10,6 +10,8 @@ const navigation = [
   { name: "Plans", href: "/plans", icon: ListTodo },
   { name: "Coupons", href: "/coupons", icon: Tag },
   { name: "Tenants", href: "/tenants", icon: Users },
+  { name: "Invoices", href: "/invoices", icon: Receipt },
+  { name: "Support", href: "/support", icon: MessageSquare },
 ];
 
 const websiteNavigation = [
@@ -80,7 +82,7 @@ export default function DashboardLayout() {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`group relative flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2'} rounded text-[13px] font-medium transition-all duration-200 ${isActive
+                className={`group relative flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2'} rounded-sm text-[13px] font-medium transition-all duration-200 ${isActive
                     ? "bg-white text-[#635BFF] shadow-[0_2px_5px_rgba(0,0,0,0.04)] border border-[#E3E8EE] font-semibold"
                     : "text-[#425466] hover:bg-[#F6F9FC] hover:text-[#0A2540] border border-transparent"
                   }`}
@@ -101,7 +103,7 @@ export default function DashboardLayout() {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`group relative flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2'} rounded text-[13px] font-medium transition-all duration-200 ${isActive
+                className={`group relative flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2'} rounded-sm text-[13px] font-medium transition-all duration-200 ${isActive
                     ? "bg-white text-[#635BFF] shadow-[0_2px_5px_rgba(0,0,0,0.04)] border border-[#E3E8EE] font-semibold"
                     : "text-[#425466] hover:bg-[#F6F9FC] hover:text-[#0A2540] border border-transparent"
                   }`}
@@ -117,7 +119,7 @@ export default function DashboardLayout() {
         <div className="border-t border-[#EAEAEA] p-3">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-2 px-3'} py-2 rounded text-slate-400 hover:text-[#425466] hover:bg-[#F6F9FC] transition-colors border border-transparent`}
+            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-2 px-3'} py-2 rounded-sm text-slate-400 hover:text-[#425466] hover:bg-[#F6F9FC] transition-colors border border-transparent`}
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4 shrink-0" /> : <ChevronLeft className="w-4 h-4 shrink-0" />}
@@ -134,7 +136,7 @@ export default function DashboardLayout() {
         {/* Top Header */}
         <header className="h-16 bg-white/70 backdrop-blur-xl border-b border-[#EAEAEA] flex items-center justify-between px-8 shrink-0 z-10 sticky top-0">
           <div className="flex items-center text-[13px] font-medium text-[#425466]">
-            <Link to="/dashboard" className="hover:text-[#0A2540] transition-colors flex items-center gap-1.5 p-1 -ml-1 rounded hover:bg-[#F6F9FC]">
+            <Link to="/dashboard" className="hover:text-[#0A2540] transition-colors flex items-center gap-1.5 p-1 -ml-1 rounded-sm hover:bg-[#F6F9FC]">
               <Home className="w-3.5 h-3.5" />
             </Link>
             {location.pathname !== "/dashboard" && (
@@ -166,7 +168,7 @@ export default function DashboardLayout() {
                 </button>
                 
                   {isNotificationsOpen && (
-                  <div className="absolute right-0 mt-2 w-72 bg-white rounded border border-[#EAEAEA] shadow-[0_12px_24px_-4px_rgba(0,0,0,0.08)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-sm border border-[#EAEAEA] shadow-[0_12px_24px_-4px_rgba(0,0,0,0.08)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="px-4 py-3 border-b border-[#EAEAEA] bg-[#F6F9FC] flex justify-between items-center">
                       <p className="text-[13px] font-semibold text-[#0A2540]">Notifications</p>
                       <button className="text-[11px] text-[#635BFF] hover:underline">Mark all read</button>
@@ -185,9 +187,9 @@ export default function DashboardLayout() {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center gap-2.5 hover:bg-[#F6F9FC] p-1 pr-2 rounded-full transition-colors border border-transparent hover:border-[#E3E8EE]/60 focus:outline-none"
+                className="flex items-center gap-2.5 hover:bg-[#F6F9FC] p-1 pr-2 rounded-sm transition-colors border border-transparent hover:border-[#E3E8EE]/60 focus:outline-none"
               >
-                <div className="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                <div className="w-7 h-7 rounded-sm bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-sm">
                   {user?.name?.charAt(0) || 'U'}
                 </div>
                 <div className="hidden sm:flex flex-col items-start text-left">
@@ -198,7 +200,7 @@ export default function DashboardLayout() {
 
               {/* Dropdown Menu */}
               {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded border border-[#EAEAEA] shadow-[0_12px_24px_-4px_rgba(0,0,0,0.08)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-sm border border-[#EAEAEA] shadow-[0_12px_24px_-4px_rgba(0,0,0,0.08)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                   <div className="px-4 py-3 border-b border-[#EAEAEA] bg-[#F6F9FC]">
                     <p className="text-[13px] font-semibold text-[#0A2540]">{user?.name}</p>
                     <p className="text-[11px] text-[#425466] mt-0.5 truncate">{user?.email}</p>

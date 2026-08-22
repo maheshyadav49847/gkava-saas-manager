@@ -64,15 +64,15 @@ export const CouponsList = () => {
   }, [filteredCoupons, currentPage, rowsPerPage]);
 
   const getStatusBadge = (coupon: CouponDto) => {
-    if (!coupon.isActive) return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600">Deleted</span>;
-    if (coupon.expiryDate && new Date(coupon.expiryDate) < new Date()) return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-100 text-rose-700">Expired</span>;
-    if (coupon.maxUses && coupon.currentUses >= coupon.maxUses) return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-700">Maxed Out</span>;
-    return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Active</span>;
+    if (!coupon.isActive) return <span className="px-2.5 py-1 text-xs font-semibold rounded-sm bg-slate-100 text-slate-600">Deleted</span>;
+    if (coupon.expiryDate && new Date(coupon.expiryDate) < new Date()) return <span className="px-2.5 py-1 text-xs font-semibold rounded-sm bg-rose-100 text-rose-700">Expired</span>;
+    if (coupon.maxUses && coupon.currentUses >= coupon.maxUses) return <span className="px-2.5 py-1 text-xs font-semibold rounded-sm bg-orange-100 text-orange-700">Maxed Out</span>;
+    return <span className="px-2.5 py-1 text-xs font-semibold rounded-sm bg-emerald-100 text-emerald-700">Active</span>;
   };
 
   if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center border border-rose-200 bg-rose-50 rounded">
+      <div className="flex flex-col items-center justify-center p-12 text-center border border-rose-200 bg-rose-50 rounded-sm">
         <AlertCircle className="w-10 h-10 text-rose-500 mb-4" />
         <h3 className="text-lg font-semibold text-rose-700">Failed to load</h3>
         <p className="text-rose-600 mt-2">
@@ -86,7 +86,7 @@ export const CouponsList = () => {
     <div className="space-y-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-[#E3E8EE] pb-6">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-white rounded shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
+          <div className="p-3 bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
             <Tag className="w-6 h-6" strokeWidth={1.5} />
           </div>
           <div>
@@ -98,7 +98,7 @@ export const CouponsList = () => {
         </div>
         <button 
           onClick={() => setIsCreateModalOpen(true)}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#635BFF] hover:bg-[#0A2540] text-white border border-transparent rounded shadow-sm transition-colors text-sm font-medium"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#635BFF] hover:bg-[#0A2540] text-white border border-transparent rounded-sm shadow-sm transition-colors text-sm font-medium"
         >
           <Plus className="w-4 h-4" strokeWidth={1.5} /> Add Coupon
         </button>
@@ -112,7 +112,7 @@ export const CouponsList = () => {
               <button
                 key={tab}
                 onClick={() => { setStatusFilter(tab); setCurrentPage(1); }}
-                className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                className={`px-3 py-1.5 text-sm font-medium rounded-sm transition-colors ${
                   statusFilter === tab 
                     ? 'bg-white text-[#635BFF] border border-[#E3E8EE] shadow-sm' 
                     : 'text-[#425466] hover:bg-slate-100 border border-transparent'
@@ -165,7 +165,7 @@ export const CouponsList = () => {
                 paginatedCoupons.map((coupon) => (
                   <tr key={coupon.id} className={`hover:bg-[#F6F9FC] transition-colors ${!coupon.isActive ? 'opacity-60' : ''}`}>
                     <td className="p-4">
-                      <span className="font-mono font-bold text-[#0A2540] bg-slate-100 px-2.5 py-1 rounded">
+                      <span className="font-mono font-bold text-[#0A2540] bg-slate-100 px-2.5 py-1 rounded-sm">
                         {coupon.code}
                       </span>
                     </td>
@@ -190,7 +190,7 @@ export const CouponsList = () => {
                         <button 
                           onClick={() => setEditingCoupon(coupon)}
                           disabled={!coupon.isActive}
-                          className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Edit"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -198,7 +198,7 @@ export const CouponsList = () => {
                         <button 
                           onClick={() => handleDelete(coupon.id)}
                           disabled={!coupon.isActive}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -223,7 +223,7 @@ export const CouponsList = () => {
                 <select
                   value={rowsPerPage}
                   onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
-                  className="bg-white border border-[#E3E8EE] rounded px-2 py-1 focus:outline-none"
+                  className="bg-white border border-[#E3E8EE] rounded-sm px-2 py-1 focus:outline-none"
                 >
                   {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size} per page</option>)}
                 </select>
@@ -232,7 +232,7 @@ export const CouponsList = () => {
                 <button
                   onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="p-1.5 border border-[#E3E8EE] rounded-sm text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -242,7 +242,7 @@ export const CouponsList = () => {
                 <button
                   onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages || totalPages === 0}
-                  className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="p-1.5 border border-[#E3E8EE] rounded-sm text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>

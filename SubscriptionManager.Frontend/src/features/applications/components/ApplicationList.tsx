@@ -101,7 +101,7 @@ export const ApplicationList = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-[#E3E8EE] pb-6">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-white rounded shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
+          <div className="p-3 bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
             <LayoutGrid className="w-6 h-6" strokeWidth={1.5} />
           </div>
           <div>
@@ -113,7 +113,7 @@ export const ApplicationList = () => {
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#635BFF] hover:bg-[#0A2540] text-white border border-transparent rounded shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors text-sm font-medium active:scale-95"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#635BFF] hover:bg-[#0A2540] text-white border border-transparent rounded-sm shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors text-sm font-medium active:scale-95"
         >
           <Plus className="w-4 h-4" strokeWidth={1.5} /> Add Application
         </button>
@@ -196,13 +196,13 @@ export const ApplicationList = () => {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-2 max-w-xs">
-                        <code className="px-2.5 py-1 bg-[#F6F9FC] border border-[#E3E8EE] rounded text-xs text-[#425466] font-mono truncate">
+                        <code className="px-2.5 py-1 bg-[#F6F9FC] border border-[#E3E8EE] rounded-sm text-xs text-[#425466] font-mono truncate">
                           {app.appKey}
                         </code>
                         <button
                           type="button"
                           onClick={() => handleCopyKey(app.id, app.appKey)}
-                          className="p-1.5 text-slate-400 hover:text-[#0A2540] bg-white border border-[#E3E8EE] rounded transition-colors shrink-0"
+                          className="p-1.5 text-slate-400 hover:text-[#0A2540] bg-white border border-[#E3E8EE] rounded-sm transition-colors shrink-0"
                           title="Copy API Key"
                         >
                           {copiedId === app.id ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-[#425466]" />}
@@ -220,7 +220,7 @@ export const ApplicationList = () => {
                       )}
                     </td>
                     <td className="p-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#F6F9FC] text-[#425466] border border-[#E3E8EE]">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium bg-[#F6F9FC] text-[#425466] border border-[#E3E8EE]">
                         {app.modules?.length || 0} {app.modules?.length === 1 ? 'module' : 'modules'}
                       </span>
                     </td>
@@ -232,7 +232,7 @@ export const ApplicationList = () => {
                             setEditingApp(app);
                             setIsEditModalOpen(true);
                           }}
-                          className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Edit Application"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -243,7 +243,7 @@ export const ApplicationList = () => {
                             setDeletingApp(app);
                             setIsDeleteModalOpen(true);
                           }}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Delete Application"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -272,7 +272,7 @@ export const ApplicationList = () => {
                 setRowsPerPage(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="bg-white border border-[#E3E8EE] rounded px-2 py-1 focus:outline-none text-sm text-[#425466]"
+              className="bg-white border border-[#E3E8EE] rounded-sm px-2 py-1 focus:outline-none text-sm text-[#425466]"
             >
               {[10, 25, 50, 100].map((s) => (
                 <option key={s} value={s}>
@@ -286,7 +286,7 @@ export const ApplicationList = () => {
                 type="button"
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50"
+                className="p-1.5 border border-[#E3E8EE] rounded-sm text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50"
               >
                 Prev
               </button>
@@ -294,7 +294,7 @@ export const ApplicationList = () => {
                 type="button"
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50"
+                className="p-1.5 border border-[#E3E8EE] rounded-sm text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50"
               >
                 Next
               </button>

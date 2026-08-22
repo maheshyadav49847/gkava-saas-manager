@@ -12,6 +12,8 @@ import { Settings } from "./features/settings";
 import { AuthProvider } from "./contexts/AuthContext";
 import { TeamMembersList } from "./features/team-members";
 import { AuditLogsList } from "./features/audit-logs/components/AuditLogsList";
+import { InvoicesList } from "./features/invoices/components/InvoicesList";
+import { TicketsList } from "./features/tickets/components/TicketsList";
 
 export function AppRoutes() {
   return (
@@ -37,6 +39,8 @@ export function AppRoutes() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/team-members" element={<TeamMembersList />} />
         <Route path="/audit-logs" element={<AuditLogsList />} />
+        <Route path="/invoices" element={<InvoicesList />} />
+        <Route path="/support" element={<TicketsList />} />
       </Route>
     </Routes>
   );

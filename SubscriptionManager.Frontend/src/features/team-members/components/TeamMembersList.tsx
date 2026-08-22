@@ -86,7 +86,7 @@ export function TeamMembersList() {
     <div className="space-y-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-[#E3E8EE] pb-6">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-white rounded shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
+          <div className="p-3 bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
             <Users className="w-6 h-6" strokeWidth={1.5} />
           </div>
           <div>
@@ -98,14 +98,14 @@ export function TeamMembersList() {
         </div>
         <button 
           onClick={handleAdd}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#635BFF] hover:bg-[#0A2540] text-white border border-transparent rounded shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors text-sm font-medium active:scale-95"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#635BFF] hover:bg-[#0A2540] text-white border border-transparent rounded-sm shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors text-sm font-medium active:scale-95"
         >
           <Plus className="w-4 h-4" strokeWidth={1.5} /> Add Member
         </button>
       </div>
 
       {isError && (
-        <div className="p-4 bg-rose-50 border border-rose-100 text-rose-600 rounded flex items-center gap-3 text-[13px] font-medium">
+        <div className="p-4 bg-rose-50 border border-rose-100 text-rose-600 rounded-sm flex items-center gap-3 text-[13px] font-medium">
           <AlertCircle className="w-4 h-4" />
           {error instanceof Error ? error.message : 'Failed to load team members'}
         </div>
@@ -175,7 +175,7 @@ export function TeamMembersList() {
                   <tr key={member.id} className="hover:bg-[#F6F9FC] transition-colors">
                     <td className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-slate-100 text-[#425466] flex items-center justify-center font-bold text-xs shrink-0 border border-[#E3E8EE]/60 shadow-sm">
+                        <div className="w-9 h-9 rounded-sm bg-slate-100 text-[#425466] flex items-center justify-center font-bold text-xs shrink-0 border border-[#E3E8EE]/60 shadow-sm">
                           {member.initials}
                         </div>
                         <div className="font-semibold text-sm text-[#0A2540]">
@@ -184,7 +184,7 @@ export function TeamMembersList() {
                       </div>
                     </td>
                     <td className="p-4">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-[#F6F9FC] text-[#0A2540] border border-[#E3E8EE]">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium bg-[#F6F9FC] text-[#0A2540] border border-[#E3E8EE]">
                         {member.role}
                       </span>
                     </td>
@@ -198,7 +198,7 @@ export function TeamMembersList() {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleEdit(member)}
-                          className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Edit"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -206,7 +206,7 @@ export function TeamMembersList() {
                         <button
                           onClick={() => handleDelete(member.id)}
                           disabled={deleteMutation.isPending && deleteMutation.variables === member.id}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Delete"
                         >
                           {deleteMutation.isPending && deleteMutation.variables === member.id ? (
@@ -239,7 +239,7 @@ export function TeamMembersList() {
                 setRowsPerPage(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="bg-white border border-[#E3E8EE] rounded px-2 py-1 focus:outline-none text-sm text-[#425466]"
+              className="bg-white border border-[#E3E8EE] rounded-sm px-2 py-1 focus:outline-none text-sm text-[#425466]"
             >
               {[10, 25, 50, 100].map((s) => (
                 <option key={s} value={s}>
@@ -252,14 +252,14 @@ export function TeamMembersList() {
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium flex items-center gap-1"
+                className="p-1.5 border border-[#E3E8EE] rounded-sm text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium flex items-center gap-1"
               >
                 <ChevronLeft className="w-4 h-4" /> Prev
               </button>
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages || totalPages === 0}
-                className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium flex items-center gap-1"
+                className="p-1.5 border border-[#E3E8EE] rounded-sm text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium flex items-center gap-1"
               >
                 Next <ChevronRight className="w-4 h-4" />
               </button>

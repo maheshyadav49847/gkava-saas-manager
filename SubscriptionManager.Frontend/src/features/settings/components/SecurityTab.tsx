@@ -46,7 +46,7 @@ export const SecurityTab = () => {
       </div>
 
       {message && (
-        <div className={`mb-6 p-4 rounded flex items-start gap-3 border ${message.type === 'success'
+        <div className={`mb-6 p-4 rounded-sm flex items-start gap-3 border ${message.type === 'success'
           ? 'bg-emerald-50 border-emerald-100 text-emerald-800   '
           : 'bg-rose-50 border-rose-100 text-rose-800   '
           }`}>
@@ -113,7 +113,7 @@ export const SecurityTab = () => {
           <button
             type="submit"
             disabled={isLoading || !currentPassword || !newPassword || !confirmPassword}
-            className="px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-white bg-[#635BFF] hover:bg-[#0A2540] border border-transparent rounded shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-white bg-[#635BFF] hover:bg-[#0A2540] border border-transparent rounded-sm shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
             Update Password

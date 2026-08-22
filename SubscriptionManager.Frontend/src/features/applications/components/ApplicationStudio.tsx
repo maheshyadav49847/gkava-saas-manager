@@ -94,7 +94,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
             </h2>
             <p className="text-sm text-gray-500 mt-1">Design and configure your product</p>
           </div>
-          <button onClick={onCancel} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
+          <button onClick={onCancel} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-sm transition-colors">
             <X size={24} />
           </button>
         </div>
@@ -109,7 +109,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
               {activeTab === tab && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900 rounded-t-full" />
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900 rounded-sm-t-full" />
               )}
             </button>
           ))}
@@ -163,7 +163,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                     value={formData.webhookUrl || ''}
                     onChange={handleChange}
                     placeholder="https://api.yourproduct.com/webhook"
-                    className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+                    className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
                   />
                 </div>
                 <div>
@@ -181,7 +181,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                       setFormData(prev => ({ ...prev, displayOrder: val }));
                     }}
                     placeholder="0"
-                    className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+                    className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
                   />
                 </div>
               </div>
@@ -191,7 +191,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                   <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                     <AlignLeft className="w-4 h-4 text-gray-400" /> Description
                   </label>
-                  <div className="rounded overflow-hidden border border-gray-200 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-[#E3E8EE] transition-shadow bg-white">
+                  <div className="rounded-sm overflow-hidden border border-gray-200 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-[#E3E8EE] transition-shadow bg-white">
                     <textarea
                       value={formData.description || ''}
                       onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
@@ -203,11 +203,11 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Product Graphic</label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border border-[#E3E8EE] border-dashed rounded hover:border-[#E3E8EE] transition-colors bg-gray-50/50">
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border border-[#E3E8EE] border-dashed rounded-sm hover:border-[#E3E8EE] transition-colors bg-gray-50/50">
                   <div className="space-y-1 text-center">
                     <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
                     <div className="flex text-sm text-gray-600 justify-center">
-                      <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded font-medium text-[#0A2540] hover:text-[#425466] focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500/20">
+                      <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-sm font-medium text-[#0A2540] hover:text-[#425466] focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500/20">
                         <span>Upload a file</span>
                         <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleImageUpload} accept="image/*" />
                       </label>
@@ -225,7 +225,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
               {formData.modules?.map((module, index) => (
                 <div key={index} className="p-5 border border-gray-200 rounded-sm bg-white shadow-sm space-y-4 relative group hover:border-[#E3E8EE] transition-colors">
                   <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => removeModule(index)} className="p-1 ml-1 text-gray-400 hover:text-red-500 rounded transition-colors">
+                    <button onClick={() => removeModule(index)} className="p-1 ml-1 text-gray-400 hover:text-red-500 rounded-sm transition-colors">
                       <Trash2 size={18} />
                     </button>
                   </div>
@@ -285,10 +285,10 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
 
         {/* Footer Actions */}
         <div className="p-6 border-t border-gray-200 bg-gray-50 flex gap-3">
-          <button onClick={onCancel} className="flex-1 px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-[#425466] bg-white hover:bg-[#F6F9FC] border border-[#E3E8EE] rounded transition-colors shadow-sm">
+          <button onClick={onCancel} className="flex-1 px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-[#425466] bg-white hover:bg-[#F6F9FC] border border-[#E3E8EE] rounded-sm transition-colors shadow-sm">
             Cancel
           </button>
-          <button onClick={handleSave} disabled={saveMutation.isPending} className="flex-1 px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-white bg-[#635BFF] hover:bg-[#0A2540] border border-transparent rounded shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          <button onClick={handleSave} disabled={saveMutation.isPending} className="flex-1 px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-white bg-[#635BFF] hover:bg-[#0A2540] border border-transparent rounded-sm shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
             {saveMutation.isPending ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : <><Save className="w-4 h-4" /> Save Changes</>}
           </button>
         </div>
@@ -299,11 +299,11 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
         {/* Mock Browser Topbar */}
         <div className="sticky top-0 z-20 bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between shadow-sm">
           <div className="flex gap-2">
-            <div className="w-3 h-3 rounded-full bg-red-400"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-            <div className="w-3 h-3 rounded-full bg-green-400"></div>
+            <div className="w-3 h-3 rounded-sm bg-red-400"></div>
+            <div className="w-3 h-3 rounded-sm bg-yellow-400"></div>
+            <div className="w-3 h-3 rounded-sm bg-green-400"></div>
           </div>
-          <div className="text-sm font-medium text-gray-500 flex-1 text-center bg-gray-100 mx-4 py-1.5 rounded max-w-md">
+          <div className="text-sm font-medium text-gray-500 flex-1 text-center bg-gray-100 mx-4 py-1.5 rounded-sm max-w-md">
             Live Preview: Website rendering
           </div>
           <div className="w-16"></div>
@@ -385,7 +385,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                   )}
 
                   {(!formData.modules?.length) && (
-                    <div className="text-center p-12 border-2 border-dashed border border-[#E3E8EE] rounded text-gray-400">
+                    <div className="text-center p-12 border-2 border-dashed border border-[#E3E8EE] rounded-sm text-gray-400">
                       Add modules to see them render here.
                     </div>
                   )}

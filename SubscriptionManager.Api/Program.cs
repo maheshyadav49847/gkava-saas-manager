@@ -1,4 +1,4 @@
-using SubscriptionManager.Application.Common.Interfaces;
+﻿using SubscriptionManager.Application.Common.Interfaces;
 using SubscriptionManager.Infrastructure.Data;
 using SubscriptionManager.Api.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -103,7 +103,7 @@ builder.Services.AddScoped<IAppDbContext>(provider => provider.GetRequiredServic
 
 // Add Services & Caching
 builder.Services.AddMemoryCache();
-builder.Services.AddStackExchangeRedisCache(options => options.Configuration = "localhost:6379");
+builder.Services.AddStackExchangeRedisCache(options => options.Configuration = builder.Configuration.GetConnectionString("Redis") ?? "localhost:6379");
 builder.Services.AddHealthChecks();
 
 // Quartz setup
@@ -149,3 +149,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

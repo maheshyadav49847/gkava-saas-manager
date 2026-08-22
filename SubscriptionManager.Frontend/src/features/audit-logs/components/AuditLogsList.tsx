@@ -118,7 +118,7 @@ export const AuditLogsList = () => {
                 setRowsPerPage(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="bg-white border border-[#E3E8EE] rounded px-2 py-1 text-sm focus:outline-none"
+              className="bg-white border border-[#E3E8EE] rounded-sm px-2 py-1 text-sm focus:outline-none"
             >
               {[10, 25, 50, 100].map(size => (
                 <option key={size} value={size}>{size}</option>
@@ -172,7 +172,7 @@ export const AuditLogsList = () => {
                         </div>
                       </td>
                       <td className="p-4">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium border ${getActionColor(log.action)}`}>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-sm text-xs font-medium border ${getActionColor(log.action)}`}>
                           {log.action}
                         </span>
                       </td>
@@ -226,7 +226,7 @@ export const AuditLogsList = () => {
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="flex items-center gap-1 px-3 py-1.5 border border-[#E3E8EE] rounded text-sm font-medium text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 border border-[#E3E8EE] rounded-sm text-sm font-medium text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" /> Prev
               </button>
@@ -236,7 +236,7 @@ export const AuditLogsList = () => {
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages || totalPages === 0}
-                className="flex items-center gap-1 px-3 py-1.5 border border-[#E3E8EE] rounded text-sm font-medium text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-1 px-3 py-1.5 border border-[#E3E8EE] rounded-sm text-sm font-medium text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Next <ChevronRight className="w-4 h-4" />
               </button>

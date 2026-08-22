@@ -78,13 +78,13 @@ export function PlatformSettingsTab() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {(error || isError) && (
-          <div className="rounded bg-red-50 p-4">
+          <div className="rounded-sm bg-red-50 p-4">
             <div className="text-sm text-red-700">{error || 'Failed to load platform settings'}</div>
           </div>
         )}
         
         {success && (
-          <div className="rounded bg-green-50 p-4">
+          <div className="rounded-sm bg-green-50 p-4">
             <div className="text-sm text-green-700">Platform settings updated successfully</div>
           </div>
         )}
@@ -175,7 +175,7 @@ export function PlatformSettingsTab() {
           <button
             type="submit"
             disabled={updateMutation.isPending}
-            className="inline-flex justify-center rounded border border-transparent bg-[#635BFF] py-2 px-4 text-sm font-medium text-white shadow-[0_2px_5px_rgba(0,0,0,0.12)] hover:bg-[#0A2540] transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:ring-offset-2 disabled:opacity-50"
+            className="inline-flex justify-center rounded-sm border border-transparent bg-[#635BFF] py-2 px-4 text-sm font-medium text-white shadow-[0_2px_5px_rgba(0,0,0,0.12)] hover:bg-[#0A2540] transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:ring-offset-2 disabled:opacity-50"
           >
             {updateMutation.isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

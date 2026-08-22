@@ -42,7 +42,7 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
     <div className="relative">
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-12 h-12 flex items-center justify-center border border-gray-300 rounded cursor-pointer hover:border-[#E3E8EE] hover:bg-[#F6F9FC] transition-colors"
+        className="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-sm cursor-pointer hover:border-[#E3E8EE] hover:bg-[#F6F9FC] transition-colors"
       >
         <CurrentIcon size={24} className="text-gray-700" />
       </div>

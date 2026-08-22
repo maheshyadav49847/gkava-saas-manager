@@ -49,8 +49,8 @@ export const RegisterPage = () => {
   if (success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F6F9FC]  p-4">
-        <div className="w-full max-w-md bg-white  rounded shadow-xl border border-[#E3E8EE]  p-8 text-center">
-          <div className="w-16 h-16 bg-green-100  rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="w-full max-w-md bg-white  rounded-sm shadow-xl border border-[#E3E8EE]  p-8 text-center">
+          <div className="w-16 h-16 bg-green-100  rounded-sm flex items-center justify-center mx-auto mb-4">
             <Check className="w-8 h-8 text-green-600 " />
           </div>
           <h2 className="text-2xl font-bold text-[#0A2540]  mb-2">Registration Successful!</h2>
@@ -65,7 +65,7 @@ export const RegisterPage = () => {
       {/* Background decoration */}
       <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-indigo-500/10 to-transparent  pointer-events-none"></div>
       
-      <div className="w-full max-w-md bg-white  rounded shadow-xl border border-[#E3E8EE]  p-8 relative z-10 my-8">
+      <div className="w-full max-w-md bg-white  rounded-sm shadow-xl border border-[#E3E8EE]  p-8 relative z-10 my-8">
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-white rounded-sm flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-500/10 border border-[#E3E8EE] overflow-hidden">
             <img src="/logo.jpg" alt="Logo" className="w-full h-full object-cover" />
@@ -76,7 +76,7 @@ export const RegisterPage = () => {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded bg-rose-50 border border-rose-100 flex items-start gap-3">
+          <div className="mb-6 p-4 rounded-sm bg-rose-50 border border-rose-100 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-rose-500 shrink-0" />
             <p className="text-sm text-rose-700">{error}</p>
           </div>
@@ -94,7 +94,7 @@ export const RegisterPage = () => {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 bg-[#F6F9FC]  border border-[#E3E8EE]  rounded focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540] "
+                className="w-full pl-11 pr-4 py-2.5 bg-[#F6F9FC]  border border-[#E3E8EE]  rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540] "
                 placeholder="John Doe"
               />
             </div>
@@ -111,7 +111,7 @@ export const RegisterPage = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 bg-[#F6F9FC]  border border-[#E3E8EE]  rounded focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540] "
+                className="w-full pl-11 pr-4 py-2.5 bg-[#F6F9FC]  border border-[#E3E8EE]  rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540] "
                 placeholder="john@example.com"
               />
             </div>
@@ -127,7 +127,7 @@ export const RegisterPage = () => {
                 type="text"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 bg-[#F6F9FC]  border border-[#E3E8EE]  rounded focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540] "
+                className="w-full pl-11 pr-4 py-2.5 bg-[#F6F9FC]  border border-[#E3E8EE]  rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540] "
                 placeholder="Acme Corp"
               />
             </div>
@@ -143,7 +143,7 @@ export const RegisterPage = () => {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 bg-[#F6F9FC]  border border-[#E3E8EE]  rounded focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540] "
+                className="w-full pl-11 pr-4 py-2.5 bg-[#F6F9FC]  border border-[#E3E8EE]  rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540] "
                 placeholder="+1 555-0123"
               />
             </div>
@@ -153,7 +153,7 @@ export const RegisterPage = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded shadow-sm text-sm font-medium text-white bg-[#635BFF] hover:bg-[#0A2540] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500/20 disabled:opacity-50 transition-colors"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-sm shadow-sm text-sm font-medium text-white bg-[#635BFF] hover:bg-[#0A2540] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500/20 disabled:opacity-50 transition-colors"
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">

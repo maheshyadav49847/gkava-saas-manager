@@ -71,7 +71,7 @@ export const TenantsList = () => {
     <div className="space-y-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8 border-b border-[#E3E8EE] pb-6">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-white rounded shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
+          <div className="p-3 bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
             <Users className="w-6 h-6" strokeWidth={1.5} />
           </div>
           <div>
@@ -83,14 +83,14 @@ export const TenantsList = () => {
         </div>
         <button 
           onClick={() => setIsCreateModalOpen(true)}
-          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#635BFF] hover:bg-[#0A2540] text-white border border-transparent rounded shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors text-sm font-medium active:scale-95"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#635BFF] hover:bg-[#0A2540] text-white border border-transparent rounded-sm shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors text-sm font-medium active:scale-95"
         >
           <Plus className="w-4 h-4" strokeWidth={1.5} /> Add Tenant
         </button>
       </div>
 
       {isError && (
-        <div className="flex flex-col items-center justify-center p-12 text-center border border-rose-200 bg-rose-50 rounded">
+        <div className="flex flex-col items-center justify-center p-12 text-center border border-rose-200 bg-rose-50 rounded-sm">
           <AlertCircle className="w-10 h-10 text-rose-500 mb-4" />
           <h3 className="text-lg font-semibold text-rose-700">Failed to load</h3>
           <p className="text-rose-600 mt-2">
@@ -170,7 +170,7 @@ export const TenantsList = () => {
                     </td>
                     <td className="p-4">
                       <div className="flex flex-col items-start gap-1.5">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${getStatusColor(tenant.status)}`}>
+                        <span className={`px-2.5 py-1 rounded-sm text-xs font-semibold border ${getStatusColor(tenant.status)}`}>
                           {tenant.status}
                         </span>
                         <span className="text-xs font-medium text-[#425466]">{tenant.plan}</span>
@@ -186,7 +186,7 @@ export const TenantsList = () => {
                       <div className="flex items-center justify-end gap-2">
                         <button 
                           onClick={() => setEditingTenant(tenant)}
-                          className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Edit Tenant"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -194,7 +194,7 @@ export const TenantsList = () => {
                         <button 
                           onClick={() => handleDelete(tenant.id)}
                           disabled={deleteMutation.isPending && deleteMutation.variables === tenant.id}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Delete Tenant"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -213,13 +213,13 @@ export const TenantsList = () => {
           <div className="text-sm text-[#425466]">Showing {startRecord} to {endRecord} of {filteredTenants.length}</div>
           <div className="flex items-center gap-4">
             {/* Rows per page select here */}
-            <select value={rowsPerPage} onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }} className="bg-white border border-[#E3E8EE] rounded px-2 py-1 focus:outline-none text-sm">
+            <select value={rowsPerPage} onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }} className="bg-white border border-[#E3E8EE] rounded-sm px-2 py-1 focus:outline-none text-sm">
               {[10, 25, 50, 100].map(s => <option key={s} value={s}>{s} per page</option>)}
             </select>
             <div className="flex items-center gap-2">
               {/* Prev and Next buttons */}
-              <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50">Prev</button>
-              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages || filteredTenants.length === 0} className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50">Next</button>
+              <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="p-1.5 border border-[#E3E8EE] rounded-sm text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50">Prev</button>
+              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages || filteredTenants.length === 0} className="p-1.5 border border-[#E3E8EE] rounded-sm text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50">Next</button>
             </div>
           </div>
         </div>
