@@ -1,11 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using SubscriptionManager.Application.Features.Applications.Commands.CreateApplication;
 
 namespace SubscriptionManager.Api.Controllers;
 
 [ApiController]
 [Route("api/admin/applications")]
+[Authorize(Policy = "RequireAdminRole")]
 public class AdminApplicationsController : ControllerBase
 {
     private readonly IMediator _mediator;

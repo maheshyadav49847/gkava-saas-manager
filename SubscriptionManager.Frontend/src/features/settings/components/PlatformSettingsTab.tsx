@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Save, Loader2, Globe } from 'lucide-react';
+﻿import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Save, Loader2, Globe, Mail } from 'lucide-react';
 import { getPlatformSettings, updatePlatformSettings } from '../api';
 
 export function PlatformSettingsTab() {
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const queryClient = useQueryClient();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -14,41 +14,39 @@ export function PlatformSettingsTab() {
     contactPhone: ''
   });
 
+  const { data: settings, isLoading, isError } = useQuery({
+    queryKey: ['platformSettings'],
+    queryFn: getPlatformSettings,
+  });
+
   useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  const fetchSettings = async () => {
-    try {
-      const data = await getPlatformSettings();
+    if (settings) {
       setFormData({
-        supportEmail: data.supportEmail || '',
-        privacyEmail: data.privacyEmail || '',
-        legalEmail: data.legalEmail || '',
-        contactPhone: data.contactPhone || ''
+        supportEmail: settings.supportEmail || '',
+        privacyEmail: settings.privacyEmail || '',
+        legalEmail: settings.legalEmail || '',
+        contactPhone: settings.contactPhone || ''
       });
-    } catch (err) {
-      setError('Failed to load platform settings');
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [settings]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    setError('');
-    setSuccess(false);
-
-    try {
-      await updatePlatformSettings(formData);
+  const updateMutation = useMutation({
+    mutationFn: updatePlatformSettings,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['platformSettings'] });
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
-    } catch (err) {
+    },
+    onError: () => {
       setError('Failed to update platform settings');
-    } finally {
-      setSaving(false);
     }
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess(false);
+    updateMutation.mutate(formData);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,10 +56,10 @@ export function PlatformSettingsTab() {
     }));
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#0A2540]" />
       </div>
     );
   }
@@ -79,95 +77,107 @@ export function PlatformSettingsTab() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {error && (
-          <div className="rounded-md bg-red-50 p-4">
-            <div className="text-sm text-red-700">{error}</div>
+        {(error || isError) && (
+          <div className="rounded bg-red-50 p-4">
+            <div className="text-sm text-red-700">{error || 'Failed to load platform settings'}</div>
           </div>
         )}
         
         {success && (
-          <div className="rounded-md bg-green-50 p-4">
+          <div className="rounded bg-green-50 p-4">
             <div className="text-sm text-green-700">Platform settings updated successfully</div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
-          <div className="sm:col-span-2">
-            <label htmlFor="supportEmail" className="block text-sm font-medium text-gray-700">
-              Support / Contact Email
-            </label>
-            <div className="mt-1">
-              <input
-                type="email"
-                name="supportEmail"
-                id="supportEmail"
-                value={formData.supportEmail}
-                onChange={handleChange}
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
+          <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
+            <div className="sm:col-span-2">
+              <label htmlFor="supportEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                Support / Contact Email
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  name="supportEmail"
+                  id="supportEmail"
+                  value={formData.supportEmail}
+                  onChange={handleChange}
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-4 w-4 text-slate-400" />
+                </div>
+              </div>
+              <p className="mt-1 text-xs text-gray-500">Displayed on the Contact Us page.</p>
             </div>
-            <p className="mt-1 text-xs text-gray-500">Displayed on the Contact Us page.</p>
-          </div>
 
-          <div>
-            <label htmlFor="privacyEmail" className="block text-sm font-medium text-gray-700">
-              Privacy Email
-            </label>
-            <div className="mt-1">
-              <input
-                type="email"
-                name="privacyEmail"
-                id="privacyEmail"
-                value={formData.privacyEmail}
-                onChange={handleChange}
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
+            <div>
+              <label htmlFor="privacyEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                Privacy Email
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  name="privacyEmail"
+                  id="privacyEmail"
+                  value={formData.privacyEmail}
+                  onChange={handleChange}
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-4 w-4 text-slate-400" />
+                </div>
+              </div>
+              <p className="mt-1 text-xs text-gray-500">Displayed in Privacy Policy and Cookies Policy.</p>
             </div>
-            <p className="mt-1 text-xs text-gray-500">Displayed in Privacy Policy and Cookies Policy.</p>
-          </div>
 
-          <div>
-            <label htmlFor="legalEmail" className="block text-sm font-medium text-gray-700">
-              Legal Email
-            </label>
-            <div className="mt-1">
-              <input
-                type="email"
-                name="legalEmail"
-                id="legalEmail"
-                value={formData.legalEmail}
-                onChange={handleChange}
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
+            <div>
+              <label htmlFor="legalEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                Legal Email
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  name="legalEmail"
+                  id="legalEmail"
+                  value={formData.legalEmail}
+                  onChange={handleChange}
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-4 w-4 text-slate-400" />
+                </div>
+              </div>
+              <p className="mt-1 text-xs text-gray-500">Displayed in Terms of Service.</p>
             </div>
-            <p className="mt-1 text-xs text-gray-500">Displayed in Terms of Service.</p>
-          </div>
 
-          <div className="sm:col-span-2">
-            <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700">
-              Contact Phone
-            </label>
-            <div className="mt-1">
-              <input
-                type="text"
-                name="contactPhone"
-                id="contactPhone"
-                value={formData.contactPhone}
-                onChange={handleChange}
-                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              />
+            <div className="sm:col-span-2">
+              <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">
+                Contact Phone
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="contactPhone"
+                  id="contactPhone"
+                  value={formData.contactPhone}
+                  onChange={handleChange}
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Globe className="h-4 w-4 text-slate-400" />
+                </div>
+              </div>
+              <p className="mt-1 text-xs text-gray-500">Displayed on the Contact Us page.</p>
             </div>
-            <p className="mt-1 text-xs text-gray-500">Displayed on the Contact Us page.</p>
           </div>
-        </div>
 
         <div className="flex justify-end">
           <button
             type="submit"
-            disabled={saving}
-            className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
+            disabled={updateMutation.isPending}
+            className="inline-flex justify-center rounded border border-transparent bg-[#635BFF] py-2 px-4 text-sm font-medium text-white shadow-[0_2px_5px_rgba(0,0,0,0.12)] hover:bg-[#0A2540] transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:ring-offset-2 disabled:opacity-50"
           >
-            {saving ? (
+            {updateMutation.isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <Save className="mr-2 h-4 w-4" />

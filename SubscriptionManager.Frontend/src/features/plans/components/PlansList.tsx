@@ -1,179 +1,262 @@
-import { Check, Star, Plus, Edit2, ListTodo, AlertCircle, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+﻿import { useState, useMemo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Plus, Edit2, Trash2, ListTodo, AlertCircle, Search, Star } from 'lucide-react';
 import { Plan } from '../types';
 import { getPlans, deletePlan } from '../api';
 import { CreatePlanModal } from './CreatePlanModal';
 import { EditPlanModal } from './EditPlanModal';
 
 export const PlansList = () => {
-  const [plans, setPlans] = useState<Plan[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
 
-  const fetchPlans = () => {
-    setIsLoading(true);
-    getPlans()
-      .then((data) => {
-        setPlans(data);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch plans:", err);
-        setError("Could not load plans from the server.");
-        setIsLoading(false);
-      });
-  };
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  useEffect(() => {
-    fetchPlans();
-  }, []);
+  const { data: plans = [], isLoading, isError, error } = useQuery({
+    queryKey: ['plans'],
+    queryFn: getPlans
+  });
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this plan? This action cannot be undone.')) return;
-    
-    try {
-      await deletePlan(id);
-      fetchPlans();
-    } catch (error) {
-      console.error('Failed to delete plan:', error);
+  const deleteMutation = useMutation({
+    mutationFn: deletePlan,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['plans'] });
+    },
+    onError: (err) => {
+      console.error('Failed to delete plan:', err);
       alert('Failed to delete plan. It might be in use.');
     }
+  });
+
+  const handleDelete = (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this plan? This action cannot be undone.')) return;
+    deleteMutation.mutate(id);
   };
 
-  if (isLoading) {
-    return (
-      <div className="space-y-8 animate-pulse">
-        <div className="flex items-center justify-between mb-10">
-          <div className="flex gap-4 items-center">
-            <div className="w-14 h-14 bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
-            <div className="space-y-2">
-              <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded w-48"></div>
-              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-64"></div>
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-96 bg-slate-200 dark:bg-slate-800 rounded-3xl"></div>
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const filteredPlans = useMemo(() => {
+    if (!searchQuery.trim()) return plans;
+    const query = searchQuery.toLowerCase().trim();
+    return plans.filter((plan) => {
+      const nameMatch = plan.name?.toLowerCase().includes(query);
+      const descMatch = plan.description?.toLowerCase().includes(query);
+      const featureMatch = plan.features?.some((f) => f.toLowerCase().includes(query));
+      return nameMatch || descMatch || featureMatch;
+    });
+  }, [plans, searchQuery]);
 
-  if (error) {
+  const totalPages = Math.max(1, Math.ceil(filteredPlans.length / rowsPerPage));
+
+  const paginatedPlans = useMemo(() => {
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    return filteredPlans.slice(startIndex, startIndex + rowsPerPage);
+  }, [filteredPlans, currentPage, rowsPerPage]);
+
+  if (isError) {
     return (
-      <div className="flex flex-col items-center justify-center p-12 text-center border border-rose-200 bg-rose-50 dark:bg-rose-500/10 dark:border-rose-800 rounded-xl">
+      <div className="flex flex-col items-center justify-center p-12 text-center border border-rose-200 bg-rose-50 rounded">
         <AlertCircle className="w-10 h-10 text-rose-500 mb-4" />
-        <h3 className="text-lg font-semibold text-rose-700 dark:text-rose-400">Failed to load</h3>
-        <p className="text-rose-600 dark:text-rose-300 mt-2">{error}</p>
+        <h3 className="text-lg font-semibold text-rose-700">Failed to load</h3>
+        <p className="text-rose-600 mt-2">
+          {error instanceof Error ? error.message : "Could not load plans from the server."}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between mb-10">
-        <div className="flex items-center gap-4 max-w-2xl">
-          <div className="p-3 bg-indigo-100 dark:bg-indigo-500/20 rounded-2xl shrink-0">
-            <ListTodo className="w-10 h-10 text-indigo-600 dark:text-indigo-400" />
+    <div className="space-y-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8 border-b border-[#E3E8EE] pb-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white rounded shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
+            <ListTodo className="w-6 h-6" strokeWidth={1.5} />
           </div>
           <div>
-            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Pricing Plans</h2>
-            <p className="mt-2 text-base text-slate-500 dark:text-slate-400">
+            <h1 className="text-2xl font-semibold tracking-tight text-[#0A2540]">Pricing Plans</h1>
+            <p className="text-sm text-[#425466] mt-1">
               Manage the subscription plans offered across your SaaS applications.
             </p>
           </div>
         </div>
         <button 
           onClick={() => setIsCreateModalOpen(true)}
-          className="flex items-center gap-2 bg-transparent hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-600 dark:border-indigo-500 px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#635BFF] hover:bg-[#0A2540] text-white border border-transparent rounded shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors text-sm font-medium active:scale-95"
         >
-          <Plus className="w-4 h-4" /> Add Plan
+          <Plus className="w-4 h-4" strokeWidth={1.5} /> Add Plan
         </button>
       </div>
 
-      {plans.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-3xl bg-slate-50/50 dark:bg-slate-900/50">
-          <ListTodo className="w-12 h-12 text-slate-400 mb-4" />
-          <h3 className="text-xl font-semibold text-slate-900 dark:text-white">No plans configured</h3>
-          <p className="text-slate-500 mt-2 max-w-md">Get started by creating your first subscription plan to offer to your tenants.</p>
+      <div className="bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-[#E3E8EE] overflow-hidden">
+        {/* Toolbar */}
+        <div className="p-4 border-b border-[#E3E8EE] bg-[#F6F9FC] flex flex-col sm:flex-row gap-4 justify-between items-center">
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input 
+              type="text" 
+              placeholder="Search plans by name, description, or features..." 
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+              className="w-full pl-9 pr-4 py-2 bg-white border border-[#E3E8EE] rounded-sm text-sm focus:outline-none"
+            />
+          </div>
+          <div className="text-xs font-medium text-[#425466]">
+            Total Plans: {filteredPlans.length}
+          </div>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          {plans.map((plan) => (
-            <div 
-              key={plan.id}
-              className={`relative flex flex-col p-8 bg-white dark:bg-slate-900 rounded-3xl border shadow-sm transition-all duration-300 hover:shadow-xl ${
-                plan.isPopular 
-                  ? "border-indigo-500 shadow-indigo-500/10 scale-105 z-10 ring-2 ring-indigo-500/20" 
-                  : "border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700"
-              }`}
-            >
-              {plan.isPopular && (
-                <div className="absolute -top-4 left-0 right-0 flex justify-center">
-                  <span className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide flex items-center gap-1 shadow-sm">
-                    <Star className="w-3 h-3 fill-current" /> Most Popular
-                  </span>
-                </div>
+
+        {/* Table */}
+        <div className="overflow-x-auto min-h-[400px]">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-[#F6F9FC] border-b border-[#E3E8EE] text-xs uppercase tracking-wider text-[#425466] font-semibold">
+                <th className="p-4">Plan Name</th>
+                <th className="p-4">Monthly Price</th>
+                <th className="p-4">Yearly Price</th>
+                <th className="p-4">Features</th>
+                <th className="p-4">Badge</th>
+                <th className="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#E3E8EE] bg-white">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="p-8 text-center text-[#425466]">Loading plans...</td>
+                </tr>
+              ) : paginatedPlans.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="p-12 text-center border-dashed border-[#E3E8EE] bg-[#F6F9FC]">
+                    <ListTodo className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                    <p className="text-[#0A2540] font-medium">No plans found</p>
+                    <p className="text-sm text-[#425466] mt-1">
+                      {searchQuery ? 'Try adjusting your search query.' : 'Get started by creating your first subscription plan.'}
+                    </p>
+                  </td>
+                </tr>
+              ) : (
+                paginatedPlans.map((plan) => (
+                  <tr key={plan.id} className="hover:bg-[#F6F9FC] transition-colors">
+                    <td className="p-4">
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-[#0A2540]">{plan.name}</span>
+                        {plan.description && (
+                          <span className="text-xs text-[#425466] mt-0.5 line-clamp-1 max-w-sm">
+                            {plan.description}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-4 font-medium text-[#0A2540]">
+                      ₹{plan.monthlyPrice} <span className="text-xs text-[#425466] font-normal">/mo</span>
+                    </td>
+                    <td className="p-4 font-medium text-[#0A2540]">
+                      ₹{plan.yearlyPrice} <span className="text-xs text-[#425466] font-normal">/yr</span>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex flex-wrap gap-1.5 max-w-xs">
+                        {plan.features && plan.features.length > 0 ? (
+                          plan.features.slice(0, 2).map((feat, idx) => (
+                            <span 
+                              key={idx} 
+                              className="inline-flex items-center text-xs px-2 py-0.5 rounded bg-slate-100 text-[#425466] border border-slate-200 max-w-[120px] truncate"
+                              title={feat}
+                            >
+                              {feat}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-slate-400">None</span>
+                        )}
+                        {plan.features && plan.features.length > 2 && (
+                          <span className="inline-flex items-center text-xs px-1.5 py-0.5 rounded bg-indigo-50 text-[#635BFF] font-medium border border-indigo-100">
+                            +{plan.features.length - 2} more
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      {plan.isPopular ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full bg-indigo-50 text-[#635BFF] border border-indigo-200">
+                          <Star className="w-3 h-3 fill-current" /> Most Popular
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                          Standard
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => setEditingPlan(plan)}
+                          className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Edit Plan"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(plan.id)}
+                          disabled={deleteMutation.isPending && deleteMutation.variables === plan.id}
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Delete Plan"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
-              
-              <div className="mb-6">
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">{plan.name}</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 min-h-[5rem]">{plan.description}</p>
-              </div>
-
-              <div className="mb-6 flex items-baseline text-slate-900 dark:text-white">
-                <span className="text-5xl font-extrabold tracking-tight">₹{plan.monthlyPrice}</span>
-                <span className="text-slate-500 dark:text-slate-400 ml-1 font-medium">/month</span>
-              </div>
-
-              <ul className="flex-1 space-y-4 mb-8">
-                {plan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start">
-                    <Check className="w-5 h-5 text-emerald-500 shrink-0 mr-3" />
-                    <span className="text-slate-700 dark:text-slate-300 text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="grid grid-cols-2 gap-3 mt-auto">
-                <button 
-                  onClick={() => setEditingPlan(plan)}
-                  className={`w-full py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
-                    plan.isPopular
-                      ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-600/20"
-                      : "bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400"
-                  }`}
-                >
-                  <Edit2 className="w-4 h-4" />
-                  Edit
-                </button>
-                <button 
-                  onClick={() => handleDelete(plan.id)}
-                  className="w-full py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+            </tbody>
+          </table>
         </div>
-      )}
+
+        {/* Pagination Footer */}
+        <div className="p-4 border-t border-[#E3E8EE] bg-white flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-sm text-[#425466]">
+            Showing {filteredPlans.length === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1} to {Math.min(currentPage * rowsPerPage, filteredPlans.length)} of {filteredPlans.length}
+          </div>
+          <div className="flex items-center gap-4">
+            {/* Rows per page select here */}
+            <select 
+              value={rowsPerPage} 
+              onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }} 
+              className="bg-white border border-[#E3E8EE] rounded px-2 py-1 focus:outline-none"
+            >
+              {[10, 25, 50, 100].map(s => <option key={s} value={s}>{s} per page</option>)}
+            </select>
+            <div className="flex items-center gap-2">
+              {/* Prev and Next buttons */}
+              <button 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))} 
+                disabled={currentPage === 1} 
+                className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Prev
+              </button>
+              <button 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} 
+                disabled={currentPage === totalPages || filteredPlans.length === 0} 
+                className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <CreatePlanModal 
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        onSuccess={() => fetchPlans()}
+        onSuccess={() => queryClient.invalidateQueries({ queryKey: ['plans'] })}
       />
 
       <EditPlanModal
         isOpen={!!editingPlan}
         onClose={() => setEditingPlan(null)}
-        onSuccess={() => fetchPlans()}
+        onSuccess={() => queryClient.invalidateQueries({ queryKey: ['plans'] })}
         plan={editingPlan}
       />
     </div>

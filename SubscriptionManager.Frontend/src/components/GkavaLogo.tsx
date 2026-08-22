@@ -1,4 +1,4 @@
-export const GkavaLogo = ({ className = "h-10 w-auto" }: { className?: string }) => (
+﻿export const GkavaLogo = ({ className = "h-10 w-auto" }: { className?: string }) => (
   <svg viewBox="0 0 200 80" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
     <text 
       x="0" 

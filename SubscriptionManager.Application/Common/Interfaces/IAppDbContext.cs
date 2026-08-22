@@ -15,6 +15,9 @@ public interface IAppDbContext
     DbSet<ApplicationModule> ApplicationModules { get; }
     DbSet<PlatformSetting> PlatformSettings { get; }
     DbSet<TeamMember> TeamMembers { get; }
+    DbSet<AuditLog> AuditLogs { get; }
+    DbSet<ApiKey> ApiKeys { get; }
+    DbSet<StripeEventIdempotency> StripeEventIdempotencies { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

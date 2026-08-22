@@ -17,6 +17,12 @@ services:
     environment:
       - NODE_ENV=production
 
+  redis:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"
+
   backend:
     image: ghcr.io/${GITHUB_REPOSITORY}/subscription-backend:${IMAGE_TAG:-latest}
     restart: always

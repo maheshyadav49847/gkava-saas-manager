@@ -11,10 +11,12 @@ namespace SubscriptionManager.Application.Features.Profile.Commands.UpdateProfil
     public class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand, AuthResponseDto>
     {
         private readonly IAppDbContext _context;
+        private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
 
-        public UpdateProfileCommandHandler(IAppDbContext context)
+        public UpdateProfileCommandHandler(IAppDbContext context, Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task<AuthResponseDto> Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
@@ -42,7 +44,9 @@ namespace SubscriptionManager.Application.Features.Profile.Commands.UpdateProfil
             // A better way is to not return a new token and just return the user object, but for consistency we can return a new token.
             
             var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-            var key = System.Text.Encoding.UTF8.GetBytes("ThisIsAMockSecretKeyForDevPurposeOnlyMakeItLongEnough!");
+            var jwtSecret = _configuration["JwtSettings:Secret"] ?? throw new InvalidOperationException("JwtSettings:Secret is missing");
+            var expiryDays = double.TryParse(_configuration["JwtSettings:ExpiryDays"], out var days) ? days : 7;
+            var key = System.Text.Encoding.UTF8.GetBytes(jwtSecret);
             
             var tokenDescriptor = new Microsoft.IdentityModel.Tokens.SecurityTokenDescriptor
             {
@@ -52,7 +56,7 @@ namespace SubscriptionManager.Application.Features.Profile.Commands.UpdateProfil
                     new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Email, user.Email),
                     new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, user.Name)
                 }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(expiryDays),
                 SigningCredentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key), Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256Signature)
             };
             

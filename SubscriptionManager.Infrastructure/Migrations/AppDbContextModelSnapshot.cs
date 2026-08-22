@@ -54,6 +54,28 @@ namespace SubscriptionManager.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SubscriptionManager.Domain.Entities.ApiKey", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TenantId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ApiKeys");
+                });
+
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.Application", b =>
                 {
                     b.Property<Guid>("Id")
@@ -128,6 +150,34 @@ namespace SubscriptionManager.Infrastructure.Migrations
                     b.HasIndex("ApplicationId");
 
                     b.ToTable("ApplicationModules");
+                });
+
+            modelBuilder.Entity("SubscriptionManager.Domain.Entities.AuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Details")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EntityName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditLogs");
                 });
 
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.Coupon", b =>
@@ -277,6 +327,24 @@ namespace SubscriptionManager.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("SubscriptionManager.Domain.Entities.StripeEventIdempotency", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EventId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StripeEventIdempotencies");
+                });
+
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.Subscription", b =>
                 {
                     b.Property<Guid>("Id")
@@ -406,6 +474,10 @@ namespace SubscriptionManager.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("PaymentProviderCustomerId");
 
                     b.ToTable("Tenants");
                 });

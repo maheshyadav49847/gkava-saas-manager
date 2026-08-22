@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2, Image as ImageIcon, Type, Link as LinkIcon, AlignLeft, Hash, ChevronDown, ChevronUp, ArrowRight } from 'lucide-react';
+﻿import React, { useState, useEffect } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { X, Plus, Trash2, Image as ImageIcon, Type, Link as LinkIcon, AlignLeft, Hash, ChevronDown, ChevronUp, ArrowRight, Save, Loader2 } from "lucide-react";
 import * as LucideIcons from 'lucide-react';
 import { IconPicker } from '../../../components/ui/IconPicker';
 import { Application, CreateApplicationDTO, UpdateApplicationDTO, ApplicationModule } from '../types';
@@ -23,7 +24,11 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
     modules: [],
   });
 
-  const [loading, setLoading] = useState(false);
+  const saveMutation = useMutation({
+    mutationFn: async (data: CreateApplicationDTO | UpdateApplicationDTO) => {
+      await onSave(data);
+    }
+  });
 
   useEffect(() => {
     if (application) {
@@ -47,16 +52,11 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
     }
   };
 
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      if (application) {
-        await onSave(formData as UpdateApplicationDTO);
-      } else {
-        await onSave(formData as CreateApplicationDTO);
-      }
-    } finally {
-      setLoading(false);
+  const handleSave = () => {
+    if (application) {
+      saveMutation.mutate(formData as UpdateApplicationDTO);
+    } else {
+      saveMutation.mutate(formData as CreateApplicationDTO);
     }
   };
 
@@ -105,11 +105,11 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-3 font-medium text-sm transition-colors relative ${activeTab === tab ? 'text-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`pb-3 font-medium text-sm transition-colors relative ${activeTab === tab ? 'text-[#0A2540]' : 'text-gray-500 hover:text-gray-700'}`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
               {activeTab === tab && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-t-full" />
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900 rounded-t-full" />
               )}
             </button>
           ))}
@@ -121,9 +121,9 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
             <div className="space-y-8">
               {/* Product Name (Advanced) */}
               <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
-                <div className="relative bg-white rounded-2xl p-1 border border-gray-100">
-                  <label className="block text-xs font-bold tracking-wider text-indigo-500 uppercase ml-3 mt-2 mb-1">Product Name</label>
+                
+                <div className="relative bg-white rounded-sm p-1 border border-gray-100">
+                  <label className="block text-xs font-bold tracking-wider text-[#425466] uppercase ml-3 mt-2 mb-1">Product Name</label>
                   <div className="flex items-center px-3 pb-2 border-b border-gray-100">
                     <Type className="w-5 h-5 text-gray-400 mr-2" />
                     <input
@@ -163,7 +163,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                     value={formData.webhookUrl || ''}
                     onChange={handleChange}
                     placeholder="https://api.yourproduct.com/webhook"
-                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                    className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
                   />
                 </div>
                 <div>
@@ -181,7 +181,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                       setFormData(prev => ({ ...prev, displayOrder: val }));
                     }}
                     placeholder="0"
-                    className="w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                    className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
                   />
                 </div>
               </div>
@@ -191,7 +191,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                   <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                     <AlignLeft className="w-4 h-4 text-gray-400" /> Description
                   </label>
-                  <div className="rounded-xl overflow-hidden border border-gray-200 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500 transition-shadow bg-white">
+                  <div className="rounded overflow-hidden border border-gray-200 focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-[#E3E8EE] transition-shadow bg-white">
                     <textarea
                       value={formData.description || ''}
                       onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
@@ -203,11 +203,11 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Product Graphic</label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-indigo-500 transition-colors bg-gray-50/50">
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border border-[#E3E8EE] border-dashed rounded hover:border-[#E3E8EE] transition-colors bg-gray-50/50">
                   <div className="space-y-1 text-center">
                     <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
                     <div className="flex text-sm text-gray-600 justify-center">
-                      <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
+                      <label htmlFor="file-upload" className="relative cursor-pointer bg-white rounded font-medium text-[#0A2540] hover:text-[#425466] focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500/20">
                         <span>Upload a file</span>
                         <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleImageUpload} accept="image/*" />
                       </label>
@@ -223,7 +223,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
           {activeTab === 'modules' && (
             <div className="space-y-6">
               {formData.modules?.map((module, index) => (
-                <div key={index} className="p-5 border border-gray-200 rounded-2xl bg-white shadow-sm space-y-4 relative group hover:border-indigo-300 transition-colors">
+                <div key={index} className="p-5 border border-gray-200 rounded-sm bg-white shadow-sm space-y-4 relative group hover:border-[#E3E8EE] transition-colors">
                   <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button onClick={() => removeModule(index)} className="p-1 ml-1 text-gray-400 hover:text-red-500 rounded transition-colors">
                       <Trash2 size={18} />
@@ -248,7 +248,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                         />
                       </div>
 
-                      <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-100 flex-shrink-0 mr-8">
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-sm border border-gray-100 flex-shrink-0 mr-8">
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Order</span>
                         <input
                           type="number"
@@ -274,7 +274,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                   </div>
                 </div>
               ))}
-              <button onClick={addModule} className="w-full py-3 border-2 border-dashed border-gray-300 rounded-2xl text-gray-600 font-medium hover:border-indigo-500 hover:text-indigo-600 transition-colors flex items-center justify-center gap-2">
+              <button onClick={addModule} className="w-full py-3 border-2 border-dashed border border-[#E3E8EE] rounded-sm text-gray-600 font-medium hover:border-[#E3E8EE] hover:text-[#0A2540] transition-colors flex items-center justify-center gap-2">
                 <Plus size={20} /> Add Module
               </button>
             </div>
@@ -285,11 +285,11 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
 
         {/* Footer Actions */}
         <div className="p-6 border-t border-gray-200 bg-gray-50 flex gap-3">
-          <button onClick={onCancel} className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors shadow-sm">
+          <button onClick={onCancel} className="flex-1 px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-[#425466] bg-white hover:bg-[#F6F9FC] border border-[#E3E8EE] rounded transition-colors shadow-sm">
             Cancel
           </button>
-          <button onClick={handleSave} disabled={loading} className="flex-1 px-4 py-3 bg-indigo-600 border border-transparent rounded-xl text-white font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors shadow-sm disabled:opacity-70 flex justify-center items-center">
-            {loading ? 'Saving...' : 'Save Changes'}
+          <button onClick={handleSave} disabled={saveMutation.isPending} className="flex-1 px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-white bg-[#635BFF] hover:bg-[#0A2540] border border-transparent rounded shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            {saveMutation.isPending ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : <><Save className="w-4 h-4" /> Save Changes</>}
           </button>
         </div>
       </div>
@@ -303,7 +303,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
             <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
             <div className="w-3 h-3 rounded-full bg-green-400"></div>
           </div>
-          <div className="text-sm font-medium text-gray-500 flex-1 text-center bg-gray-100 mx-4 py-1.5 rounded-md max-w-md">
+          <div className="text-sm font-medium text-gray-500 flex-1 text-center bg-gray-100 mx-4 py-1.5 rounded max-w-md">
             Live Preview: Website rendering
           </div>
           <div className="w-16"></div>
@@ -311,7 +311,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
 
         {/* Scaled Preview Container */}
         <div className="p-10 min-h-full flex justify-center">
-          <div className="w-full max-w-[1200px] bg-white rounded-2xl shadow-2xl overflow-hidden" style={{ minHeight: '800px' }}>
+          <div className="w-full max-w-[1200px] bg-white rounded-sm shadow-2xl overflow-hidden" style={{ minHeight: '800px' }}>
             
             {/* THIS IS THE WEBSITE PREVIEW RENDER */}
             <div className="p-10">
@@ -385,7 +385,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                   )}
 
                   {(!formData.modules?.length) && (
-                    <div className="text-center p-12 border-2 border-dashed border-gray-300 rounded-xl text-gray-400">
+                    <div className="text-center p-12 border-2 border-dashed border border-[#E3E8EE] rounded text-gray-400">
                       Add modules to see them render here.
                     </div>
                   )}

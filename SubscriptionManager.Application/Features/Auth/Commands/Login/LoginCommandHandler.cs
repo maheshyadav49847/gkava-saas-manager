@@ -14,10 +14,12 @@ namespace SubscriptionManager.Application.Features.Auth.Commands.Login
     public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto>
     {
         private readonly IAppDbContext _context;
+        private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
 
-        public LoginCommandHandler(IAppDbContext context)
+        public LoginCommandHandler(IAppDbContext context, Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task<AuthResponseDto> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -30,8 +32,10 @@ namespace SubscriptionManager.Application.Features.Auth.Commands.Login
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            // Match this to Program.cs
-            var key = Encoding.UTF8.GetBytes("ThisIsAMockSecretKeyForDevPurposeOnlyMakeItLongEnough!");
+            // Read from configuration
+            var jwtSecret = _configuration["JwtSettings:Secret"] ?? throw new InvalidOperationException("JwtSettings:Secret is missing");
+            var expiryDays = double.TryParse(_configuration["JwtSettings:ExpiryDays"], out var days) ? days : 7;
+            var key = Encoding.UTF8.GetBytes(jwtSecret);
             
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -39,9 +43,10 @@ namespace SubscriptionManager.Application.Features.Auth.Commands.Login
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Name, user.Name)
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Role, "Admin")
                 }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(expiryDays),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             

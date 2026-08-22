@@ -13,7 +13,7 @@ namespace SubscriptionManager.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Policy = "RequireAdminRole")]
 public class AdminTeamMembersController : ControllerBase
 {
     private readonly IMediator _mediator;

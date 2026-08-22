@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Settings as SettingsIcon, User, ShieldCheck, Globe } from 'lucide-react';
+﻿import { useState } from 'react';
+import { User, ShieldCheck, Globe , Settings as SettingsIcon } from 'lucide-react';
 import { ProfileTab } from './ProfileTab';
 import { SecurityTab } from './SecurityTab';
 import { PlatformSettingsTab } from './PlatformSettingsTab';
@@ -8,60 +8,61 @@ export const Settings = () => {
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'platform'>('profile');
 
   return (
-    <div className="space-y-8 pb-12">
-      {/* Header */}
-      <div className="flex items-center gap-5 border-b border-slate-200 dark:border-slate-800/60 pb-8">
-        <div className="p-4 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-500/20 dark:to-purple-500/20 rounded-3xl shadow-sm border border-indigo-200/50 dark:border-indigo-500/20 shrink-0">
-          <SettingsIcon className="w-12 h-12 text-indigo-600 dark:text-indigo-400" strokeWidth={1.5} />
-        </div>
-        <div>
-          <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 tracking-tight">Account Settings</h2>
-          <p className="mt-2 text-lg text-slate-500 dark:text-slate-400 font-medium">
-            Manage your personal profile and security preferences.
-          </p>
+            <div className="space-y-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8 border-b border-[#E3E8EE] pb-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white rounded shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
+            <SettingsIcon className="w-6 h-6" strokeWidth={1.5} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-[#0A2540]">Account Settings</h1>
+            <p className="text-sm text-[#425466] mt-1">
+              Manage your personal profile and platform preferences.
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Main Content: Unified Flat Card */}
-      <div className="flex flex-col lg:flex-row items-stretch mt-8 bg-white dark:bg-slate-900 rounded-2xl border-2 border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+      <div className="flex flex-col lg:flex-row items-stretch mt-8 bg-white rounded-sm border border-[#EAEAEA] shadow-[0_2px_8px_rgba(0,0,0,0.02)] overflow-hidden">
         
         {/* Left Panel: Navigation */}
-        <div className="w-full lg:w-72 shrink-0 border-b lg:border-b-0 lg:border-r-2 border-slate-200 dark:border-slate-800 p-6 bg-slate-50/50 dark:bg-slate-900">
-          <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 px-2">Settings Menu</h4>
+        <div className="w-full lg:w-72 shrink-0 border-b lg:border-b-0 lg:border-r-2 border-[#E3E8EE]  p-6 bg-[#F6F9FC] ">
+          <h4 className="text-xs font-bold uppercase tracking-widest text-[#425466]/60  mb-4 px-2">Settings Menu</h4>
           <nav className="flex lg:flex-col gap-2 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab('profile')}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors whitespace-nowrap text-left ${
+              className={`flex items-center gap-3 px-4 py-3 rounded font-medium transition-colors whitespace-nowrap text-left ${
                 activeTab === 'profile'
-                  ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-[#635BFF]'
+                  : 'text-[#425466]  hover:bg-slate-100 hover:text-[#0A2540]'
               }`}
             >
-              <User className={`w-5 h-5 ${activeTab === 'profile' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
+              <User className={`w-5 h-5 ${activeTab === 'profile' ? 'text-[#0A2540] ' : 'text-[#425466]/60'}`} />
               Profile Details
             </button>
             
             <button
               onClick={() => setActiveTab('security')}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors whitespace-nowrap text-left ${
+              className={`flex items-center gap-3 px-4 py-3 rounded font-medium transition-colors whitespace-nowrap text-left ${
                 activeTab === 'security'
-                  ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-[#635BFF]'
+                  : 'text-[#425466]  hover:bg-slate-100 hover:text-[#0A2540]'
               }`}
             >
-              <ShieldCheck className={`w-5 h-5 ${activeTab === 'security' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
+              <ShieldCheck className={`w-5 h-5 ${activeTab === 'security' ? 'text-[#0A2540] ' : 'text-[#425466]/60'}`} />
               Security & Password
             </button>
             
             <button
               onClick={() => setActiveTab('platform')}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors whitespace-nowrap text-left ${
+              className={`flex items-center gap-3 px-4 py-3 rounded font-medium transition-colors whitespace-nowrap text-left ${
                 activeTab === 'platform'
-                  ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-[#635BFF]'
+                  : 'text-[#425466]  hover:bg-slate-100 hover:text-[#0A2540]'
               }`}
             >
-              <Globe className={`w-5 h-5 ${activeTab === 'platform' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'}`} />
+              <Globe className={`w-5 h-5 ${activeTab === 'platform' ? 'text-[#0A2540] ' : 'text-[#425466]/60'}`} />
               Platform Settings
             </button>
           </nav>
@@ -69,7 +70,7 @@ export const Settings = () => {
 
         {/* Right Panel: Content Area */}
         <div className="flex-1 w-full min-w-0 p-6 lg:p-10">
-          <div className="animate-in fade-in slide-in-from-right-4 duration-500 max-w-2xl mx-auto">
+          <div className="animate-in fade-in slide-in-from-right-4 duration-500 w-full max-w-4xl">
             {activeTab === 'profile' && <ProfileTab />}
             {activeTab === 'security' && <SecurityTab />}
             {activeTab === 'platform' && <PlatformSettingsTab />}

@@ -3,4 +3,5 @@
   <Project Path="SubscriptionManager.Application/SubscriptionManager.Application.csproj" />
   <Project Path="SubscriptionManager.Domain/SubscriptionManager.Domain.csproj" />
   <Project Path="SubscriptionManager.Infrastructure/SubscriptionManager.Infrastructure.csproj" />
+  <Project Path="SubscriptionManager.Tests/SubscriptionManager.Tests.csproj" />
 </Solution>

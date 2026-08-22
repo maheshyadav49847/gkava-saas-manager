@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { getPlans, getApplications, type Plan, type Application } from '../services/api';

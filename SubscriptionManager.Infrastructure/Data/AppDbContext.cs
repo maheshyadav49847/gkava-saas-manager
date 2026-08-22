@@ -22,6 +22,9 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<ApplicationModule> ApplicationModules { get; set; } = null!;
     public DbSet<PlatformSetting> PlatformSettings { get; set; } = null!;
     public DbSet<TeamMember> TeamMembers { get; set; } = null!;
+    public DbSet<AuditLog> AuditLogs { get; set; } = null!;
+    public DbSet<ApiKey> ApiKeys { get; set; } = null!;
+    public DbSet<StripeEventIdempotency> StripeEventIdempotencies { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -77,6 +80,8 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Email).IsRequired().HasMaxLength(150);
+            entity.HasIndex(e => e.Email);
+            entity.HasIndex(e => e.PaymentProviderCustomerId);
         });
 
         modelBuilder.Entity<Coupon>(entity =>
@@ -92,6 +97,7 @@ public class AppDbContext : DbContext, IAppDbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Status).HasConversion<string>(); // Store enum as string
+            entity.HasIndex(e => e.TenantId);
             
             entity.HasOne(e => e.Tenant)
                 .WithMany(t => t.Subscriptions)

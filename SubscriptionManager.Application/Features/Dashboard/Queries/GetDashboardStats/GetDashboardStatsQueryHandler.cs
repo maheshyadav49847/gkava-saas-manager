@@ -56,12 +56,33 @@ namespace SubscriptionManager.Application.Features.Dashboard.Queries.GetDashboar
             .OrderByDescending(a => a.Timestamp)
             .ToList();
 
+            // Actual Subscription Distribution
+            var dist = activeSubscriptions
+                .Where(s => s.Plan != null)
+                .GroupBy(s => s.Plan.Name)
+                .Select(g => new SubscriptionDistributionDto
+                {
+                    Name = g.Key,
+                    Value = g.Count()
+                }).ToList();
+
+            // Empty MRR history for now. This should be populated from real historical invoice data
+            // once the billing module is fully implemented.
+            var mrrHistory = new System.Collections.Generic.List<MrrHistoryDto>();
+            mrrHistory.Add(new MrrHistoryDto 
+            { 
+                Name = DateTime.UtcNow.ToString("MMM"), 
+                Mrr = Math.Round(totalRevenue, 2)
+            });
+
             return new DashboardStatsDto
             {
                 TotalRevenue = totalRevenue,
                 ActiveSubscriptionsCount = activeSubscriptionsCount,
                 NewTenantsCount = newTenantsCount,
-                RecentActivities = recentActivities
+                RecentActivities = recentActivities,
+                SubscriptionDistribution = dist,
+                MrrHistory = mrrHistory
             };
         }
     }

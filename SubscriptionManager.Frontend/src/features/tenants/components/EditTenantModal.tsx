@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { X, Loader2, Edit2, Save } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
 import { updateTenant, UpdateTenantDto } from '../api';
 import { Tenant } from '../types';
 
@@ -17,7 +18,6 @@ export const EditTenantModal = ({ isOpen, onClose, onSuccess, tenant }: EditTena
     email: '',
     phone: ''
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isOpen && tenant) {
@@ -30,68 +30,73 @@ export const EditTenantModal = ({ isOpen, onClose, onSuccess, tenant }: EditTena
     }
   }, [isOpen, tenant]);
 
-  if (!isOpen || !tenant) return null;
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await updateTenant(tenant.id, formData);
+  const updateMutation = useMutation({
+    mutationFn: (data: UpdateTenantDto) => {
+      if (!tenant) throw new Error('No tenant selected');
+      return updateTenant(tenant.id, data);
+    },
+    onSuccess: () => {
       onSuccess();
       onClose();
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error('Failed to update tenant', error);
       alert('Failed to update tenant');
-    } finally {
-      setIsSubmitting(false);
-    }
+    },
+  });
+
+  if (!isOpen || !tenant) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateMutation.mutate(formData);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-md border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <div className="p-2 bg-indigo-100 dark:bg-indigo-500/20 rounded-xl">
-              <Edit2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+      <div className="bg-white  rounded-sm shadow-xl w-full max-w-md border border-[#E3E8EE]  animate-in fade-in zoom-in-95 duration-200">
+        <div className="flex items-center justify-between p-6 border-b border-[#E3E8EE] ">
+          <h2 className="text-xl font-bold text-[#0A2540]  flex items-center gap-2">
+            <div className="p-2 bg-slate-100  rounded">
+              <Edit2 className="w-5 h-5 text-[#0A2540] " />
             </div>
             Edit Tenant
           </h2>
-          <button type="button" onClick={onClose} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <button type="button" onClick={onClose} className="p-2 text-slate-400 hover:text-[#425466] rounded-full hover:bg-slate-100 transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Company/Tenant Name</label>
+            <label className="block text-sm font-medium text-[#425466]  mb-1">Company/Tenant Name</label>
             <input
               type="text"
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-0 focus:border-indigo-500 text-slate-900 dark:text-white transition-all"
+              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Admin Email</label>
+            <label className="block text-sm font-medium text-[#425466]  mb-1">Admin Email</label>
             <input
               type="email"
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-0 focus:border-indigo-500 text-slate-900 dark:text-white transition-all"
+              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone Number</label>
+            <label className="block text-sm font-medium text-[#425466]  mb-1">Phone Number</label>
             <input
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-0 focus:border-indigo-500 text-slate-900 dark:text-white transition-all"
+              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
             />
           </div>
 
@@ -99,16 +104,17 @@ export const EditTenantModal = ({ isOpen, onClose, onSuccess, tenant }: EditTena
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-sm font-medium flex items-center gap-2 text-slate-700 dark:text-slate-300 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl transition-colors"
+              disabled={updateMutation.isPending}
+              className="px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-[#425466] bg-white hover:bg-[#F6F9FC] border border-[#E3E8EE] rounded transition-colors shadow-sm"
             >
               <X className="w-4 h-4" /> Cancel
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="px-5 py-2.5 text-sm font-medium flex items-center gap-2 text-indigo-600 dark:text-indigo-400 bg-transparent hover:bg-indigo-50 dark:hover:bg-indigo-500/10 border-2 border-indigo-600 dark:border-indigo-500 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              disabled={updateMutation.isPending}
+              className="px-4 py-2 text-sm font-medium flex items-center justify-center gap-2 text-white bg-[#635BFF] hover:bg-[#0A2540] border border-transparent rounded shadow-[0_2px_5px_rgba(0,0,0,0.12)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? (
+              {updateMutation.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" /> Saving...
                 </>

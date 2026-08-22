@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Layers, Menu, X, ChevronRight, LogOut } from 'lucide-react';
+import { Menu, X, ChevronRight, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Header.css';
 
@@ -46,7 +46,9 @@ export function Header() {
     <header className={`header ${isMobileMenuOpen ? 'menu-open' : ''}`}>
       <div className="container header-container">
         <Link to="/" className="brand">
-          <Layers className="brand-icon" size={28} />
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 overflow-hidden mr-2" style={{ width: '32px', height: '32px', marginRight: '8px', borderRadius: '8px', overflow: 'hidden' }}>
+            <img src="/logo.jpg" alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
           <span className="brand-text">GK<span style={{ color: 'var(--color-primary)' }}>ava</span></span>
         </Link>
 

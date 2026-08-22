@@ -1,201 +1,267 @@
-import { useState, useEffect } from 'react';
-import { Tag, Plus, Edit2, Trash2, AlertCircle, CheckCircle2, XCircle } from 'lucide-react';
+﻿import { useState, useMemo } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Tag, Plus, Edit2, Trash2, AlertCircle, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { format } from 'date-fns';
 import { CouponDto } from '../types';
 import { couponsApi } from '../api';
 import { CreateCouponModalView } from './CreateCouponModalView';
 import { EditCouponModalView } from './EditCouponModalView';
 
-// Trigger IDE refresh
 export const CouponsList = () => {
-  const [coupons, setCoupons] = useState<CouponDto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<CouponDto | null>(null);
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'All' | 'Active' | 'Expired' | 'Deleted'>('Active');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const fetchCoupons = () => {
-    setIsLoading(true);
-    couponsApi.getCoupons()
-      .then((data: CouponDto[]) => {
-        setCoupons(data);
-        setIsLoading(false);
-      })
-      .catch((err: any) => {
-        console.error("Failed to fetch coupons:", err);
-        setError("Could not load coupons from the server.");
-        setIsLoading(false);
-      });
-  };
+  const { data: coupons = [], isLoading, isError, error } = useQuery({
+    queryKey: ['coupons'],
+    queryFn: couponsApi.getCoupons
+  });
 
-  useEffect(() => {
-    fetchCoupons();
-  }, []);
-
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this coupon? This action cannot be undone.')) return;
-    
-    try {
-      await couponsApi.deleteCoupon(id);
-      fetchCoupons();
-    } catch (error) {
-      console.error('Failed to delete coupon:', error);
+  const deleteMutation = useMutation({
+    mutationFn: couponsApi.deleteCoupon,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coupons'] });
+    },
+    onError: (err) => {
+      console.error('Failed to delete coupon:', err);
       alert('Failed to delete coupon.');
     }
+  });
+
+  const handleDelete = (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this coupon?')) return;
+    deleteMutation.mutate(id);
   };
 
-  const formatDate = (dateString?: string | null) => {
-    if (!dateString) return 'No expiry';
-    return new Date(dateString).toLocaleDateString();
+  const filteredCoupons = useMemo(() => {
+    return coupons.filter(coupon => {
+      // Status Logic
+      const isExpired = coupon.expiryDate && new Date(coupon.expiryDate) < new Date();
+      const isMaxedOut = coupon.maxUses && coupon.currentUses >= coupon.maxUses;
+      const isUsable = coupon.isActive && !isExpired && !isMaxedOut;
+
+      let statusMatch = true;
+      if (statusFilter === 'Active') statusMatch = isUsable;
+      else if (statusFilter === 'Expired') statusMatch = !!(isExpired && coupon.isActive);
+      else if (statusFilter === 'Deleted') statusMatch = !coupon.isActive;
+
+      // Search Logic
+      const searchMatch = coupon.code.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return statusMatch && searchMatch;
+    });
+  }, [coupons, statusFilter, searchQuery]);
+
+  const totalPages = Math.ceil(filteredCoupons.length / rowsPerPage);
+  const paginatedCoupons = useMemo(() => {
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    return filteredCoupons.slice(startIndex, startIndex + rowsPerPage);
+  }, [filteredCoupons, currentPage, rowsPerPage]);
+
+  const getStatusBadge = (coupon: CouponDto) => {
+    if (!coupon.isActive) return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600">Deleted</span>;
+    if (coupon.expiryDate && new Date(coupon.expiryDate) < new Date()) return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-100 text-rose-700">Expired</span>;
+    if (coupon.maxUses && coupon.currentUses >= coupon.maxUses) return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-700">Maxed Out</span>;
+    return <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700">Active</span>;
   };
 
-  if (isLoading) {
+  if (isError) {
     return (
-      <div className="space-y-8 animate-pulse">
-        <div className="flex items-center justify-between mb-10">
-          <div className="flex gap-4 items-center">
-            <div className="w-14 h-14 bg-slate-200 dark:bg-slate-800 rounded-2xl"></div>
-            <div className="space-y-2">
-              <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded w-48"></div>
-              <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-64"></div>
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-48 bg-slate-200 dark:bg-slate-800 rounded-3xl"></div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center p-12 text-center border border-rose-200 bg-rose-50 dark:bg-rose-500/10 dark:border-rose-800 rounded-xl">
+      <div className="flex flex-col items-center justify-center p-12 text-center border border-rose-200 bg-rose-50 rounded">
         <AlertCircle className="w-10 h-10 text-rose-500 mb-4" />
-        <h3 className="text-lg font-semibold text-rose-700 dark:text-rose-400">Failed to load</h3>
-        <p className="text-rose-600 dark:text-rose-300 mt-2">{error}</p>
+        <h3 className="text-lg font-semibold text-rose-700">Failed to load</h3>
+        <p className="text-rose-600 mt-2">
+          {error instanceof Error ? error.message : "Could not load coupons."}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between mb-10">
-        <div className="flex items-center gap-4 max-w-2xl">
-          <div className="p-3 bg-indigo-100 dark:bg-indigo-500/20 rounded-2xl shrink-0">
-            <Tag className="w-10 h-10 text-indigo-600 dark:text-indigo-400" />
+    <div className="space-y-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-[#E3E8EE] pb-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white rounded shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E3E8EE] text-[#635BFF] shrink-0">
+            <Tag className="w-6 h-6" strokeWidth={1.5} />
           </div>
           <div>
-            <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Coupons & Discounts</h2>
-            <p className="mt-2 text-base text-slate-500 dark:text-slate-400">
+            <h1 className="text-2xl font-semibold tracking-tight text-[#0A2540]">Coupons & Discounts</h1>
+            <p className="text-sm text-[#425466] mt-1">
               Manage promotional codes and discounts for your subscriptions.
             </p>
           </div>
         </div>
         <button 
           onClick={() => setIsCreateModalOpen(true)}
-          className="flex items-center gap-2 bg-transparent hover:bg-indigo-50 dark:hover:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-600 dark:border-indigo-500 px-4 py-2 rounded-lg font-medium transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-2 bg-[#635BFF] hover:bg-[#0A2540] text-white border border-transparent rounded shadow-sm transition-colors text-sm font-medium"
         >
-          <Plus className="w-4 h-4" /> Add Coupon
+          <Plus className="w-4 h-4" strokeWidth={1.5} /> Add Coupon
         </button>
       </div>
 
-      {coupons.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-3xl bg-slate-50/50 dark:bg-slate-900/50">
-          <Tag className="w-12 h-12 text-slate-400 mb-4" />
-          <h3 className="text-xl font-semibold text-slate-900 dark:text-white">No coupons created</h3>
-          <p className="text-slate-500 mt-2 max-w-md">Create your first discount code to offer to your customers.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-          {coupons.map((coupon) => {
-            const isExpired = coupon.expiryDate && new Date(coupon.expiryDate) < new Date();
-            const isMaxedOut = coupon.maxUses && coupon.currentUses >= coupon.maxUses;
-            const isUsable = coupon.isActive && !isExpired && !isMaxedOut;
-
-            return (
-              <div 
-                key={coupon.id}
-                className={`flex flex-col p-6 bg-white dark:bg-slate-900 rounded-3xl border shadow-sm transition-all duration-300 hover:shadow-xl ${
-                  isUsable 
-                    ? "border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-700"
-                    : "border-slate-200 dark:border-slate-800 opacity-75 grayscale-[30%]"
+      <div className="bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-[#E3E8EE] overflow-hidden">
+        {/* Toolbar */}
+        <div className="p-4 border-b border-[#E3E8EE] bg-[#F6F9FC] flex flex-col sm:flex-row gap-4 justify-between items-center">
+          <div className="flex items-center gap-2">
+            {(['Active', 'All', 'Expired', 'Deleted'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => { setStatusFilter(tab); setCurrentPage(1); }}
+                className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
+                  statusFilter === tab 
+                    ? 'bg-white text-[#635BFF] border border-[#E3E8EE] shadow-sm' 
+                    : 'text-[#425466] hover:bg-slate-100 border border-transparent'
                 }`}
               >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold tracking-wider font-mono bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg text-slate-900 dark:text-white">
-                      {coupon.code}
-                    </span>
-                    {isUsable ? (
-                      <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                    ) : (
-                      <XCircle className="w-5 h-5 text-rose-500" />
-                    )}
-                  </div>
-                  <div className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                    isUsable ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' 
-                             : 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400'
-                  }`}>
-                    {isUsable ? 'Active' : (isExpired ? 'Expired' : (isMaxedOut ? 'Maxed Out' : 'Inactive'))}
-                  </div>
-                </div>
+                {tab}
+              </button>
+            ))}
+          </div>
 
-                <div className="flex items-baseline gap-1 mb-6 text-indigo-600 dark:text-indigo-400">
-                  <span className="text-4xl font-extrabold tracking-tight">
-                    {coupon.discountType === 'FixedAmount' && '₹'}
-                    {coupon.discountValue}
-                    {coupon.discountType === 'Percentage' && '%'}
-                  </span>
-                  <span className="font-medium text-slate-500 text-sm">OFF</span>
-                </div>
-
-                <div className="space-y-3 mb-6 flex-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Usage</span>
-                    <span className="font-medium text-slate-900 dark:text-white">
-                      {coupon.currentUses} {coupon.maxUses ? `/ ${coupon.maxUses}` : 'uses'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Expires</span>
-                    <span className="font-medium text-slate-900 dark:text-white">{formatDate(coupon.expiryDate)}</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 mt-auto">
-                  <button 
-                    onClick={() => setEditingCoupon(coupon)}
-                    className="w-full py-2 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                    Edit
-                  </button>
-                  <button 
-                    onClick={() => handleDelete(coupon.id)}
-                    className="w-full py-2 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 bg-rose-50 dark:bg-rose-500/10 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-600 dark:text-rose-400"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input 
+              type="text" 
+              placeholder="Search by code..." 
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+              className="w-full pl-9 pr-4 py-2 bg-white border border-[#E3E8EE] rounded-sm text-sm focus:outline-none"
+            />
+          </div>
         </div>
-      )}
+
+        {/* Table */}
+        <div className="overflow-x-auto min-h-[400px]">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-[#F6F9FC] border-b border-[#E3E8EE] text-xs uppercase tracking-wider text-[#425466] font-semibold">
+                <th className="p-4">Code</th>
+                <th className="p-4">Discount</th>
+                <th className="p-4">Status</th>
+                <th className="p-4">Usage</th>
+                <th className="p-4">Expiry Date</th>
+                <th className="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#E3E8EE] bg-white">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="p-8 text-center text-[#425466]">Loading coupons...</td>
+                </tr>
+              ) : paginatedCoupons.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="p-12 text-center border-dashed border-[#E3E8EE] bg-[#F6F9FC]">
+                    <Tag className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+                    <p className="text-[#0A2540] font-medium">No coupons found</p>
+                    <p className="text-sm text-[#425466] mt-1">Try adjusting your filters or create a new one.</p>
+                  </td>
+                </tr>
+              ) : (
+                paginatedCoupons.map((coupon) => (
+                  <tr key={coupon.id} className={`hover:bg-[#F6F9FC] transition-colors ${!coupon.isActive ? 'opacity-60' : ''}`}>
+                    <td className="p-4">
+                      <span className="font-mono font-bold text-[#0A2540] bg-slate-100 px-2.5 py-1 rounded">
+                        {coupon.code}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <span className="font-semibold text-[#0A2540]">
+                        {coupon.discountType === 'FixedAmount' ? '₹' : ''}
+                        {coupon.discountValue}
+                        {coupon.discountType === 'Percentage' ? '%' : ''} OFF
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      {getStatusBadge(coupon)}
+                    </td>
+                    <td className="p-4 text-sm text-[#425466]">
+                      {coupon.currentUses} / {coupon.maxUses || 'âˆž'}
+                    </td>
+                    <td className="p-4 text-sm text-[#425466]">
+                      {coupon.expiryDate ? format(new Date(coupon.expiryDate), 'MMM d, yyyy') : 'No expiry'}
+                    </td>
+                    <td className="p-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button 
+                          onClick={() => setEditingCoupon(coupon)}
+                          disabled={!coupon.isActive}
+                          className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Edit"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(coupon.id)}
+                          disabled={!coupon.isActive}
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Footer */}
+        {!isLoading && filteredCoupons.length > 0 && (
+          <div className="p-4 border-t border-[#E3E8EE] bg-white flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-sm text-[#425466]">
+              Showing {((currentPage - 1) * rowsPerPage) + 1} to {Math.min(currentPage * rowsPerPage, filteredCoupons.length)} of {filteredCoupons.length} coupons
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-sm text-[#425466]">
+                <select
+                  value={rowsPerPage}
+                  onChange={(e) => { setRowsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                  className="bg-white border border-[#E3E8EE] rounded px-2 py-1 focus:outline-none"
+                >
+                  {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size} per page</option>)}
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <div className="text-sm font-medium text-[#0A2540] px-2">
+                  Page {currentPage} of {totalPages || 1}
+                </div>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  className="p-1.5 border border-[#E3E8EE] rounded text-[#425466] hover:bg-[#F6F9FC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
       <CreateCouponModalView
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        onSuccess={fetchCoupons}
+        onSuccess={() => queryClient.invalidateQueries({ queryKey: ['coupons'] })}
       />
 
       <EditCouponModalView
         isOpen={!!editingCoupon}
         onClose={() => setEditingCoupon(null)}
-        onSuccess={fetchCoupons}
+        onSuccess={() => queryClient.invalidateQueries({ queryKey: ['coupons'] })}
         coupon={editingCoupon}
       />
     </div>

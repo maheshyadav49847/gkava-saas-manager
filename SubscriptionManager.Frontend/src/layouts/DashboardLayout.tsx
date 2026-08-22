@@ -1,7 +1,8 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Blocks, ListTodo, LogOut, Home, ChevronRight, ChevronDown, User, Tag, ChevronLeft, Settings } from 'lucide-react';
+﻿import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { LayoutDashboard, Users, Blocks, ListTodo, LogOut, Home, ChevronRight, ChevronDown, User, Tag, ChevronLeft, Settings, Search, Bell, Activity } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
+import { CommandPalette } from '../components/CommandPalette';
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -14,72 +15,84 @@ const navigation = [
 const websiteNavigation = [
   { name: "Platform Settings", href: "/settings", icon: Settings },
   { name: "Team Members", href: "/team-members", icon: User },
+  { name: "Audit Logs", href: "/audit-logs", icon: Activity },
 ];
 
 export default function DashboardLayout() {
-  const location = useLocation();
   const { user, logout } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
+  // Close profile dropdown on click outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsProfileOpen(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setIsNotificationsOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex font-sans text-slate-900 dark:text-slate-100">
+  // Cmd+K shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
+  return (
+    <div className="min-h-screen flex font-sans text-[#0A2540] bg-[#FAFAFA]">
+      
       {/* Sidebar */}
-      <aside className={`${isCollapsed ? 'w-20' : 'w-64'} transition-all duration-300 ease-in-out bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 hidden md:flex flex-col shrink-0 relative`}>
-        <div className={`h-16 flex items-center ${isCollapsed ? 'justify-center px-0' : 'px-6'} border-b border-slate-200 dark:border-slate-800 shrink-0`}>
-          <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/20 shrink-0">
-              <span className="text-white font-bold text-lg leading-none">S</span>
+      <aside className={`${isCollapsed ? 'w-20' : 'w-64'} transition-all duration-300 ease-in-out bg-white border-r border-[#EAEAEA] hidden md:flex flex-col shrink-0 relative z-20`}>
+        <div className={`h-16 flex items-center ${isCollapsed ? 'justify-center px-0' : 'px-6'} border-b border-[#EAEAEA] shrink-0`}>
+          <div className="flex items-center gap-3 overflow-hidden whitespace-nowrap">
+            <div className="w-8 h-8 rounded-sm flex items-center justify-center shadow-[0_2px_10px_rgba(79,70,229,0.2)] shrink-0 overflow-hidden bg-white">
+              <img src="/logo.jpg" alt="Logo" className="w-full h-full object-cover" />
             </div>
             {!isCollapsed && (
-              <span className="text-lg font-bold tracking-tight bg-gradient-to-br from-slate-900 to-slate-600 dark:from-white dark:to-slate-400 bg-clip-text text-transparent">
-                SubManager
+              <span className="text-[15px] font-bold tracking-tight text-[#0A2540]">
+                gkava-saas-manager
               </span>
             )}
           </div>
         </div>
 
-        <nav className={`flex-1 ${isCollapsed ? 'px-2' : 'px-3'} py-6 space-y-1 overflow-y-auto`}>
+        <nav className={`flex-1 ${isCollapsed ? 'px-2' : 'px-4'} py-6 space-y-0.5 overflow-y-auto`}>
           {navigation.map((item) => {
             const isActive = location.pathname === item.href || (item.href !== '/' && location.pathname.startsWith(item.href));
             return (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`group relative flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2.5'} rounded-lg text-sm font-medium transition-all duration-200 ${isActive
-                    ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400"
-                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200"
+                className={`group relative flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2'} rounded text-[13px] font-medium transition-all duration-200 ${isActive
+                    ? "bg-white text-[#635BFF] shadow-[0_2px_5px_rgba(0,0,0,0.04)] border border-[#E3E8EE] font-semibold"
+                    : "text-[#425466] hover:bg-[#F6F9FC] hover:text-[#0A2540] border border-transparent"
                   }`}
               >
-                <item.icon className={`w-5 h-5 shrink-0 ${isActive ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"}`} />
+                <item.icon className={`w-4 h-4 shrink-0 ${isActive ? "text-[#635BFF]" : "text-slate-400 group-hover:text-[#425466]"}`} />
                 {!isCollapsed && <span className="truncate">{item.name}</span>}
-                
-                {/* Popover Tooltip for Collapsed State */}
-                {isCollapsed && (
-                  <div className="absolute left-full ml-4 px-3 py-2 bg-slate-800 dark:bg-slate-700 text-white text-xs font-bold rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
-                    {item.name}
-                    {/* Tooltip Arrow */}
-                    <div className="absolute top-1/2 -left-1 -mt-1 w-2 h-2 bg-slate-800 dark:bg-slate-700 rotate-45"></div>
-                  </div>
-                )}
               </Link>
             );
           })}
           
-          <div className={`pt-4 pb-2 ${isCollapsed ? 'hidden' : 'px-3'}`}>
-            <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Website</p>
+          <div className={`pt-6 pb-2 ${isCollapsed ? 'hidden' : 'px-3'}`}>
+            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">Settings</p>
           </div>
           
           {websiteNavigation.map((item) => {
@@ -88,100 +101,128 @@ export default function DashboardLayout() {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`group relative flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2.5'} rounded-lg text-sm font-medium transition-all duration-200 ${isActive
-                    ? "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400"
-                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200"
+                className={`group relative flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2'} rounded text-[13px] font-medium transition-all duration-200 ${isActive
+                    ? "bg-white text-[#635BFF] shadow-[0_2px_5px_rgba(0,0,0,0.04)] border border-[#E3E8EE] font-semibold"
+                    : "text-[#425466] hover:bg-[#F6F9FC] hover:text-[#0A2540] border border-transparent"
                   }`}
               >
-                <item.icon className={`w-5 h-5 shrink-0 ${isActive ? "text-indigo-600 dark:text-indigo-400" : "text-slate-400"}`} />
+                <item.icon className={`w-4 h-4 shrink-0 ${isActive ? "text-[#635BFF]" : "text-slate-400 group-hover:text-[#425466]"}`} />
                 {!isCollapsed && <span className="truncate">{item.name}</span>}
-                
-                {/* Popover Tooltip for Collapsed State */}
-                {isCollapsed && (
-                  <div className="absolute left-full ml-4 px-3 py-2 bg-slate-800 dark:bg-slate-700 text-white text-xs font-bold rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50">
-                    {item.name}
-                    {/* Tooltip Arrow */}
-                    <div className="absolute top-1/2 -left-1 -mt-1 w-2 h-2 bg-slate-800 dark:bg-slate-700 rotate-45"></div>
-                  </div>
-                )}
               </Link>
             );
           })}
         </nav>
 
         {/* Collapse Toggle Button */}
-        <div className="border-t border-slate-200 dark:border-slate-800 p-2">
+        <div className="border-t border-[#EAEAEA] p-3">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-2 px-3'} py-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors`}
+            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-2 px-3'} py-2 rounded text-slate-400 hover:text-[#425466] hover:bg-[#F6F9FC] transition-colors border border-transparent`}
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
-            {isCollapsed ? <ChevronRight className="w-5 h-5 shrink-0" /> : <ChevronLeft className="w-5 h-5 shrink-0" />}
-            {!isCollapsed && <span className="text-sm font-medium">Collapse</span>}
+            {isCollapsed ? <ChevronRight className="w-4 h-4 shrink-0" /> : <ChevronLeft className="w-4 h-4 shrink-0" />}
+            {!isCollapsed && <span className="text-[13px] font-medium">Collapse</span>}
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
+        {/* Background Decorative Grid */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+        
         {/* Top Header */}
-        <header className="h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-6 shrink-0 z-10 sticky top-0">
-          <div className="flex items-center text-sm font-medium text-slate-500 dark:text-slate-400">
-            <Link to="/dashboard" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors flex items-center gap-1">
-              <Home className="w-4 h-4" />
+        <header className="h-16 bg-white/70 backdrop-blur-xl border-b border-[#EAEAEA] flex items-center justify-between px-8 shrink-0 z-10 sticky top-0">
+          <div className="flex items-center text-[13px] font-medium text-[#425466]">
+            <Link to="/dashboard" className="hover:text-[#0A2540] transition-colors flex items-center gap-1.5 p-1 -ml-1 rounded hover:bg-[#F6F9FC]">
+              <Home className="w-3.5 h-3.5" />
             </Link>
             {location.pathname !== "/dashboard" && (
               <>
-                <ChevronRight className="w-4 h-4 mx-2 text-slate-300 dark:text-slate-600" />
-                <span className="capitalize text-slate-900 dark:text-white font-semibold">
+                <ChevronRight className="w-3.5 h-3.5 mx-2 text-slate-300" />
+                <span className="capitalize text-[#0A2540] font-semibold tracking-tight">
                   {location.pathname.split('/')[1]?.replace(/-/g, ' ')}
                 </span>
               </>
             )}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
+            <div className="flex items-center gap-3 text-slate-400 border-r border-[#E3E8EE] pr-5">
+              <button 
+                onClick={() => setIsCommandPaletteOpen(true)}
+                className="hover:text-[#425466] transition-colors p-1"
+                title="Search (Ctrl+K)"
+              >
+                <Search className="w-4 h-4" />
+              </button>
+              
+              <div className="relative" ref={notifRef}>
+                <button 
+                  onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                  className="hover:text-[#425466] transition-colors relative p-1"
+                >
+                  <Bell className="w-4 h-4" />
+                </button>
+                
+                  {isNotificationsOpen && (
+                  <div className="absolute right-0 mt-2 w-72 bg-white rounded border border-[#EAEAEA] shadow-[0_12px_24px_-4px_rgba(0,0,0,0.08)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="px-4 py-3 border-b border-[#EAEAEA] bg-[#F6F9FC] flex justify-between items-center">
+                      <p className="text-[13px] font-semibold text-[#0A2540]">Notifications</p>
+                      <button className="text-[11px] text-[#635BFF] hover:underline">Mark all read</button>
+                    </div>
+                    <div className="max-h-64 overflow-y-auto p-8 text-center">
+                      <Bell className="w-8 h-8 text-slate-200 mx-auto mb-2" />
+                      <p className="text-[13px] text-[#425466]">No new notifications</p>
+                      <p className="text-[11px] text-slate-400 mt-1">You're all caught up!</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+            
             {/* Profile Dropdown */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center gap-3 hover:bg-slate-100 dark:hover:bg-slate-800 p-1.5 pr-3 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="flex items-center gap-2.5 hover:bg-[#F6F9FC] p-1 pr-2 rounded-full transition-colors border border-transparent hover:border-[#E3E8EE]/60 focus:outline-none"
               >
-                <div className="w-9 h-9 rounded-full bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+                <div className="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs shadow-sm">
                   {user?.name?.charAt(0) || 'U'}
                 </div>
                 <div className="hidden sm:flex flex-col items-start text-left">
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white leading-none">{user?.name || 'User'}</span>
+                  <span className="text-[13px] font-medium text-[#425466] leading-none">{user?.name || 'User'}</span>
                 </div>
-                <ChevronDown className="w-4 h-4 text-slate-400" />
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </button>
 
               {/* Dropdown Menu */}
               {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="p-4 border-b border-slate-200 dark:border-slate-800">
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">{user?.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.email}</p>
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded border border-[#EAEAEA] shadow-[0_12px_24px_-4px_rgba(0,0,0,0.08)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="px-4 py-3 border-b border-[#EAEAEA] bg-[#F6F9FC]">
+                    <p className="text-[13px] font-semibold text-[#0A2540]">{user?.name}</p>
+                    <p className="text-[11px] text-[#425466] mt-0.5 truncate">{user?.email}</p>
                   </div>
-                  <div className="p-2">
+                  <div className="p-1.5">
                     <Link
                       to="/settings"
                       onClick={() => setIsProfileOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-[#425466] hover:bg-[#F6F9FC] rounded-sm transition-colors"
                     >
-                      <User className="w-4 h-4" />
+                      <User className="w-4 h-4 text-slate-400" />
                       Profile Settings
                     </Link>
                   </div>
-                  <div className="p-2 border-t border-slate-200 dark:border-slate-800">
+                  <div className="p-1.5 border-t border-[#EAEAEA]">
                     <button
                       onClick={() => {
                         setIsProfileOpen(false);
                         logout();
+                        navigate('/login');
                       }}
-                      className="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 w-full rounded-lg transition-colors"
+                      className="flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-rose-600 hover:bg-rose-50 w-full rounded-sm transition-colors"
                     >
-                      <LogOut className="w-4 h-4" />
+                      <LogOut className="w-4 h-4 text-rose-400" />
                       Sign Out
                     </button>
                   </div>
@@ -192,10 +233,18 @@ export default function DashboardLayout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6 bg-slate-50/50 dark:bg-slate-950">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto">
+          <div className="w-full p-6 md:p-8">
+            <Outlet />
+          </div>
         </main>
       </div>
+
+      {/* Command Palette Modal */}
+      <CommandPalette 
+        isOpen={isCommandPaletteOpen} 
+        onClose={() => setIsCommandPaletteOpen(false)} 
+      />
     </div>
   );
 }

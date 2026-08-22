@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import * as LucideIcons from 'lucide-react';
 import { Search } from 'lucide-react';
 
@@ -42,7 +42,7 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
     <div className="relative">
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-12 h-12 flex items-center justify-center border border-gray-300 rounded-xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-colors"
+        className="w-12 h-12 flex items-center justify-center border border-gray-300 rounded cursor-pointer hover:border-[#E3E8EE] hover:bg-[#F6F9FC] transition-colors"
       >
         <CurrentIcon size={24} className="text-gray-700" />
       </div>
@@ -50,7 +50,7 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)}></div>
-          <div className="absolute top-14 left-0 z-50 w-72 bg-white border border-gray-200 rounded-2xl shadow-xl overflow-hidden p-3">
+          <div className="absolute top-14 left-0 z-50 w-72 bg-white border border-gray-200 rounded-sm shadow-xl overflow-hidden p-3">
             <div className="relative mb-3">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
               <input
@@ -58,7 +58,7 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
                 placeholder="Search icons..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               />
             </div>
             
@@ -75,9 +75,9 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
                       setIsOpen(false);
                     }}
                     title={iconName}
-                    className={`flex items-center justify-center p-2 rounded-lg transition-colors ${
+                    className={`flex items-center justify-center p-2 rounded-sm transition-colors ${
                       value === iconName 
-                        ? 'bg-indigo-100 text-indigo-600 border border-indigo-200' 
+                        ? 'bg-slate-100 text-[#0A2540] border border-[#E3E8EE]' 
                         : 'text-gray-600 hover:bg-gray-100 border border-transparent'
                     }`}
                   >

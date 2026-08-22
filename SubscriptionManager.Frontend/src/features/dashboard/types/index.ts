@@ -10,4 +10,6 @@ export interface DashboardStats {
   activeSubscriptionsCount: number;
   newTenantsCount: number;
   recentActivities: RecentActivity[];
+  mrrHistory: any[];
+  subscriptionDistribution: any[];
 }

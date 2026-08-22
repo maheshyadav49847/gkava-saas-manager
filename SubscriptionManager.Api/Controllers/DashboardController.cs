@@ -19,7 +19,7 @@ namespace SubscriptionManager.Api.Controllers
         }
 
         [HttpGet("stats")]
-        public async Task<ActionResult<DashboardStatsDto>> GetStats()
+        public async Task<ActionResult> GetStats()
         {
             var stats = await _mediator.Send(new GetDashboardStatsQuery());
             return Ok(stats);

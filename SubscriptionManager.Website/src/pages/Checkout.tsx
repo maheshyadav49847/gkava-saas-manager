@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate, Navigate } from 'react-router-dom';
 import { getPlans, subscribeToPlan, type Plan } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -102,7 +102,7 @@ export function Checkout() {
 
           <form className="checkout-form" onSubmit={handleCheckout}>
             <button type="submit" className="btn checkout-submit-btn" disabled={subscribing}>
-              {subscribing ? 'Generating Secure Link...' : `Proceed to Payment ($${plan.monthlyPrice})`}
+              {subscribing ? 'Generating Secure Link...' : `Proceed to Payment (?${plan.monthlyPrice})`}
             </button>
           </form>
 
@@ -117,14 +117,14 @@ export function Checkout() {
             <h2>Order Summary</h2>
             <div className="summary-item">
               <span className="summary-plan-name">{plan.name}</span>
-              <span className="summary-plan-price">${plan.monthlyPrice} /mo</span>
+              <span className="summary-plan-price">₹{plan.monthlyPrice} /mo</span>
             </div>
             
             <div className="summary-divider"></div>
             
             <div className="summary-total">
               <span>Total due today</span>
-              <span>${plan.monthlyPrice}</span>
+              <span>₹{plan.monthlyPrice}</span>
             </div>
 
             <ul className="summary-features">

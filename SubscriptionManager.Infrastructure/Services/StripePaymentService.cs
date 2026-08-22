@@ -54,10 +54,11 @@ public class StripePaymentService : IPaymentService
             var productService = new ProductService();
             var product = await productService.CreateAsync(productOptions);
 
+            var currency = _configuration["Stripe:Currency"] ?? "usd";
             var priceOptions = new PriceCreateOptions
             {
                 UnitAmount = (long)(plan.MonthlyPrice * 100), // Stripe expects amounts in cents
-                Currency = "usd", // Should make this configurable
+                Currency = currency,
                 Recurring = new PriceRecurringOptions
                 {
                     Interval = "month",
