@@ -1,13 +1,14 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Stripe;
 using SubscriptionManager.Application.Common.Interfaces;
-using SubscriptionManager.Domain.Entities;
 using SubscriptionManager.Domain.Enums;
 using System;
 using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace SubscriptionManager.Api.Controllers;
@@ -16,14 +17,12 @@ namespace SubscriptionManager.Api.Controllers;
 [ApiController]
 public class PaymentWebhookController : ControllerBase
 {
-    private readonly string _webhookSecret;
     private readonly IAppDbContext _context;
     private readonly IWebhookService _webhookService;
     private readonly ILogger<PaymentWebhookController> _logger;
 
-    public PaymentWebhookController(IConfiguration configuration, IAppDbContext context, IWebhookService webhookService, ILogger<PaymentWebhookController> logger)
+    public PaymentWebhookController(IAppDbContext context, IWebhookService webhookService, ILogger<PaymentWebhookController> logger)
     {
-        _webhookSecret = configuration["Stripe:WebhookSecret"] ?? string.Empty;
         _context = context;
         _webhookService = webhookService;
         _logger = logger;
@@ -33,30 +32,43 @@ public class PaymentWebhookController : ControllerBase
     public async Task<IActionResult> Index()
     {
         var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+        var signature = Request.Headers["x-webhook-signature"].FirstOrDefault() ?? string.Empty;
+        var timestamp = Request.Headers["x-webhook-timestamp"].FirstOrDefault() ?? string.Empty;
+
+        var settings = await _context.PlatformSettings.FirstOrDefaultAsync();
+        if (settings == null || string.IsNullOrEmpty(settings.CashfreeSecretKey))
+        {
+            _logger.LogError("Platform Settings not configured with Cashfree Keys.");
+            return BadRequest();
+        }
+
+        if (!VerifySignature(json, timestamp, signature, settings.CashfreeSecretKey))
+        {
+            _logger.LogWarning("Invalid webhook signature from Cashfree.");
+            return Unauthorized();
+        }
 
         try
         {
-            var stripeEvent = EventUtility.ConstructEvent(
-                json,
-                Request.Headers["Stripe-Signature"],
-                _webhookSecret
-            );
+            using var jsonDoc = JsonDocument.Parse(json);
+            var root = jsonDoc.RootElement;
 
-            if (stripeEvent.Type == EventTypes.CheckoutSessionCompleted)
+            if (root.TryGetProperty("type", out var typeProp))
             {
-                var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
-                if (session != null)
+                var eventType = typeProp.GetString();
+                if (eventType == "SUBSCRIPTION_NEW" || eventType == "SUBSCRIPTION_PAYMENT_SUCCESS")
                 {
-                    await HandleCheckoutSessionCompletedAsync(session);
+                    if (root.TryGetProperty("data", out var dataProp) && dataProp.TryGetProperty("subscription", out var subProp))
+                    {
+                        var subscriptionId = subProp.GetProperty("subscription_id").GetString();
+                        if (!string.IsNullOrEmpty(subscriptionId) && subscriptionId.StartsWith("sub_"))
+                        {
+                            await HandleSubscriptionSuccessAsync(subscriptionId);
+                        }
+                    }
                 }
             }
-
             return Ok();
-        }
-        catch (StripeException e)
-        {
-            _logger.LogError(e, "Stripe Webhook Error");
-            return BadRequest();
         }
         catch (Exception e)
         {
@@ -65,39 +77,45 @@ public class PaymentWebhookController : ControllerBase
         }
     }
 
-    private async Task HandleCheckoutSessionCompletedAsync(Stripe.Checkout.Session session)
+    private bool VerifySignature(string payload, string timestamp, string signature, string secretKey)
     {
-        // Get Tenant and Plan ID from metadata
-        if (session.Metadata == null) return;
-        
-        var tenantIdStr = session.Metadata.GetValueOrDefault("TenantId");
-        var planIdStr = session.Metadata.GetValueOrDefault("PlanId");
-        var stripeSubscriptionId = session.SubscriptionId;
-
-        if (Guid.TryParse(tenantIdStr, out var tenantId) && Guid.TryParse(planIdStr, out var planId))
+        try
         {
-            // Activate the subscription in the database
+            string data = timestamp + payload;
+            using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secretKey));
+            var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
+            var expectedSignature = Convert.ToBase64String(hashBytes);
+            return signature == expectedSignature;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private async Task HandleSubscriptionSuccessAsync(string cashfreeSubscriptionId)
+    {
+        var parts = cashfreeSubscriptionId.Split('_');
+        if (parts.Length >= 3 && Guid.TryParse(parts[1], out var tenantId) && Guid.TryParse(parts[2], out var planId))
+        {
             var newSub = new SubscriptionManager.Domain.Entities.Subscription
             {
                 Id = Guid.NewGuid(),
                 TenantId = tenantId,
                 PlanId = planId,
                 StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow.AddMonths(1), // Should ideally read from Stripe billing cycle
+                EndDate = DateTime.UtcNow.AddMonths(1),
                 Status = SubscriptionStatus.Active,
-                PaymentProviderSubscriptionId = stripeSubscriptionId
+                PaymentProviderSubscriptionId = cashfreeSubscriptionId
             };
-
             _context.Subscriptions.Add(newSub);
             await _context.SaveChangesAsync(default);
 
-            // Notify the external SaaS application
             var plan = await _context.Plans.Include(p => p.Application).FirstOrDefaultAsync(p => p.Id == planId);
             if (plan?.Application != null && !string.IsNullOrEmpty(plan.Application.WebhookUrl))
             {
                 _ = _webhookService.NotifySubscriptionCreatedAsync(plan.Application.WebhookUrl, tenantId, plan.Id, plan.Application.AppKey);
             }
-            
             _logger.LogInformation("Successfully provisioned subscription for Tenant {TenantId} on Plan {PlanId}", tenantId, planId);
         }
     }

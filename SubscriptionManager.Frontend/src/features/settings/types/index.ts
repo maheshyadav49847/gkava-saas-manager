@@ -14,5 +14,8 @@ export interface PlatformSettingsDto {
   privacyEmail: string;
   legalEmail: string;
   contactPhone: string;
+  cashfreeAppId?: string;
+  cashfreeSecretKey?: string;
+  cashfreeEnvironment?: string;
   updatedAt: string;
 }

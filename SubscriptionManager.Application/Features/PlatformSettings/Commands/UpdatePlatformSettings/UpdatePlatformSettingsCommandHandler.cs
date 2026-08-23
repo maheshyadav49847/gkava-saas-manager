@@ -31,6 +31,9 @@ public class UpdatePlatformSettingsCommandHandler : IRequestHandler<UpdatePlatfo
                 PrivacyEmail = request.PrivacyEmail,
                 LegalEmail = request.LegalEmail,
                 ContactPhone = request.ContactPhone,
+                CashfreeAppId = request.CashfreeAppId,
+                CashfreeSecretKey = request.CashfreeSecretKey,
+                CashfreeEnvironment = request.CashfreeEnvironment ?? "SANDBOX",
                 UpdatedAt = DateTime.UtcNow
             };
             _context.PlatformSettings.Add(settings);
@@ -41,6 +44,12 @@ public class UpdatePlatformSettingsCommandHandler : IRequestHandler<UpdatePlatfo
             settings.PrivacyEmail = request.PrivacyEmail;
             settings.LegalEmail = request.LegalEmail;
             settings.ContactPhone = request.ContactPhone;
+            settings.CashfreeAppId = request.CashfreeAppId;
+            if (!string.IsNullOrEmpty(request.CashfreeSecretKey) && request.CashfreeSecretKey != "***")
+            {
+                settings.CashfreeSecretKey = request.CashfreeSecretKey;
+            }
+            settings.CashfreeEnvironment = request.CashfreeEnvironment ?? "SANDBOX";
             settings.UpdatedAt = DateTime.UtcNow;
         }
 

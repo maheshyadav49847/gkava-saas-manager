@@ -1,4 +1,4 @@
-﻿using SubscriptionManager.Application.Common.Interfaces;
+using SubscriptionManager.Application.Common.Interfaces;
 using SubscriptionManager.Infrastructure.Data;
 using SubscriptionManager.Api.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -119,7 +119,7 @@ builder.Services.AddQuartz(q =>
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 builder.Services.AddHttpClient<IWebhookService, SubscriptionManager.Infrastructure.Services.WebhookService>();
-builder.Services.AddScoped<IPaymentService, SubscriptionManager.Infrastructure.Services.StripePaymentService>();
+builder.Services.AddHttpClient<IPaymentService, SubscriptionManager.Infrastructure.Services.CashfreePaymentService>();
 builder.Services.AddTransient<IEmailService, SubscriptionManager.Infrastructure.Services.EmailService>();
 
 var app = builder.Build();

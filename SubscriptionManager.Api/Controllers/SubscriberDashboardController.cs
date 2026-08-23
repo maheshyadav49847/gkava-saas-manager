@@ -25,6 +25,7 @@ public class SubscriberDashboardController : ControllerBase
         _configuration = configuration;
     }
 
+
     [HttpGet("summary")]
     public async Task<IActionResult> GetSummary()
     {
@@ -108,20 +109,13 @@ public class SubscriberDashboardController : ControllerBase
             // Save any changes to Tenant (Customer ID) or Plan (Price ID) made by the Payment Service
             await _context.SaveChangesAsync(default);
 
-            return Ok(new { Url = sessionUrl });
+            
+            var settings = await _context.PlatformSettings.FirstOrDefaultAsync();
+            var env = settings?.CashfreeEnvironment ?? "SANDBOX";
+            return Ok(new { Url = sessionUrl, Environment = env });
         }
-        catch (Stripe.StripeException ex)
-        {
-            if (ex.Message.Contains("Invalid API Key provided"))
-            {
-                return BadRequest(new { Message = "Payment system is not yet configured. Please provide actual Stripe API keys in appsettings.json." });
-            }
-            return BadRequest(new { Message = "Payment provider error: " + ex.Message });
-        }
-        catch (System.Exception ex)
-        {
-            return StatusCode(500, new { Message = "An unexpected error occurred during checkout setup." });
-        }
+        catch (Exception ex) when (ex.Message.Contains("Cashfree Payment Gateway is not configured")) { return BadRequest(new { Message = ex.Message }); }
+        catch (System.Exception ex) { return StatusCode(500, new { Message = "An unexpected error occurred during checkout setup. " + ex.Message }); }
     }
 
     [HttpPost("unsubscribe/{id}")]
@@ -154,3 +148,10 @@ public class SubscriberDashboardController : ControllerBase
         return Ok(new { Message = "Successfully unsubscribed from plan." });
     }
 }
+
+
+
+
+
+
+

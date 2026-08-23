@@ -32,6 +32,9 @@ public class GetPlatformSettingsQueryHandler : IRequestHandler<GetPlatformSettin
             PrivacyEmail = settings.PrivacyEmail,
             LegalEmail = settings.LegalEmail,
             ContactPhone = settings.ContactPhone,
+            CashfreeAppId = settings.CashfreeAppId,
+            CashfreeSecretKey = string.IsNullOrEmpty(settings.CashfreeSecretKey) ? null : "***",
+            CashfreeEnvironment = settings.CashfreeEnvironment ?? "SANDBOX",
             UpdatedAt = settings.UpdatedAt
         };
     }

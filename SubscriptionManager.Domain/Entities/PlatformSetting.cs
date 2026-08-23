@@ -9,5 +9,8 @@ public class PlatformSetting
     public string PrivacyEmail { get; set; } = string.Empty;
     public string LegalEmail { get; set; } = string.Empty;
     public string ContactPhone { get; set; } = string.Empty;
+    public string? CashfreeAppId { get; set; }
+    public string? CashfreeSecretKey { get; set; }
+    public string CashfreeEnvironment { get; set; } = "SANDBOX"; // SANDBOX or PRODUCTION
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }

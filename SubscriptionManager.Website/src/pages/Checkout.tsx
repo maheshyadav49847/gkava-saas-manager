@@ -49,9 +49,45 @@ export function Checkout() {
     try {
       const response = await subscribeToPlan(planId, token);
       
-      // Navigate to Stripe Checkout
       if (response && response.url) {
-        window.location.href = response.url;
+        if (response.url.startsWith('sub_session_')) {
+          // Cashfree session ID
+          const script = document.createElement('script');
+          script.src = "https://sdk.cashfree.com/js/v3/cashfree.js";
+          script.onload = () => {
+            try {
+              const envMode = (response as any).environment === "PRODUCTION" ? "production" : "sandbox";
+              const cashfree = (window as any).Cashfree({ mode: envMode });
+              // Use subscriptionsCheckout instead of checkout!
+              cashfree.subscriptionsCheckout({
+                subsSessionId: response.url,
+                redirectTarget: "_self"
+              }).then((result: any) => {
+                  if(result && result.error) {
+                      setError(result.error.message || "Checkout error");
+                      setSubscribing(false);
+                  }
+              }).catch((err: any) => {
+                  setError("Checkout failed: " + err.message);
+                  setSubscribing(false);
+              });
+            } catch (err: any) {
+              console.error("Cashfree SDK error", err);
+              setError("Cashfree SDK failed to initialize: " + (err.message || err));
+              setSubscribing(false);
+            }
+          };
+          script.onerror = () => {
+            setError("Failed to load Cashfree SDK.");
+            setSubscribing(false);
+          };
+          document.body.appendChild(script);
+        } else if (response.url.startsWith('https://')) {
+          window.location.href = response.url;
+        } else {
+          setError("Received invalid session ID from Cashfree.");
+          setSubscribing(false);
+        }
       } else {
         setError("Could not generate secure checkout link.");
         setSubscribing(false);
@@ -64,7 +100,7 @@ export function Checkout() {
   };
 
   if (!isAuthenticated) {
-    return <Navigate to={`/login?planId=${planId}`} replace />;
+    return <Navigate to={"/login?planId=" + planId} replace />;
   }
 
   if (loading) {
@@ -96,19 +132,19 @@ export function Checkout() {
           {error && <div className="checkout-error">{error}</div>}
           
           <p style={{ color: 'var(--color-text-light)', marginBottom: '32px', lineHeight: '1.6' }}>
-            You will be redirected to our secure payment partner (Stripe) to complete your purchase. 
-            Stripe supports Credit/Debit Cards, Google Pay, Apple Pay, and local payment methods like UPI (in supported regions).
+            You will be redirected to our secure payment partner (Cashfree) to complete your purchase. 
+            Cashfree supports Credit/Debit Cards, Net Banking, and local payment methods like UPI.
           </p>
 
           <form className="checkout-form" onSubmit={handleCheckout}>
             <button type="submit" className="btn checkout-submit-btn" disabled={subscribing}>
-              {subscribing ? 'Generating Secure Link...' : `Proceed to Payment (?${plan.monthlyPrice})`}
+              {subscribing ? 'Generating Secure Link...' : 'Proceed to Payment (₹' + plan.monthlyPrice + ')'}
             </button>
           </form>
 
           <div className="checkout-security-badge">
             <Lock size={16} />
-            <span>Payments are securely processed by Stripe. We do not store your card details.</span>
+            <span>Payments are securely processed by Cashfree. We do not store your card details.</span>
           </div>
         </div>
 
