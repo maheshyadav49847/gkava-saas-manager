@@ -30,8 +30,8 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Ticket> Tickets { get; set; } = null!;
     public DbSet<TicketMessage> TicketMessages { get; set; } = null!;
     public DbSet<TenantEntitlementOverride> TenantEntitlementOverrides { get; set; } = null!;
-    public DbSet<WebhookEndpoint> WebhookEndpoints { get; set; } = null!;
-    public DbSet<WebhookDeliveryLog> WebhookDeliveryLogs { get; set; } = null!;
+    public DbSet<AppIntegrationConfig> AppIntegrationConfigs { get; set; } = null!;
+    public DbSet<AppIntegrationHistory> AppIntegrationHistories { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -179,23 +179,9 @@ public class AppDbContext : DbContext, IAppDbContext
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-        modelBuilder.Entity<WebhookEndpoint>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.HasOne(e => e.Tenant)
-                .WithMany()
-                .HasForeignKey(e => e.TenantId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
+        
 
-        modelBuilder.Entity<WebhookDeliveryLog>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.HasOne(e => e.WebhookEndpoint)
-                .WithMany(w => w.DeliveryLogs)
-                .HasForeignKey(e => e.WebhookEndpointId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
+        
 
         // Seed Admin User
         modelBuilder.Entity<AdminUser>().HasData(new AdminUser
@@ -246,5 +232,14 @@ public class AppDbContext : DbContext, IAppDbContext
                 DisplayOrder = 3
             }
         );
+        modelBuilder.Entity<AppIntegrationConfig>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+        });
+
+        modelBuilder.Entity<AppIntegrationHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+        });
     }
 }

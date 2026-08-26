@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Domain.Entities;
 
 namespace SubscriptionManager.Application.Common.Interfaces;
@@ -25,8 +25,8 @@ public interface IAppDbContext
     DbSet<Ticket> Tickets { get; }
     DbSet<TicketMessage> TicketMessages { get; }
     DbSet<TenantEntitlementOverride> TenantEntitlementOverrides { get; }
-    DbSet<WebhookEndpoint> WebhookEndpoints { get; }
-    DbSet<WebhookDeliveryLog> WebhookDeliveryLogs { get; }
+    DbSet<AppIntegrationConfig> AppIntegrationConfigs { get; }
+    DbSet<AppIntegrationHistory> AppIntegrationHistories { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

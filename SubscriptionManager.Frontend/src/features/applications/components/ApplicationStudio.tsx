@@ -17,7 +17,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
   const [previewExpanded, setPreviewExpanded] = useState(false);
   const [formData, setFormData] = useState<Partial<Application>>({
     name: '',
-    webhookUrl: '',
+    websiteUrl: '',
     description: '',
     imageBase64: '',
     displayOrder: 0,
@@ -151,18 +151,18 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                 </div>
               </div>
 
-              {/* Webhook URL and Display Order */}
+              {/* Website URL and Display Order */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1 flex items-center gap-2">
-                    <LinkIcon className="w-4 h-4 text-gray-400" /> Webhook URL
+                    <LinkIcon className="w-4 h-4 text-gray-400" /> Website URL
                   </label>
                   <input
                     type="text"
-                    name="webhookUrl"
-                    value={formData.webhookUrl || ''}
+                    name="websiteUrl"
+                    value={formData.websiteUrl || ''}
                     onChange={handleChange}
-                    placeholder="https://api.yourproduct.com/webhook"
+                    placeholder="https://www.yourproduct.com"
                     className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
                   />
                 </div>

@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using SubscriptionManager.Application.Features.Auth.Commands.Login;
 
 namespace SubscriptionManager.Application.Features.Profile.Commands.UpdateProfile

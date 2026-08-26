@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace SubscriptionManager.Application.Features.PlatformSettings.Queries.GetPlatformSettings;
 

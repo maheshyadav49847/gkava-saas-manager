@@ -1,4 +1,4 @@
-namespace SubscriptionManager.Application.Features.Applications.Queries.GetApplications;
+﻿namespace SubscriptionManager.Application.Features.Applications.Queries.GetApplications;
 
 public class ApplicationModuleDto
 {

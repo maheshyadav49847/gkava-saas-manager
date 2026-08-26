@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using SubscriptionManager.Application.Common.Interfaces;
 using SubscriptionManager.Domain.Entities;
 using Microsoft.EntityFrameworkCore;

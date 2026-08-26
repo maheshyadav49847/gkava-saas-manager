@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using SubscriptionManager.Application.Features.Coupons.Queries.GetCoupons;
 
 namespace SubscriptionManager.Application.Features.Coupons.Queries.ValidateCoupon

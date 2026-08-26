@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using System;
 
 namespace SubscriptionManager.Application.Features.Tenants.Commands.UpdateTenant

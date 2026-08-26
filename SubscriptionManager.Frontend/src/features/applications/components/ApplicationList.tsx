@@ -86,7 +86,7 @@ export const ApplicationList = () => {
         (app.subtitle && app.subtitle.toLowerCase().includes(lower)) ||
         (app.description && app.description.toLowerCase().includes(lower)) ||
         (app.appKey && app.appKey.toLowerCase().includes(lower)) ||
-        (app.webhookUrl && app.webhookUrl.toLowerCase().includes(lower))
+        (app.websiteUrl && app.websiteUrl.toLowerCase().includes(lower))
     );
   }, [applications, searchQuery]);
 
@@ -145,7 +145,7 @@ export const ApplicationList = () => {
               <tr className="bg-[#F6F9FC] border-b border-[#E3E8EE] text-xs uppercase tracking-wider text-[#425466] font-semibold">
                 <th className="p-4">Application</th>
                 <th className="p-4">API Key</th>
-                <th className="p-4">Webhook URL</th>
+                <th className="p-4">Website URL</th>
                 <th className="p-4">Modules</th>
                 <th className="p-4 text-right">Actions</th>
               </tr>
@@ -210,13 +210,13 @@ export const ApplicationList = () => {
                       </div>
                     </td>
                     <td className="p-4">
-                      {app.webhookUrl ? (
-                        <div className="flex items-center gap-1.5 text-xs text-[#425466] max-w-xs truncate" title={app.webhookUrl}>
+                      {app.websiteUrl ? (
+                        <div className="flex items-center gap-1.5 text-xs text-[#425466] max-w-xs truncate" title={app.websiteUrl}>
                           <LinkIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                          <span className="truncate">{app.webhookUrl}</span>
+                          <span className="truncate">{app.websiteUrl}</span>
                         </div>
                       ) : (
-                        <span className="text-xs text-slate-400 italic">No webhook set</span>
+                        <span className="text-xs text-slate-400 italic">No website set</span>
                       )}
                     </td>
                     <td className="p-4">

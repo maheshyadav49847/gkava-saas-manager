@@ -76,6 +76,118 @@ namespace SubscriptionManager.Infrastructure.Migrations
                     b.ToTable("ApiKeys");
                 });
 
+            modelBuilder.Entity("SubscriptionManager.Domain.Entities.AppIntegrationConfig", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Meta_AppId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Meta_AppId_IsSensitive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Meta_BaseUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Meta_BaseUrl_IsSensitive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Meta_ConfigId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Meta_ConfigId_IsSensitive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Meta_SystemUserToken")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Meta_SystemUserToken_IsSensitive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("SyncStatus")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TargetApiSecretEncrypted")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TargetApiUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Telegram_BaseUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Telegram_BaseUrl_IsSensitive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Twilio_AccountSid")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Twilio_AccountSid_IsSensitive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Twilio_AuthToken")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Twilio_AuthToken_IsSensitive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Twilio_SmsFromNumber")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Twilio_SmsFromNumber_IsSensitive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("WhatsApp_WebhookVerifyToken")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("WhatsApp_WebhookVerifyToken_IsSensitive")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppIntegrationConfigs");
+                });
+
+            modelBuilder.Entity("SubscriptionManager.Domain.Entities.AppIntegrationHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConfigSnapshotJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SyncStatus")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppIntegrationHistories");
+                });
+
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.Application", b =>
                 {
                     b.Property<Guid>("Id")
@@ -107,8 +219,7 @@ namespace SubscriptionManager.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("WebhookUrl")
-                        .IsRequired()
+                    b.Property<string>("WebsiteUrl")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -679,72 +790,6 @@ namespace SubscriptionManager.Infrastructure.Migrations
                     b.ToTable("TicketMessages");
                 });
 
-            modelBuilder.Entity("SubscriptionManager.Domain.Entities.WebhookDeliveryLog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("DeliveredAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("ErrorMessage")
-                        .HasColumnType("text");
-
-                    b.Property<string>("EventType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsSuccessful")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("RequestPayload")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("ResponseStatusCode")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("WebhookEndpointId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WebhookEndpointId");
-
-                    b.ToTable("WebhookDeliveryLogs");
-                });
-
-            modelBuilder.Entity("SubscriptionManager.Domain.Entities.WebhookEndpoint", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Secret")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid?>("TenantId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TenantId");
-
-                    b.ToTable("WebhookEndpoints");
-                });
-
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.ApplicationModule", b =>
                 {
                     b.HasOne("SubscriptionManager.Domain.Entities.Application", "Application")
@@ -867,27 +912,6 @@ namespace SubscriptionManager.Infrastructure.Migrations
                     b.Navigation("Ticket");
                 });
 
-            modelBuilder.Entity("SubscriptionManager.Domain.Entities.WebhookDeliveryLog", b =>
-                {
-                    b.HasOne("SubscriptionManager.Domain.Entities.WebhookEndpoint", "WebhookEndpoint")
-                        .WithMany("DeliveryLogs")
-                        .HasForeignKey("WebhookEndpointId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("WebhookEndpoint");
-                });
-
-            modelBuilder.Entity("SubscriptionManager.Domain.Entities.WebhookEndpoint", b =>
-                {
-                    b.HasOne("SubscriptionManager.Domain.Entities.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Tenant");
-                });
-
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.Application", b =>
                 {
                     b.Navigation("Modules");
@@ -913,11 +937,6 @@ namespace SubscriptionManager.Infrastructure.Migrations
             modelBuilder.Entity("SubscriptionManager.Domain.Entities.Ticket", b =>
                 {
                     b.Navigation("Messages");
-                });
-
-            modelBuilder.Entity("SubscriptionManager.Domain.Entities.WebhookEndpoint", b =>
-                {
-                    b.Navigation("DeliveryLogs");
                 });
 #pragma warning restore 612, 618
         }

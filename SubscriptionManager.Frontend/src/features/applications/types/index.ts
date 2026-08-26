@@ -1,4 +1,4 @@
-export interface ApplicationModule {
+﻿export interface ApplicationModule {
   id?: string;
   name: string;
   description: string;
@@ -11,7 +11,7 @@ export interface Application {
   name: string;
   subtitle?: string;
   appKey: string;
-  webhookUrl: string;
+  websiteUrl?: string;
   description: string;
   imageBase64: string;
   displayOrder: number;
@@ -21,7 +21,7 @@ export interface Application {
 export interface CreateApplicationDTO {
   name: string;
   subtitle?: string;
-  webhookUrl: string;
+  websiteUrl?: string;
   description: string;
   imageBase64: string;
   displayOrder: number;
@@ -32,7 +32,7 @@ export interface UpdateApplicationDTO {
   id: string;
   name: string;
   subtitle?: string;
-  webhookUrl: string;
+  websiteUrl?: string;
   description: string;
   imageBase64: string;
   displayOrder: number;

@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 
 namespace SubscriptionManager.Application.Features.Applications.Commands.DeleteApplication;
 

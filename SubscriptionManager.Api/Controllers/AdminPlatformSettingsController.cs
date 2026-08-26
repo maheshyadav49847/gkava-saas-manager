@@ -1,4 +1,4 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SubscriptionManager.Application.Features.PlatformSettings.Queries.GetPlatformSettings;
 using SubscriptionManager.Application.Features.PlatformSettings.Commands.UpdatePlatformSettings;

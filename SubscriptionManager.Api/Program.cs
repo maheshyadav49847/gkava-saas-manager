@@ -1,4 +1,4 @@
-using SubscriptionManager.Application.Common.Interfaces;
+﻿using SubscriptionManager.Application.Common.Interfaces;
 using SubscriptionManager.Infrastructure.Data;
 using SubscriptionManager.Api.Infrastructure;
 using Microsoft.EntityFrameworkCore;

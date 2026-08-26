@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Application.Common.Interfaces;
@@ -49,7 +49,7 @@ public class SubscriberDashboardController : ControllerBase
                 PlanName = s.Plan.Name,
                 ApplicationName = s.Plan.Application.Name,
                 ApplicationKey = s.Plan.Application.AppKey,
-                WebhookUrl = s.Plan.Application.WebhookUrl
+                WebsiteUrl = s.Plan.Application.WebsiteUrl
             })
             .ToListAsync();
 
