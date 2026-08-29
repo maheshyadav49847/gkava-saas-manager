@@ -31,7 +31,11 @@ public class PaymentWebhookController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Index()
     {
-        var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+        using var ms = new MemoryStream();
+        await HttpContext.Request.Body.CopyToAsync(ms);
+        var rawBytes = ms.ToArray();
+        var json = Encoding.UTF8.GetString(rawBytes);
+
         var signature = Request.Headers["x-webhook-signature"].FirstOrDefault() ?? string.Empty;
         var timestamp = Request.Headers["x-webhook-timestamp"].FirstOrDefault() ?? string.Empty;
 
@@ -44,8 +48,10 @@ public class PaymentWebhookController : ControllerBase
 
         if (!VerifySignature(json, timestamp, signature, settings.CashfreeSecretKey))
         {
-            _logger.LogWarning("Invalid webhook signature from Cashfree.");
-            return Unauthorized();
+            _logger.LogWarning("Invalid webhook signature from Cashfree. Timestamp: {Timestamp}, Signature: {Signature}, PayloadLength: {Length}", timestamp, signature, json.Length);
+            // In Test/Sandbox environment, sometimes the Test button sends dummy signature.
+            // We will allow it ONLY if it's explicitly missing/dummy and we are in dev, but for now we enforce it.
+            return Unauthorized(new { Message = "Signature verification failed", Timestamp = timestamp, Signature = signature });
         }
 
         try
