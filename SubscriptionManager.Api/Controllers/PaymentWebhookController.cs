@@ -59,26 +59,46 @@ public class PaymentWebhookController : ControllerBase
             using var jsonDoc = JsonDocument.Parse(json);
             var root = jsonDoc.RootElement;
 
+            string eventType = string.Empty;
+            string subscriptionId = string.Empty;
+
             if (root.TryGetProperty("type", out var typeProp))
             {
-                var eventType = typeProp.GetString()?.ToUpperInvariant();
-                if (eventType == "SUBSCRIPTION_NEW" || 
-                    eventType == "SUBSCRIPTION_PAYMENT_SUCCESS" || 
-                    eventType == "SUBSCRIPTION_STATUS_CHANGED" ||
-                    eventType == "SUBSCRIPTION_AUTH_STATUS")
+                eventType = typeProp.GetString()?.ToUpperInvariant() ?? "";
+                if (root.TryGetProperty("data", out var dataProp) && dataProp.TryGetProperty("subscription", out var subProp))
                 {
-                    if (root.TryGetProperty("data", out var dataProp) && dataProp.TryGetProperty("subscription", out var subProp))
-                    {
-                        var subscriptionId = subProp.GetProperty("subscription_id").GetString();
-                        if (!string.IsNullOrEmpty(subscriptionId) && subscriptionId.StartsWith("sub_"))
-                        {
-                            // If the subscription exists already, we might not want to recreate it. 
-                            // HandleSubscriptionSuccessAsync handles this (we should ensure it checks if exists)
-                            await HandleSubscriptionSuccessAsync(subscriptionId);
-                        }
-                    }
+                    if (subProp.TryGetProperty("subscription_id", out var subIdProp))
+                        subscriptionId = subIdProp.GetString() ?? "";
                 }
             }
+            else if (root.TryGetProperty("cf_event", out var cfEventProp))
+            {
+                eventType = cfEventProp.GetString()?.ToUpperInvariant() ?? "";
+                if (root.TryGetProperty("cf_subscriptionId", out var cfSubIdProp))
+                    subscriptionId = cfSubIdProp.GetString() ?? "";
+                else if (root.TryGetProperty("subscription_id", out var subIdProp2))
+                    subscriptionId = subIdProp2.GetString() ?? "";
+            }
+            
+            _logger.LogInformation("Cashfree Webhook received. Event: {Event}, SubId: {SubId}", eventType, subscriptionId);
+
+            if (eventType == "SUBSCRIPTION_NEW" || 
+                eventType == "SUBSCRIPTION_PAYMENT_SUCCESS" || 
+                eventType == "SUBSCRIPTION_STATUS_CHANGED" ||
+                eventType == "SUBSCRIPTION_STATUS_CHANGE" ||
+                eventType == "SUBSCRIPTION_AUTH_STATUS" ||
+                eventType.Contains("SUCCESS"))
+            {
+                if (!string.IsNullOrEmpty(subscriptionId) && subscriptionId.StartsWith("sub_"))
+                {
+                    await HandleSubscriptionSuccessAsync(subscriptionId);
+                }
+                else 
+                {
+                    _logger.LogWarning("Webhook matched success criteria but invalid or missing subscriptionId.");
+                }
+            }
+
             return Ok();
         }
         catch (Exception e)
