@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -85,7 +85,7 @@ namespace SubscriptionManager.Infrastructure.Services
                 subscription_expiry_time = DateTime.UtcNow.AddYears(5).ToString("yyyy-MM-ddTHH:mm:ssZ"),
                 subscription_meta = new
                 {
-                    return_url = "http://localhost:5170/dashboard?success=true"
+                    return_url = successUrl
                 }
             };
 

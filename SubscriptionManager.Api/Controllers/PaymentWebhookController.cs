@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SubscriptionManager.Application.Common.Interfaces;
@@ -55,14 +55,19 @@ public class PaymentWebhookController : ControllerBase
 
             if (root.TryGetProperty("type", out var typeProp))
             {
-                var eventType = typeProp.GetString();
-                if (eventType == "SUBSCRIPTION_NEW" || eventType == "SUBSCRIPTION_PAYMENT_SUCCESS")
+                var eventType = typeProp.GetString()?.ToUpperInvariant();
+                if (eventType == "SUBSCRIPTION_NEW" || 
+                    eventType == "SUBSCRIPTION_PAYMENT_SUCCESS" || 
+                    eventType == "SUBSCRIPTION_STATUS_CHANGED" ||
+                    eventType == "SUBSCRIPTION_AUTH_STATUS")
                 {
                     if (root.TryGetProperty("data", out var dataProp) && dataProp.TryGetProperty("subscription", out var subProp))
                     {
                         var subscriptionId = subProp.GetProperty("subscription_id").GetString();
                         if (!string.IsNullOrEmpty(subscriptionId) && subscriptionId.StartsWith("sub_"))
                         {
+                            // If the subscription exists already, we might not want to recreate it. 
+                            // HandleSubscriptionSuccessAsync handles this (we should ensure it checks if exists)
                             await HandleSubscriptionSuccessAsync(subscriptionId);
                         }
                     }
@@ -98,6 +103,15 @@ public class PaymentWebhookController : ControllerBase
         var parts = cashfreeSubscriptionId.Split('_');
         if (parts.Length >= 3 && Guid.TryParse(parts[1], out var tenantId) && Guid.TryParse(parts[2], out var planId))
         {
+            // Check if this subscription is already processed
+            var existingSub = await _context.Subscriptions.FirstOrDefaultAsync(s => s.PaymentProviderSubscriptionId == cashfreeSubscriptionId);
+            if (existingSub != null)
+            {
+                // Optionally update status if it changed, but for now just return
+                _logger.LogInformation("Subscription {SubId} already exists, ignoring duplicate webhook.", cashfreeSubscriptionId);
+                return;
+            }
+
             var newSub = new SubscriptionManager.Domain.Entities.Subscription
             {
                 Id = Guid.NewGuid(),
