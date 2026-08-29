@@ -1,4 +1,4 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Application, CreateApplicationDTO, UpdateApplicationDTO } from '../types';
 import { getApplications, createApplication, updateApplication, deleteApplication } from '../api';
@@ -35,9 +35,10 @@ export const ApplicationList = () => {
       setIsDeleteModalOpen(false);
       setDeletingApp(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Failed to delete application", error);
-      alert("Error deleting application");
+      const errorMsg = error.response?.data || "Error deleting application";
+      alert(errorMsg);
     }
   });
 

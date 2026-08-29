@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SubscriptionManager.Application.Features.Applications.Commands.CreateApplication;
@@ -49,10 +49,17 @@ public class ApplicationsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(Guid id)
     {
-        var result = await _mediator.Send(new SubscriptionManager.Application.Features.Applications.Commands.DeleteApplication.DeleteApplicationCommand { Id = id });
-        if (!result)
-            return NotFound();
+        try
+        {
+            var result = await _mediator.Send(new SubscriptionManager.Application.Features.Applications.Commands.DeleteApplication.DeleteApplicationCommand { Id = id });
+            if (!result)
+                return NotFound();
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException)
+        {
+            return BadRequest("Cannot delete application. It has active plans or subscriptions attached to it.");
+        }
     }
 }
