@@ -115,14 +115,20 @@ jobs:
               export FRONTEND_PORT=9000
               export BACKEND_PORT=9080
               export WEBSITE_PORT=9100
+              export FRONTEND_URL="https://app.gkava.com"
+              export WEBSITE_URL="https://gkava.com"
             elif [ "$TARGET_ENV" = "dev" ]; then
               export FRONTEND_PORT=9002
               export BACKEND_PORT=9082
               export WEBSITE_PORT=9102
+              export FRONTEND_URL="https://app.dev.gkava.com"
+              export WEBSITE_URL="https://dev.gkava.com"
             elif [ "$TARGET_ENV" = "sandbox" ]; then
               export FRONTEND_PORT=9001
               export BACKEND_PORT=9081
               export WEBSITE_PORT=9101
+              export FRONTEND_URL="https://app.sandbox.gkava.com"
+              export WEBSITE_URL="https://sandbox.gkava.com"
             fi
             
             # Export variables for docker-compose file to resolve

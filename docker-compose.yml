@@ -32,3 +32,5 @@ services:
       - ASPNETCORE_URLS=http://+:${BACKEND_PORT:-9080}
       - AllowedOrigins=http://${VPS_IP}
       - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING:-Host=localhost;Database=GkavaSaasDb_Prod;Username=postgres;Password=sa}
+      - FrontendUrl=${FRONTEND_URL:-http://localhost:5180}
+      - WebsiteUrl=${WEBSITE_URL:-http://localhost:5170}
