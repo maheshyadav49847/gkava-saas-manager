@@ -65,10 +65,13 @@ public class PaymentWebhookController : ControllerBase
             if (root.TryGetProperty("type", out var typeProp))
             {
                 eventType = typeProp.GetString()?.ToUpperInvariant() ?? "";
-                if (root.TryGetProperty("data", out var dataProp) && dataProp.TryGetProperty("subscription", out var subProp))
+                if (root.TryGetProperty("data", out var dataProp))
                 {
-                    if (subProp.TryGetProperty("subscription_id", out var subIdProp))
-                        subscriptionId = subIdProp.GetString() ?? "";
+                    if (dataProp.TryGetProperty("subscription_details", out var subProp) || dataProp.TryGetProperty("subscription", out subProp))
+                    {
+                        if (subProp.TryGetProperty("subscription_id", out var subIdProp))
+                            subscriptionId = subIdProp.GetString() ?? "";
+                    }
                 }
             }
             else if (root.TryGetProperty("cf_event", out var cfEventProp))
