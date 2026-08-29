@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Application.Common.Interfaces;
 
@@ -25,6 +25,7 @@ public class UpdateApplicationCommandHandler : IRequestHandler<UpdateApplication
         application.Name = request.Name;
         application.Subtitle = request.Subtitle;
         application.WebsiteUrl = request.WebsiteUrl;
+        application.WebhookUrl = request.WebhookUrl;
         application.Description = request.Description;
         if (!string.IsNullOrEmpty(request.ImageBase64))
         {

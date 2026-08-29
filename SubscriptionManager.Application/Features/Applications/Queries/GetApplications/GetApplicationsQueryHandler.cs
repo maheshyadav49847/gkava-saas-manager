@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Application.Common.Interfaces;
 
@@ -24,6 +24,7 @@ public class GetApplicationsQueryHandler : IRequestHandler<GetApplicationsQuery,
                 Subtitle = a.Subtitle,
                 AppKey = a.AppKey,
                 WebsiteUrl = a.WebsiteUrl,
+                WebhookUrl = a.WebhookUrl,
                 Description = a.Description,
                 ImageBase64 = a.ImageBase64,
                 DisplayOrder = a.DisplayOrder,

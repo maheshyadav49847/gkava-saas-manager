@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 
 namespace SubscriptionManager.Application.Features.Applications.Commands.UpdateApplication;
 
@@ -8,6 +8,7 @@ public class UpdateApplicationCommand : IRequest<bool>
     public string Name { get; set; } = string.Empty;
     public string Subtitle { get; set; } = string.Empty;
     public string? WebsiteUrl { get; set; }
+    public string? WebhookUrl { get; set; }
     public string Description { get; set; } = string.Empty;
     public string ImageBase64 { get; set; } = string.Empty;
     public int DisplayOrder { get; set; }

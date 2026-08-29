@@ -155,9 +155,16 @@ public class PaymentWebhookController : ControllerBase
             await _context.SaveChangesAsync(default);
 
             var plan = await _context.Plans.Include(p => p.Application).FirstOrDefaultAsync(p => p.Id == planId);
-            if (plan?.Application != null && !string.IsNullOrEmpty(plan.Application.WebsiteUrl))
+            var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId);
+            
+            if (plan?.Application != null && !string.IsNullOrEmpty(plan.Application.WebhookUrl) && tenant != null)
             {
-                _ = _webhookService.NotifySubscriptionCreatedAsync(plan.Application.WebsiteUrl, tenantId, plan.Id, plan.Application.AppKey);
+                _ = _webhookService.NotifySubscriptionCreatedAsync(plan.Application.WebhookUrl, tenant, plan, newSub, plan.Application.AppKey);
+            }
+            else if (plan?.Application != null && !string.IsNullOrEmpty(plan.Application.WebsiteUrl) && tenant != null)
+            {
+                // Fallback for legacy compatibility
+                _ = _webhookService.NotifySubscriptionCreatedAsync(plan.Application.WebsiteUrl, tenant, plan, newSub, plan.Application.AppKey);
             }
             _logger.LogInformation("Successfully provisioned subscription for Tenant {TenantId} on Plan {PlanId}", tenantId, planId);
         }

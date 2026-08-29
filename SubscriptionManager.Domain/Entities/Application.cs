@@ -1,4 +1,4 @@
-﻿namespace SubscriptionManager.Domain.Entities;
+namespace SubscriptionManager.Domain.Entities;
 
 public class Application
 {
@@ -7,6 +7,7 @@ public class Application
     public string Subtitle { get; set; } = string.Empty;
     public string AppKey { get; set; } = Guid.NewGuid().ToString("N");
     public string? WebsiteUrl { get; set; }
+    public string? WebhookUrl { get; set; }
     
     // Marketing Fields
     public string Description { get; set; } = string.Empty;

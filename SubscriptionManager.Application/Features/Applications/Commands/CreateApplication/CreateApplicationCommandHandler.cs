@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using SubscriptionManager.Domain.Entities;
 using SubscriptionManager.Application.Common.Interfaces;
 
@@ -20,6 +20,7 @@ public class CreateApplicationCommandHandler : IRequestHandler<CreateApplication
             Name = request.Name,
             Subtitle = request.Subtitle,
             WebsiteUrl = request.WebsiteUrl,
+            WebhookUrl = request.WebhookUrl,
             AppKey = Guid.NewGuid().ToString("N"),
             Description = request.Description,
             ImageBase64 = request.ImageBase64,

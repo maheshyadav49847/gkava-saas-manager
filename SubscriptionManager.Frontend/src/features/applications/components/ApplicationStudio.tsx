@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { X, Plus, Trash2, Image as ImageIcon, Type, Link as LinkIcon, AlignLeft, Hash, ChevronDown, ChevronUp, ArrowRight, Save, Loader2 } from "lucide-react";
 import * as LucideIcons from 'lucide-react';
@@ -18,6 +18,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
   const [formData, setFormData] = useState<Partial<Application>>({
     name: '',
     websiteUrl: '',
+    webhookUrl: '',
     description: '',
     imageBase64: '',
     displayOrder: 0,
@@ -151,22 +152,37 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
                 </div>
               </div>
 
-              {/* Website URL and Display Order */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1 flex items-center gap-2">
-                    <LinkIcon className="w-4 h-4 text-gray-400" /> Website URL
-                  </label>
-                  <input
-                    type="text"
-                    name="websiteUrl"
-                    value={formData.websiteUrl || ''}
-                    onChange={handleChange}
-                    placeholder="https://www.yourproduct.com"
-                    className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
-                  />
+              {/* Website URL, Webhook URL, and Display Order */}
+              <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1 flex items-center gap-2">
+                      <LinkIcon className="w-4 h-4 text-gray-400" /> Website URL
+                    </label>
+                    <input
+                      type="text"
+                      name="websiteUrl"
+                      value={formData.websiteUrl || ''}
+                      onChange={handleChange}
+                      placeholder="https://www.yourproduct.com"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1 flex items-center gap-2">
+                      <LinkIcon className="w-4 h-4 text-gray-400" /> Webhook URL (For Generic Payload)
+                    </label>
+                    <input
+                      type="text"
+                      name="webhookUrl"
+                      value={formData.webhookUrl || ''}
+                      onChange={handleChange}
+                      placeholder="https://api.yourproduct.com/webhooks/subscription"
+                      className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+                    />
+                  </div>
                 </div>
-                <div>
+                <div className="w-1/2 pr-2">
                   <label className="block text-sm font-semibold text-gray-700 mb-1 flex items-center gap-2">
                     <Hash className="w-4 h-4 text-gray-400" /> Display Order
                   </label>

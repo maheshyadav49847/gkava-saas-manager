@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Linq;
 using SubscriptionManager.Application.Common.Interfaces;
 
 namespace SubscriptionManager.Infrastructure.Services;
@@ -16,11 +17,10 @@ public class WebhookService : IWebhookService
         _httpClient = httpClient;
     }
 
-    public async Task NotifySubscriptionCreatedAsync(string webhookUrl, Guid tenantId, Guid planId, string applicationKey)
+    public async Task NotifySubscriptionCreatedAsync(string webhookUrl, SubscriptionManager.Domain.Entities.Tenant tenant, SubscriptionManager.Domain.Entities.Plan plan, SubscriptionManager.Domain.Entities.Subscription subscription, string applicationKey)
     {
         if (string.IsNullOrWhiteSpace(webhookUrl))
         {
-            // If the application doesn't have a webhook URL configured, we just skip it.
             return;
         }
 
@@ -28,23 +28,52 @@ public class WebhookService : IWebhookService
         {
             var payload = new
             {
-                EventType = "subscription_created",
-                TenantId = tenantId,
-                PlanId = planId,
-                ApplicationKey = applicationKey,
-                Timestamp = DateTime.UtcNow
+                @event = "subscription_created",
+                applicationKey = applicationKey,
+                timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                data = new 
+                {
+                    tenant = new 
+                    {
+                        id = tenant.Id,
+                        name = tenant.Name,
+                        email = tenant.Email,
+                        phone = tenant.Phone,
+                        passwordHash = tenant.PasswordHash
+                    },
+                    subscription = new 
+                    {
+                        id = subscription.Id,
+                        providerSubscriptionId = subscription.PaymentProviderSubscriptionId,
+                        startDate = subscription.StartDate.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        endDate = subscription.EndDate.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                        status = subscription.Status.ToString()
+                    },
+                    plan = new 
+                    {
+                        id = plan.Id,
+                        name = plan.Name,
+                        monthlyPrice = plan.MonthlyPrice,
+                        yearlyPrice = plan.YearlyPrice
+                    }
+                }
             };
 
             var jsonPayload = JsonSerializer.Serialize(payload);
             var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            // For enterprise resilience, we would add Polly retries here.
-            // For now, we perform a basic POST request.
+            // Optionally add secret header if available
+            if (!string.IsNullOrWhiteSpace(applicationKey))
+            {
+                _httpClient.DefaultRequestHeaders.Remove("X-Signature");
+                // basic generic signature or token
+                _httpClient.DefaultRequestHeaders.Add("X-Signature", applicationKey);
+            }
+
             var response = await _httpClient.PostAsync(webhookUrl, content);
             
             if (!response.IsSuccessStatusCode)
             {
-                // In a real enterprise app, we'd log this and potentially add to a retry queue (e.g. RabbitMQ / Hangfire)
                 Console.WriteLine($"[Webhook Warning] Failed to notify {webhookUrl}. Status: {response.StatusCode}");
             }
             else
