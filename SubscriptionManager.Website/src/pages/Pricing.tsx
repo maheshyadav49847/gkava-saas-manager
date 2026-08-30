@@ -35,6 +35,16 @@ export function Pricing() {
     fetchData();
   }, []);
 
+  // Determine the active application ID
+  const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (appId) {
+      setSelectedAppId(appId);
+    }
+    // If no appId in URL, we leave selectedAppId as null to show the selection screen
+  }, [appId]);
+
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
       (entries) => {
@@ -56,21 +66,13 @@ export function Pricing() {
         observerRef.current.disconnect();
       }
     };
-  }, [plans]); // Re-run when plans update
-
-  // Determine the active application ID
-  const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (appId) {
-      setSelectedAppId(appId);
-    }
-    // If no appId in URL, we leave selectedAppId as null to show the selection screen
-  }, [appId]);
+  }, [plans, selectedAppId]); // Re-run when plans update or when a different app is selected
 
   // Filter plans based on the selected application
-  const displayPlans = selectedAppId ? plans.filter(p => p.applicationId === selectedAppId) : [];
-  const appName = applications.find(a => a.id === selectedAppId)?.name || null;
+  const displayPlans = selectedAppId 
+    ? plans.filter(p => p.applicationId && p.applicationId.toLowerCase() === selectedAppId.toLowerCase()) 
+    : [];
+  const appName = applications.find(a => a.id && selectedAppId && a.id.toLowerCase() === selectedAppId.toLowerCase())?.name || null;
 
   // Render product selection screen if no product is selected
   if (!selectedAppId && applications.length > 0) {
