@@ -76,7 +76,7 @@ export function Pricing() {
   if (!selectedAppId && applications.length > 0) {
     return (
       <div className="pricing-page" style={{ minHeight: '80vh', paddingTop: '6rem' }}>
-        <header className="pricing-header reveal-on-scroll text-center mb-12">
+        <header className="pricing-header reveal-on-scroll" style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <div className="hero-badge-left" style={{ margin: '0 auto 1.5rem', display: 'inline-flex' }}>
             <span className="badge-dot"></span>
             SUBSCRIPTION PLANS
@@ -89,25 +89,23 @@ export function Pricing() {
           </p>
         </header>
 
-        <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20 reveal-on-scroll">
+        <div className="product-select-grid reveal-on-scroll">
           {applications.map((app, index) => (
             <div 
               key={app.id} 
               onClick={() => setSelectedAppId(app.id)}
-              className="bg-white rounded-2xl p-8 border border-gray-100 hover:border-indigo-500 transition-all cursor-pointer shadow-sm hover:shadow-xl group text-center"
+              className="product-select-card"
               style={{ transitionDelay: `${index * 0.1}s` }}
             >
-              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                <span className="text-2xl font-bold text-indigo-600">
-                  {app.name.charAt(0).toUpperCase()}
-                </span>
+              <div className="product-select-icon">
+                {app.name.charAt(0).toUpperCase()}
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">{app.name}</h3>
-              <p className="text-sm text-gray-500 line-clamp-2">
+              <h3 className="product-select-title">{app.name}</h3>
+              <p className="product-select-desc">
                 {app.subtitle || 'View subscription plans and features'}
               </p>
-              <div className="mt-6 inline-flex items-center text-sm font-semibold text-indigo-600 group-hover:text-indigo-700">
-                View Pricing <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
+              <div className="product-select-link">
+                View Pricing <ArrowRight size={16} />
               </div>
             </div>
           ))}
