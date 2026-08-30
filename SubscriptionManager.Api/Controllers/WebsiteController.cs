@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -30,38 +30,14 @@ public class WebsiteController : ControllerBase
     [HttpGet("applications")]
     public async Task<ActionResult<List<ApplicationDto>>> GetApplications()
     {
-        var cacheKey = "Website_Applications";
-        
-        // Return from cache if available, otherwise fetch and cache
-        if (!_cache.TryGetValue(cacheKey, out List<ApplicationDto>? applications))
-        {
-            applications = await _mediator.Send(new GetApplicationsQuery());
-            
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(CacheDuration);
-                
-            _cache.Set(cacheKey, applications, cacheEntryOptions);
-        }
-        
+        var applications = await _mediator.Send(new GetApplicationsQuery());
         return Ok(applications);
     }
 
     [HttpGet("plans")]
     public async Task<ActionResult<List<PlanDto>>> GetPlans()
     {
-        var cacheKey = "Website_Plans";
-        
-        // Return from cache if available, otherwise fetch and cache
-        if (!_cache.TryGetValue(cacheKey, out List<PlanDto>? plans))
-        {
-            plans = await _mediator.Send(new GetPlansQuery());
-            
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(CacheDuration);
-                
-            _cache.Set(cacheKey, plans, cacheEntryOptions);
-        }
-        
+        var plans = await _mediator.Send(new GetPlansQuery());
         return Ok(plans);
     }
 

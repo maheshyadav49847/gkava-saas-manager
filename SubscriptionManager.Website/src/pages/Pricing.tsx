@@ -58,21 +58,63 @@ export function Pricing() {
     };
   }, [plans]); // Re-run when plans update
 
-  // Determine the active application ID (either from URL, selected state, or default to first app)
+  // Determine the active application ID
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
 
   useEffect(() => {
     if (appId) {
       setSelectedAppId(appId);
-    } else if (applications.length > 0 && !selectedAppId) {
-      // Default to the first application's ID if no appId in URL
-      setSelectedAppId(applications[0].id);
     }
-  }, [appId, applications]);
+    // If no appId in URL, we leave selectedAppId as null to show the selection screen
+  }, [appId]);
 
   // Filter plans based on the selected application
-  const displayPlans = plans.filter(p => p.applicationId === selectedAppId);
+  const displayPlans = selectedAppId ? plans.filter(p => p.applicationId === selectedAppId) : [];
   const appName = applications.find(a => a.id === selectedAppId)?.name || null;
+
+  // Render product selection screen if no product is selected
+  if (!selectedAppId && applications.length > 0) {
+    return (
+      <div className="pricing-page" style={{ minHeight: '80vh', paddingTop: '6rem' }}>
+        <header className="pricing-header reveal-on-scroll text-center mb-12">
+          <div className="hero-badge-left" style={{ margin: '0 auto 1.5rem', display: 'inline-flex' }}>
+            <span className="badge-dot"></span>
+            SUBSCRIPTION PLANS
+          </div>
+          <h1 className="pricing-title">
+            Select a <span className="highlight-solid">Product.</span>
+          </h1>
+          <p className="pricing-subtitle" style={{ maxWidth: '600px', margin: '0 auto' }}>
+            Choose one of our enterprise SaaS products below to view its pricing plans and features.
+          </p>
+        </header>
+
+        <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20 reveal-on-scroll">
+          {applications.map((app, index) => (
+            <div 
+              key={app.id} 
+              onClick={() => setSelectedAppId(app.id)}
+              className="bg-white rounded-2xl p-8 border border-gray-100 hover:border-indigo-500 transition-all cursor-pointer shadow-sm hover:shadow-xl group text-center"
+              style={{ transitionDelay: `${index * 0.1}s` }}
+            >
+              <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                <span className="text-2xl font-bold text-indigo-600">
+                  {app.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{app.name}</h3>
+              <p className="text-sm text-gray-500 line-clamp-2">
+                {app.subtitle || 'View subscription plans and features'}
+              </p>
+              <div className="mt-6 inline-flex items-center text-sm font-semibold text-indigo-600 group-hover:text-indigo-700">
+                View Pricing <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="pricing-page">
@@ -80,10 +122,11 @@ export function Pricing() {
       <header className="pricing-header reveal-on-scroll">
         <div
           className="hero-badge-left"
-          style={{ margin: '0 auto 1.5rem', display: 'inline-flex' }}
+          style={{ margin: '0 auto 1.5rem', display: 'inline-flex', cursor: 'pointer' }}
+          onClick={() => setSelectedAppId(null)}
         >
           <span className="badge-dot"></span>
-          PRICING PLANS
+          ← BACK TO PRODUCTS
         </div>
         <h1 className="pricing-title">
           {appName ? `Pricing for ${appName}.` : (
@@ -94,31 +137,6 @@ export function Pricing() {
           No hidden fees. No surprises. Choose the plan that fits your stage and
           scale as you grow.
         </p>
-
-        {/* Application Tabs (Only show if no appId is forced in URL and there are multiple apps) */}
-        {!appId && applications.length > 1 && (
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
-            {applications.map(app => (
-              <button
-                key={app.id}
-                onClick={() => setSelectedAppId(app.id)}
-                style={{
-                  padding: '0.5rem 1rem',
-                  borderRadius: '2rem',
-                  fontSize: '0.9rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  border: selectedAppId === app.id ? 'none' : '1px solid #e5e7eb',
-                  backgroundColor: selectedAppId === app.id ? '#4f46e5' : '#ffffff',
-                  color: selectedAppId === app.id ? '#ffffff' : '#374151',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {app.name}
-              </button>
-            ))}
-          </div>
-        )}
 
         {/* Monthly / Annual Toggle */}
         <div className="pricing-toggle">
