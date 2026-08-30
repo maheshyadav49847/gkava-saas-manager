@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { getPlans, getApplications, type Plan, type Application } from '../services/api';
@@ -58,9 +58,21 @@ export function Pricing() {
     };
   }, [plans]); // Re-run when plans update
 
-  // Filter plans based on the selected application (if provided)
-  const displayPlans = appId ? plans.filter(p => p.applicationId === appId) : plans;
-  const appName = appId ? applications.find(a => a.id === appId)?.name : null;
+  // Determine the active application ID (either from URL, selected state, or default to first app)
+  const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (appId) {
+      setSelectedAppId(appId);
+    } else if (applications.length > 0 && !selectedAppId) {
+      // Default to the first application's ID if no appId in URL
+      setSelectedAppId(applications[0].id);
+    }
+  }, [appId, applications]);
+
+  // Filter plans based on the selected application
+  const displayPlans = plans.filter(p => p.applicationId === selectedAppId);
+  const appName = applications.find(a => a.id === selectedAppId)?.name || null;
 
   return (
     <div className="pricing-page">
@@ -82,6 +94,31 @@ export function Pricing() {
           No hidden fees. No surprises. Choose the plan that fits your stage and
           scale as you grow.
         </p>
+
+        {/* Application Tabs (Only show if no appId is forced in URL and there are multiple apps) */}
+        {!appId && applications.length > 1 && (
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
+            {applications.map(app => (
+              <button
+                key={app.id}
+                onClick={() => setSelectedAppId(app.id)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  borderRadius: '2rem',
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  border: selectedAppId === app.id ? 'none' : '1px solid #e5e7eb',
+                  backgroundColor: selectedAppId === app.id ? '#4f46e5' : '#ffffff',
+                  color: selectedAppId === app.id ? '#ffffff' : '#374151',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {app.name}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Monthly / Annual Toggle */}
         <div className="pricing-toggle">

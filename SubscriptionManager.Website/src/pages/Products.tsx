@@ -140,8 +140,8 @@ export function Products() {
                     </div>
                   </div>
 
-                  {app.webhookUrl && (
-                    <a href={app.webhookUrl} target="_blank" rel="noreferrer" style={{ color: '#4f46e5', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '1rem', marginTop: '0.75rem' }}>
+                  {app.websiteUrl && (
+                    <a href={app.websiteUrl} target="_blank" rel="noreferrer" style={{ color: '#4f46e5', fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontSize: '1rem', marginTop: '0.75rem' }}>
                       Visit Website <ArrowRight size={16} />
                     </a>
                   )}
