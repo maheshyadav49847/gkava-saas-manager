@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using SubscriptionManager.Application.Common.Interfaces;
 using SubscriptionManager.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +19,9 @@ namespace SubscriptionManager.Application.Features.Coupons.Commands.CreateCoupon
 
         public async Task<Guid> Handle(CreateCouponCommand request, CancellationToken cancellationToken)
         {
-            // Validate code uniqueness
             if (await _context.Coupons.AnyAsync(c => c.Code.ToLower() == request.Code.ToLower(), cancellationToken))
             {
-                throw new Exception("A coupon with this code already exists.");
+                throw new ArgumentException("A coupon with this code already exists.");
             }
 
             var coupon = new Coupon

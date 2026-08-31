@@ -15,6 +15,11 @@ public class UpdateApplicationCommandHandler : IRequestHandler<UpdateApplication
 
     public async Task<bool> Handle(UpdateApplicationCommand request, CancellationToken cancellationToken)
     {
+        if (await _context.Applications.AnyAsync(a => a.Name == request.Name && a.Id != request.Id, cancellationToken))
+        {
+            throw new ArgumentException("Another application with this name already exists.");
+        }
+
         var application = await _context.Applications
             .Include(a => a.Modules)
             .FirstOrDefaultAsync(a => a.Id == request.Id, cancellationToken);

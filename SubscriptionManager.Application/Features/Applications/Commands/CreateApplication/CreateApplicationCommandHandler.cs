@@ -1,6 +1,7 @@
 using MediatR;
 using SubscriptionManager.Domain.Entities;
 using SubscriptionManager.Application.Common.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace SubscriptionManager.Application.Features.Applications.Commands.CreateApplication;
 
@@ -15,6 +16,11 @@ public class CreateApplicationCommandHandler : IRequestHandler<CreateApplication
 
     public async Task<Guid> Handle(CreateApplicationCommand request, CancellationToken cancellationToken)
     {
+        if (await _context.Applications.AnyAsync(a => a.Name == request.Name, cancellationToken))
+        {
+            throw new ArgumentException("An application with this name already exists.");
+        }
+
         var entity = new SubscriptionManager.Domain.Entities.Application
         {
             Name = request.Name,

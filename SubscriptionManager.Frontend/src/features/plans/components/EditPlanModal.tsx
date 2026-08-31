@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { X, Loader2, Edit2, Save } from 'lucide-react';
 import { updatePlan, UpdatePlanDto } from '../api';
@@ -53,9 +53,10 @@ export const EditPlanModal = ({ isOpen, onClose, onSuccess, plan }: EditPlanModa
       onSuccess();
       onClose();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Failed to update plan', error);
-      alert('Failed to update plan');
+      const message = error.response?.data?.detail || 'Failed to update plan';
+      alert(message);
     }
   });
 

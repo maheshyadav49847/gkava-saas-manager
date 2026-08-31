@@ -1,10 +1,11 @@
-﻿import { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Edit2, Trash2, ListTodo, AlertCircle, Search, Star } from 'lucide-react';
 import { Plan } from '../types';
 import { getPlans, deletePlan } from '../api';
 import { CreatePlanModal } from './CreatePlanModal';
 import { EditPlanModal } from './EditPlanModal';
+import { getApplications } from '../../applications/api';
 
 export const PlansList = () => {
   const queryClient = useQueryClient();
@@ -12,13 +13,21 @@ export const PlansList = () => {
   const [editingPlan, setEditingPlan] = useState<Plan | null>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedAppFilter, setSelectedAppFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const { data: plans = [], isLoading, isError, error } = useQuery({
+  const { data: plans = [], isLoading: isPlansLoading, isError, error } = useQuery({
     queryKey: ['plans'],
     queryFn: getPlans
   });
+
+  const { data: applications = [], isLoading: isAppsLoading } = useQuery({
+    queryKey: ['applications'],
+    queryFn: getApplications
+  });
+  
+  const isLoading = isPlansLoading || isAppsLoading;
 
   const deleteMutation = useMutation({
     mutationFn: deletePlan,
@@ -37,15 +46,26 @@ export const PlansList = () => {
   };
 
   const filteredPlans = useMemo(() => {
-    if (!searchQuery.trim()) return plans;
-    const query = searchQuery.toLowerCase().trim();
-    return plans.filter((plan) => {
-      const nameMatch = plan.name?.toLowerCase().includes(query);
-      const descMatch = plan.description?.toLowerCase().includes(query);
-      const featureMatch = plan.features?.some((f) => f.toLowerCase().includes(query));
-      return nameMatch || descMatch || featureMatch;
-    });
-  }, [plans, searchQuery]);
+    let result = plans;
+    
+    // Filter by Application
+    if (selectedAppFilter) {
+      result = result.filter(p => p.applicationId === selectedAppFilter);
+    }
+    
+    // Filter by Search Query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      result = result.filter((plan) => {
+        const nameMatch = plan.name?.toLowerCase().includes(query);
+        const descMatch = plan.description?.toLowerCase().includes(query);
+        const featureMatch = plan.features?.some((f) => f.toLowerCase().includes(query));
+        return nameMatch || descMatch || featureMatch;
+      });
+    }
+    
+    return result;
+  }, [plans, searchQuery, selectedAppFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filteredPlans.length / rowsPerPage));
 
@@ -88,23 +108,35 @@ export const PlansList = () => {
         </button>
       </div>
 
-      <div className="bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-[#E3E8EE] overflow-hidden">
-        {/* Toolbar */}
-        <div className="p-4 border-b border-[#E3E8EE] bg-[#F6F9FC] flex flex-col sm:flex-row gap-4 justify-between items-center">
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Search plans by name, description, or features..." 
-              value={searchQuery}
-              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-              className="w-full pl-9 pr-4 py-2 bg-white border border-[#E3E8EE] rounded-sm text-sm focus:outline-none"
-            />
+        <div className="bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-[#E3E8EE] overflow-hidden">
+          {/* Toolbar */}
+          <div className="p-4 border-b border-[#E3E8EE] bg-[#F6F9FC] flex flex-col sm:flex-row gap-4 justify-between items-center">
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto flex-1">
+              <div className="relative w-full sm:w-80">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input 
+                  type="text" 
+                  placeholder="Search plans..." 
+                  value={searchQuery}
+                  onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                  className="w-full pl-9 pr-4 py-2 bg-white border border-[#E3E8EE] rounded-sm text-sm focus:outline-none"
+                />
+              </div>
+              <select
+                value={selectedAppFilter}
+                onChange={(e) => { setSelectedAppFilter(e.target.value); setCurrentPage(1); }}
+                className="w-full sm:w-64 px-3 py-2 bg-white border border-[#E3E8EE] rounded-sm text-sm focus:outline-none text-[#0A2540]"
+              >
+                <option value="">All Applications</option>
+                {applications.map(app => (
+                  <option key={app.id} value={app.id}>{app.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="text-xs font-medium text-[#425466]">
+              Total Plans: {filteredPlans.length}
+            </div>
           </div>
-          <div className="text-xs font-medium text-[#425466]">
-            Total Plans: {filteredPlans.length}
-          </div>
-        </div>
 
         {/* Table */}
         <div className="overflow-x-auto min-h-[400px]">

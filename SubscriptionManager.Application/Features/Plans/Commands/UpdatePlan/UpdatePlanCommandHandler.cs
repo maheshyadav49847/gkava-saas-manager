@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using SubscriptionManager.Application.Common.Interfaces;
 using SubscriptionManager.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +19,11 @@ namespace SubscriptionManager.Application.Features.Plans.Commands.UpdatePlan
 
         public async Task<bool> Handle(UpdatePlanCommand request, CancellationToken cancellationToken)
         {
+            if (await _context.Plans.AnyAsync(p => p.Name == request.Name && p.ApplicationId == request.ApplicationId && p.Id != request.Id, cancellationToken))
+            {
+                throw new ArgumentException("Another plan with this name already exists for the selected application.");
+            }
+
             var plan = await _context.Plans
                 .Include(p => p.Features)
                 .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);

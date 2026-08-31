@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using SubscriptionManager.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -25,7 +25,7 @@ namespace SubscriptionManager.Application.Features.Coupons.Commands.UpdateCoupon
             var exists = await _context.Coupons.AnyAsync(c => c.Code.ToLower() == request.Code.ToLower() && c.Id != request.Id, cancellationToken);
             if (exists)
             {
-                throw new Exception("Another coupon with this code already exists.");
+                throw new ArgumentException("Another coupon with this code already exists.");
             }
 
             coupon.Code = request.Code.ToUpper();

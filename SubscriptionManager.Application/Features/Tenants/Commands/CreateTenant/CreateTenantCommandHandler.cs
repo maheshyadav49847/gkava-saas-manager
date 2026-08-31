@@ -1,4 +1,5 @@
-﻿using MediatR;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Application.Common.Interfaces;
 using SubscriptionManager.Domain.Entities;
 using SubscriptionManager.Domain.Enums;
@@ -19,6 +20,11 @@ namespace SubscriptionManager.Application.Features.Tenants.Commands.CreateTenant
 
         public async Task<Guid> Handle(CreateTenantCommand request, CancellationToken cancellationToken)
         {
+            if (await _context.Tenants.AnyAsync(t => t.Email.ToLower() == request.Email.ToLower(), cancellationToken))
+            {
+                throw new ArgumentException("A tenant with this email already exists.");
+            }
+
             var tenant = new Tenant
             {
                 Name = request.Name,
@@ -39,16 +45,16 @@ namespace SubscriptionManager.Application.Features.Tenants.Commands.CreateTenant
             {
                 var coupon = _context.Coupons.FirstOrDefault(c => c.Code == request.CouponCode.ToUpper());
                 if (coupon == null)
-                    throw new Exception("Invalid coupon code.");
+                    throw new ArgumentException("Invalid coupon code.");
                 
                 if (!coupon.IsActive)
-                    throw new Exception("Coupon is no longer active.");
+                    throw new ArgumentException("Coupon is no longer active.");
                 
                 if (coupon.ExpiryDate.HasValue && coupon.ExpiryDate.Value < DateTime.UtcNow)
-                    throw new Exception("Coupon has expired.");
+                    throw new ArgumentException("Coupon has expired.");
                     
                 if (coupon.MaxUses.HasValue && coupon.CurrentUses >= coupon.MaxUses.Value)
-                    throw new Exception("Coupon usage limit reached.");
+                    throw new ArgumentException("Coupon usage limit reached.");
                     
                 subscription.CouponId = coupon.Id;
                 coupon.CurrentUses++;

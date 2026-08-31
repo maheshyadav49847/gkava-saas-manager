@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { X, Loader2, ListTodo, Plus } from 'lucide-react';
 import { createPlan } from '../api';
@@ -42,9 +42,10 @@ export const CreatePlanModal = ({ isOpen, onClose, onSuccess }: CreatePlanModalP
       onSuccess();
       onClose();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Failed to create plan', error);
-      alert('Failed to create plan');
+      const message = error.response?.data?.detail || 'Failed to create plan';
+      alert(message);
     }
   });
 
