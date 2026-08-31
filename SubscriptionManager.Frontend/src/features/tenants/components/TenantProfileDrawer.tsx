@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Building, Mail, Phone, CalendarDays, CreditCard, ExternalLink, Package, History, FileText, Settings, ShieldAlert, Key } from 'lucide-react';
+import { X, Building, Mail, Phone, CalendarDays, CreditCard, Package, FileText, Settings, ShieldAlert, Key } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { appsettings } from '../../../config/appsettings';
