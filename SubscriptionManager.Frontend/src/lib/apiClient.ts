@@ -37,6 +37,12 @@ export interface CountryDto {
 }
 
 export const getCountries = async (): Promise<CountryDto[]> => {
-    const response = await apiClient.get('/countries');
-    return response as any;
+    try {
+        const response = await apiClient.get('/countries');
+        console.log("getCountries response:", response);
+        return Array.isArray(response) ? response : (response as any).data || [];
+    } catch (e) {
+        console.error("getCountries error:", e);
+        return [];
+    }
 };
