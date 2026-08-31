@@ -117,38 +117,7 @@ export const EditTenantModal = ({ isOpen, onClose, onSuccess, tenant }: EditTena
             </div>
           </div>
 
-          <div className="pt-4 border-t border-[#E3E8EE]">
-            <h3 className="text-sm font-semibold text-[#0A2540] mb-3">Feature Flags & Quota Overrides</h3>
-            
-            <div className="space-y-3">
-              <label className="flex items-center gap-2 text-sm text-[#425466] cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  defaultChecked={true}
-                  className="w-4 h-4 rounded-sm border-[#E3E8EE] text-[#635BFF] focus:ring-[#635BFF]"
-                />
-                <span className="font-medium">enable_beta_reports</span>
-              </label>
-              
-              <label className="flex items-center gap-2 text-sm text-[#425466] cursor-pointer">
-                <input 
-                  type="checkbox" 
-                  defaultChecked={false}
-                  className="w-4 h-4 rounded-sm border-[#E3E8EE] text-[#635BFF] focus:ring-[#635BFF]"
-                />
-                <span className="font-medium">bypass_rate_limits</span>
-              </label>
-
-              <div className="pt-2">
-                <label className="block text-xs font-medium text-[#425466] mb-1">override_user_limit (0 = infinite)</label>
-                <input
-                  type="number"
-                  defaultValue={50}
-                  className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
-                />
-              </div>
-            </div>
-          </div>
+          
 
           <div className="flex items-center justify-end gap-3 pt-4">
             <button

@@ -97,19 +97,31 @@ export const ExpandedTenantRow = ({ tenantId }: { tenantId: string }) => {
               <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Quick Actions</h4>
             </div>
             <div className="p-3 grid grid-cols-2 gap-2">
-              <button className="flex flex-col items-center justify-center p-2 rounded bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100 transition-colors gap-1">
+              <button 
+                onClick={() => alert('Change Plan: This will open a modal to select a new product/plan. API endpoint pending.')}
+                className="flex flex-col items-center justify-center p-2 rounded bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100 transition-colors gap-1"
+              >
                 <RefreshCw className="w-4 h-4" />
                 <span className="text-[10px] font-bold">Change Plan</span>
               </button>
-              <button className="flex flex-col items-center justify-center p-2 rounded bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-100 transition-colors gap-1">
+              <button 
+                onClick={() => alert('Suspend Tenant: This will disable the tenant account and pause billing. API endpoint pending.')}
+                className="flex flex-col items-center justify-center p-2 rounded bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-100 transition-colors gap-1"
+              >
                 <Pause className="w-4 h-4" />
                 <span className="text-[10px] font-bold">Suspend</span>
               </button>
-              <button className="flex flex-col items-center justify-center p-2 rounded bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors gap-1">
+              <button 
+                onClick={() => alert('Reset Password: This will trigger a password reset email to the tenant admin. API endpoint pending.')}
+                className="flex flex-col items-center justify-center p-2 rounded bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors gap-1"
+              >
                 <Key className="w-4 h-4" />
                 <span className="text-[10px] font-bold">Reset Pass</span>
               </button>
-              <button className="flex flex-col items-center justify-center p-2 rounded bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-100 transition-colors gap-1">
+              <button 
+                onClick={() => alert('Cancel Subscription: This will cancel the active subscription at period end. API endpoint pending.')}
+                className="flex flex-col items-center justify-center p-2 rounded bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-100 transition-colors gap-1"
+              >
                 <Power className="w-4 h-4" />
                 <span className="text-[10px] font-bold">Cancel Sub</span>
               </button>
