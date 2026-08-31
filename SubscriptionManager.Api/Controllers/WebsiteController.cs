@@ -76,4 +76,11 @@ public class WebsiteController : ControllerBase
         
         return Ok(teamMembers);
     }
+
+    [HttpPost("contact")]
+    public async Task<ActionResult> SubmitContactMessage([FromBody] SubscriptionManager.Application.Features.ContactMessages.Commands.SubmitContactMessage.SubmitContactMessageCommand command)
+    {
+        await _mediator.Send(command);
+        return Ok(new { message = "Your message has been sent successfully." });
+    }
 }

@@ -99,6 +99,18 @@ export const getTeamMembers = async (): Promise<TeamMember[]> => {
   }
 };
 
+export interface ContactMessageDto {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+export const submitContactMessage = async (data: ContactMessageDto): Promise<{ message: string }> => {
+  const response = await axios.post(`${API_BASE_URL}/Website/contact`, data);
+  return response.data;
+};
+
 export const registerSubscriber = async (data: any) => {
   const response = await axios.post(`${API_BASE_URL}/SubscriberAuth/register`, data);
   return response.data;

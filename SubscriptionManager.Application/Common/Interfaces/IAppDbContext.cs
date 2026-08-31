@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Domain.Entities;
 
 namespace SubscriptionManager.Application.Common.Interfaces;
@@ -27,6 +27,7 @@ public interface IAppDbContext
     DbSet<TenantEntitlementOverride> TenantEntitlementOverrides { get; }
     DbSet<AppIntegrationConfig> AppIntegrationConfigs { get; }
     DbSet<AppIntegrationHistory> AppIntegrationHistories { get; }
+    DbSet<ContactMessage> ContactMessages { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

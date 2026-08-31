@@ -1,11 +1,36 @@
 import { useEffect, useRef, useState } from 'react';
-import { Mail, MapPin, Phone } from 'lucide-react';
-import { getPlatformSettings, type PlatformSettings } from '../services/api';
+import { Mail, MapPin, Phone, CheckCircle2, Loader2 } from 'lucide-react';
+import { getPlatformSettings, submitContactMessage, type PlatformSettings, type ContactMessageDto } from '../services/api';
 import './Contact.css';
 
 export function Contact() {
   const [settings, setSettings] = useState<PlatformSettings | null>(null);
+  const [formData, setFormData] = useState<ContactMessageDto>({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      await submitContactMessage(formData);
+      setIsSuccess(true);
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (err) {
+      console.error(err);
+      setError('Failed to send message. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -104,52 +129,90 @@ export function Contact() {
 
         {/* Right: Contact Form */}
         <div className="contact-form-card reveal-on-scroll" style={{ transitionDelay: '0.15s' }}>
-          <form className="contact-form" onSubmit={(e) => e.preventDefault()}>
-            <div className="form-row">
+          {isSuccess ? (
+            <div className="contact-success" style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+              <CheckCircle2 size={48} color="#10b981" style={{ margin: '0 auto 1rem' }} />
+              <h3 style={{ fontSize: '1.5rem', color: '#0f172a', marginBottom: '0.5rem' }}>Message Sent!</h3>
+              <p style={{ color: '#64748b', marginBottom: '2rem' }}>Thanks for reaching out. We'll get back to you shortly.</p>
+              <button 
+                onClick={() => setIsSuccess(false)}
+                className="contact-submit"
+                style={{ width: 'auto', padding: '0.75rem 2rem' }}
+              >
+                Send Another Message
+              </button>
+            </div>
+          ) : (
+            <form className="contact-form" onSubmit={handleSubmit}>
+              {error && (
+                <div style={{ padding: '0.75rem', backgroundColor: '#fef2f2', color: '#b91c1c', borderRadius: '4px', marginBottom: '1.5rem', fontSize: '0.875rem' }}>
+                  {error}
+                </div>
+              )}
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="contact-name">Name</label>
+                  <input
+                    id="contact-name"
+                    type="text"
+                    required
+                    className="form-input"
+                    placeholder="Your name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="contact-email">Email</label>
+                  <input
+                    id="contact-email"
+                    type="email"
+                    required
+                    className="form-input"
+                    placeholder="you@company.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+                </div>
+              </div>
+
               <div className="form-group">
-                <label htmlFor="contact-name">Name</label>
+                <label htmlFor="contact-subject">Subject</label>
                 <input
-                  id="contact-name"
+                  id="contact-subject"
                   type="text"
+                  required
                   className="form-input"
-                  placeholder="Your name"
+                  placeholder="How can we help?"
+                  value={formData.subject}
+                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 />
               </div>
+
               <div className="form-group">
-                <label htmlFor="contact-email">Email</label>
-                <input
-                  id="contact-email"
-                  type="email"
+                <label htmlFor="contact-message">Message</label>
+                <textarea
+                  id="contact-message"
+                  required
                   className="form-input"
-                  placeholder="you@company.com"
-                />
+                  placeholder="Tell us about your project or question..."
+                  rows={5}
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                ></textarea>
               </div>
-            </div>
 
-            <div className="form-group">
-              <label htmlFor="contact-subject">Subject</label>
-              <input
-                id="contact-subject"
-                type="text"
-                className="form-input"
-                placeholder="How can we help?"
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="contact-message">Message</label>
-              <textarea
-                id="contact-message"
-                className="form-input"
-                placeholder="Tell us about your project or question..."
-                rows={5}
-              ></textarea>
-            </div>
-
-            <button type="submit" className="contact-submit">
-              Send Message
-            </button>
-          </form>
+              <button type="submit" className="contact-submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                    <Loader2 size={18} className="animate-spin" /> Sending...
+                  </span>
+                ) : (
+                  'Send Message'
+                )}
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </div>

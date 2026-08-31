@@ -32,6 +32,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<TenantEntitlementOverride> TenantEntitlementOverrides { get; set; } = null!;
     public DbSet<AppIntegrationConfig> AppIntegrationConfigs { get; set; } = null!;
     public DbSet<AppIntegrationHistory> AppIntegrationHistories { get; set; } = null!;
+    public DbSet<ContactMessage> ContactMessages { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
