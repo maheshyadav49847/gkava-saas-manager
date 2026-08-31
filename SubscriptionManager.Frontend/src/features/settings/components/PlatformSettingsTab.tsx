@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { getCountries } from '@/lib/apiClient';
+import React, { useState, useEffect, useRef } from 'react';
+import { getCountries, apiClient } from '@/lib/apiClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Save, Loader2, Globe, Mail, CreditCard, Key } from 'lucide-react';
+import { Save, Loader2, Globe, Mail, CreditCard, Key, Upload } from 'lucide-react';
 import { getPlatformSettings, updatePlatformSettings } from '../api';
 
 export function PlatformSettingsTab() {
@@ -58,6 +58,48 @@ export function PlatformSettingsTab() {
       setError('Failed to update platform settings');
     }
   });
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isImporting, setIsImporting] = useState(false);
+
+  const handleExportCsv = async () => {
+    try {
+      const response = await apiClient.get('/countries/export', { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'countries.csv');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Failed to export CSV', error);
+      alert('Export failed');
+    }
+  };
+
+  const handleImportCsv = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    
+    setIsImporting(true);
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await apiClient.post('/countries/import', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      alert(res.data.Message || 'Import successful!');
+      queryClient.invalidateQueries({ queryKey: ['countries'] });
+    } catch (error) {
+      console.error('Failed to import CSV', error);
+      alert('Import failed');
+    } finally {
+      setIsImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -344,6 +386,42 @@ export function PlatformSettingsTab() {
           </button>
         </div>
       </form>
+
+      <div className="bg-white rounded-lg border border-[#E3E8EE] shadow-sm mt-8">
+        <div className="px-6 py-4 border-b border-[#E3E8EE]">
+          <h2 className="text-lg font-semibold text-[#0A2540]">Data Management</h2>
+          <p className="text-sm text-[#425466] mt-1">Manage static data like Countries, Codes, and Currencies</p>
+        </div>
+        <div className="p-6">
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={handleExportCsv}
+              className="px-4 py-2 bg-white border border-[#E3E8EE] text-[#0A2540] rounded-sm hover:bg-[#F6F9FC] font-medium text-sm transition-colors"
+            >
+              Download Countries CSV
+            </button>
+            <input 
+              type="file" 
+              accept=".csv" 
+              ref={fileInputRef} 
+              style={{ display: 'none' }} 
+              onChange={handleImportCsv} 
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isImporting}
+              className="px-4 py-2 bg-[#635BFF] text-white rounded-sm hover:bg-[#524BDE] font-medium text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
+            >
+              {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              Upload Updated CSV
+            </button>
+          </div>
+          <p className="text-xs text-[#425466] mt-2">Download the CSV, make changes in Excel, and upload it back to update the database instantly.</p>
+        </div>
+      </div>
+
     </div>
   );
 }
