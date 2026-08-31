@@ -55,7 +55,7 @@ public class CountriesController : ControllerBase
         var addedCount = 0;
 
         using (var reader = new StreamReader(file.OpenReadStream()))
-        using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HeaderValidated = null, MissingFieldFound = null, IgnoreBlankLines = true }))
+        using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture) { HeaderValidated = null, MissingFieldFound = null, IgnoreBlankLines = true, DetectDelimiter = true }))
         {
             csv.Read();
             csv.ReadHeader();
