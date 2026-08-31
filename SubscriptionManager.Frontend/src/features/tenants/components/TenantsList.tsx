@@ -1,10 +1,11 @@
 import React from 'react';
-import { Search, Building, ChevronDown, ChevronRight, Mail, Phone, CreditCard, FileText, Plus, Users, AlertCircle, Edit2, Trash2, X, Loader2 } from 'lucide-react';
+import { Search, Building, ChevronDown, ChevronRight, Plus, Users, AlertCircle, Edit2, Trash2, X, Loader2 } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Tenant } from '../types';
 import { getTenants, deleteTenant } from '../api';
 import { CreateTenantModal } from './CreateTenantModal';
+import { ExpandedTenantRow } from './ExpandedTenantRow';
 import { EditTenantModal } from './EditTenantModal';
 
 export const TenantsList = () => {
@@ -208,47 +209,9 @@ export const TenantsList = () => {
                       </td>
                     </tr>
                     {expandedTenantId === tenant.id && (
-                      <tr className="bg-slate-50 border-b border-[#E3E8EE]">
+                      <tr>
                         <td colSpan={6} className="p-0">
-                          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-top-2 duration-200">
-                            {/* Contact Details */}
-                            <div className="bg-white p-4 rounded-sm border border-[#E3E8EE] shadow-sm">
-                              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Contact Information</h4>
-                              <div className="space-y-3">
-                                <div className="flex items-center text-sm text-[#425466]">
-                                  <Mail className="w-4 h-4 mr-2 text-slate-400" /> {tenant.email}
-                                </div>
-                                <div className="flex items-center text-sm text-[#425466]">
-                                  <Phone className="w-4 h-4 mr-2 text-slate-400" /> {tenant.phoneCountryCode || '+91'} {tenant.phone}
-                                </div>
-                              </div>
-                            </div>
-                            
-                            {/* Payment Details */}
-                            <div className="bg-white p-4 rounded-sm border border-[#E3E8EE] shadow-sm">
-                              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Payment Details</h4>
-                              <div className="space-y-3">
-                                <div className="flex items-center text-sm text-[#425466]">
-                                  <CreditCard className="w-4 h-4 mr-2 text-slate-400" /> 
-                                  <span className="font-medium">{tenant.paymentMethod}</span>
-                                </div>
-                                <div className="flex items-center text-sm text-[#425466]">
-                                  <FileText className="w-4 h-4 mr-2 text-slate-400" /> 
-                                  <span className="font-mono text-xs bg-slate-100 px-1.5 py-0.5 rounded">{tenant.paymentDetails || 'No details available'}</span>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Subscription Details */}
-                            <div className="bg-white p-4 rounded-sm border border-[#E3E8EE] shadow-sm">
-                              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Active Subscription</h4>
-                              <div className="space-y-1">
-                                <p className="text-sm font-semibold text-[#0A2540]">{tenant.applicationName}</p>
-                                <p className="text-sm text-[#635BFF]">{tenant.plan}</p>
-                                <p className="text-xs text-slate-500 mt-2">Started: {new Date(tenant.joinDate).toLocaleDateString()}</p>
-                              </div>
-                            </div>
-                          </div>
+                          <ExpandedTenantRow tenantId={tenant.id} />
                         </td>
                       </tr>
                     )}
