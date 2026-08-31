@@ -87,7 +87,7 @@ export function SubscriberDashboard() {
                   <div className="integration-details">
                     <h4>Integration Info</h4>
                     <p><strong>App Key:</strong> <code>{sub.applicationKey}</code></p>
-                    <p><strong>Webhook URL:</strong> {sub.webhookUrl}</p>
+                    <p><strong>Website URL:</strong> {sub.websiteUrl ? <a href={sub.websiteUrl} target="_blank" rel="noopener noreferrer">{sub.websiteUrl}</a> : 'N/A'}</p>
                   </div>
 
                   {sub.status.toLowerCase() === 'active' && !sub.cancelAtPeriodEnd && (

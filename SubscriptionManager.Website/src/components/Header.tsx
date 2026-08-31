@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronRight, LogOut } from 'lucide-react';
+import { Menu, X, ChevronRight, LogOut, User, LayoutDashboard, Settings } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import './Header.css';
 
@@ -8,12 +8,28 @@ export function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, logout } = useAuth();
 
-  // Close menu when route changes
+  // Close menus when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
+    setIsProfileMenuOpen(false);
   }, [location]);
+
+  // Click outside to close profile menu
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Prevent scroll when menu is open
   useEffect(() => {
@@ -24,18 +40,12 @@ export function Header() {
     }
   }, [isMobileMenuOpen]);
 
-  const publicNavLinks = [
+  const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Products', path: '/products' },
     { name: 'Pricing', path: '/pricing' },
     { name: 'About Us', path: '/about' },
   ];
-
-  const authNavLinks = [
-    { name: 'Dashboard', path: '/dashboard' }
-  ];
-
-  const navLinks = isAuthenticated ? [...publicNavLinks, ...authNavLinks] : publicNavLinks;
 
   const handleLogout = () => {
     logout();
@@ -84,10 +94,46 @@ export function Header() {
                 <Link to="/register" className="btn btn-primary">Get Started</Link>
               </>
             ) : (
-              <button onClick={handleLogout} className="btn btn-outline">
-                <LogOut size={18} style={{ marginRight: '8px' }} />
-                Log Out
-              </button>
+              <div className="profile-menu-container" ref={profileMenuRef}>
+                <button 
+                  className="profile-menu-btn" 
+                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                >
+                  <div className="avatar">
+                    <User size={18} />
+                  </div>
+                  <span className="profile-name">My Account</span>
+                </button>
+
+                {isProfileMenuOpen && (
+                  <div className="profile-dropdown">
+                    <div className="profile-dropdown-header">
+                      <p className="profile-dropdown-title">Signed In</p>
+                    </div>
+                    <ul className="profile-dropdown-list">
+                      <li>
+                        <Link to="/dashboard" className="profile-dropdown-item">
+                          <LayoutDashboard size={16} />
+                          <span>Dashboard</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/dashboard?tab=billing" className="profile-dropdown-item">
+                          <Settings size={16} />
+                          <span>Billing & Plans</span>
+                        </Link>
+                      </li>
+                      <li className="profile-dropdown-divider"></li>
+                      <li>
+                        <button onClick={handleLogout} className="profile-dropdown-item text-red">
+                          <LogOut size={16} />
+                          <span>Log Out</span>
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </nav>

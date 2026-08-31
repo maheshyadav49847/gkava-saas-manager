@@ -87,13 +87,25 @@ public class SubscriberDashboardController : ControllerBase
         var plan = await _context.Plans.FindAsync(request.PlanId);
         if (plan == null) return NotFound("Plan not found.");
 
-        // Basic validation: user can't have duplicate active subscriptions to the same plan
-        var existingSub = await _context.Subscriptions
-            .FirstOrDefaultAsync(s => s.TenantId == tenantId && s.PlanId == request.PlanId && s.Status == SubscriptionManager.Domain.Enums.SubscriptionStatus.Active);
+        // Strict Industry Rule: 1 Base Plan per Application
+        var existingSubsForApp = await _context.Subscriptions
+            .Include(s => s.Plan)
+            .Where(s => s.TenantId == tenantId && s.Plan.ApplicationId == plan.ApplicationId && s.Status == SubscriptionManager.Domain.Enums.SubscriptionStatus.Active)
+            .ToListAsync();
 
-        if (existingSub != null)
+        foreach (var existing in existingSubsForApp)
         {
-            return BadRequest("You are already subscribed to this plan.");
+            if (existing.PlanId == request.PlanId)
+            {
+                return BadRequest("You are already subscribed to this exact plan. To increase quantity, use the manage subscription panel.");
+            }
+            
+            // This is an Upgrade/Downgrade flow.
+            // In a real Cashfree proration, we would call Cashfree APIs to modify the subscription.
+            // For now, we follow industry standard "Graceful Downgrade/Replace" by marking the old one as CancelAtPeriodEnd 
+            // or immediately cancelling it. We will cancel it immediately to prevent overlapping entitlements.
+            existing.Status = SubscriptionManager.Domain.Enums.SubscriptionStatus.Cancelled;
+            existing.EndDate = DateTime.UtcNow; // Revoke immediately upon upgrade
         }
 
         // Get Frontend URL for redirects
