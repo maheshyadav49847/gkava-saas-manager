@@ -57,7 +57,7 @@ public class SubscriberDashboardController : ControllerBase
 
         var profile = await _context.Tenants
             .Where(t => t.Id == tenantId)
-            .Select(t => new { t.Name, t.Email, t.Phone })
+            .Select(t => new { t.Name, t.Email, t.PhoneCountryCode, t.Phone })
             .FirstOrDefaultAsync();
 
         var invoices = await _context.Invoices

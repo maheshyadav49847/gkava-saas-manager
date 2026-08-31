@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Application.Common.Interfaces;
 using SubscriptionManager.Domain.Entities;
@@ -30,8 +30,10 @@ namespace SubscriptionManager.Application.Features.SubscriberAuth.Commands.Regis
             {
                 Name = request.Name,
                 Email = request.Email,
+                PhoneCountryCode = request.PhoneCountryCode,
                 Phone = request.Phone,
-                PasswordHash = passwordHash
+                PasswordHash = passwordHash,
+                CreatedAt = DateTime.UtcNow
             };
 
             _context.Tenants.Add(tenant);

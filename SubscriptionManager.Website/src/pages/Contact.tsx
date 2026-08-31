@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Mail, MapPin, Phone, CheckCircle2, Loader2 } from 'lucide-react';
 import { getPlatformSettings, submitContactMessage, type PlatformSettings, type ContactMessageDto } from '../services/api';
+import { countryCodes } from '../utils/countryCodes';
 import './Contact.css';
 
 export function Contact() {
@@ -8,6 +9,7 @@ export function Contact() {
   const [formData, setFormData] = useState<ContactMessageDto>({
     name: '',
     email: '',
+    phoneCountryCode: '+91',
     phone: '',
     subject: '',
     message: ''
@@ -24,7 +26,7 @@ export function Contact() {
     try {
       await submitContactMessage(formData);
       setIsSuccess(true);
-      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      setFormData({ name: '', email: '', phoneCountryCode: '+91', phone: '', subject: '', message: '' });
     } catch (err) {
       console.error(err);
       setError('Failed to send message. Please try again later.');
@@ -108,8 +110,8 @@ export function Contact() {
             <div className="contact-info-text">
               <h4>Call Us</h4>
               <p>Mon–Fri, 9 AM – 6 PM IST</p>
-              <a href={`tel:${settings?.contactPhone || '+919876543210'}`}>
-                {settings?.contactPhone || '+91 98765 43210'}
+              <a href={`tel:${settings?.contactPhoneCountryCode || '+91'}${settings?.contactPhone || '9876543210'}`}>
+                {settings?.contactPhoneCountryCode || '+91'} {settings?.contactPhone || '98765 43210'}
               </a>
             </div>
           </div>
@@ -179,15 +181,30 @@ export function Contact() {
 
               <div className="form-group">
                 <label htmlFor="contact-phone">Mobile Number</label>
-                <input
-                  id="contact-phone"
-                  type="tel"
-                  required
-                  className="form-input"
-                  placeholder="+91 98765 43210"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <select
+                    name="phoneCountryCode"
+                    id="phoneCountryCode"
+                    value={formData.phoneCountryCode}
+                    onChange={(e) => setFormData({ ...formData, phoneCountryCode: e.target.value })}
+                    className="w-24 px-3 py-3 bg-white border border-[#E3E8EE] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+                  >
+                    {countryCodes.map(c => (
+                      <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                    ))}
+                  </select>
+                  <input
+                    id="contact-phone"
+                    name="phone"
+                    type="tel"
+                    required
+                    className="form-input"
+                    placeholder="98765 43210"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    style={{ flexGrow: 1 }}
+                  />
+                </div>
               </div>
 
               <div className="form-group">

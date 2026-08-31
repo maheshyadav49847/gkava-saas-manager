@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using System;
 
 namespace SubscriptionManager.Application.Features.Tenants.Commands.CreateTenant
@@ -7,6 +7,7 @@ namespace SubscriptionManager.Application.Features.Tenants.Commands.CreateTenant
     {
         public string Name { get; set; }
         public string Email { get; set; }
+        public string PhoneCountryCode { get; set; } = "+91";
         public string Phone { get; set; }
         public Guid PlanId { get; set; }
         public string? CouponCode { get; set; }

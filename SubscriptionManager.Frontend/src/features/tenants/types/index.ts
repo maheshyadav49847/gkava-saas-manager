@@ -2,6 +2,7 @@ export interface Tenant {
   id: string;
   name: string;
   email: string;
+  phoneCountryCode: string;
   phone: string;
   status: string;
   plan: string;
@@ -11,6 +12,7 @@ export interface Tenant {
 export interface CreateTenantDto {
   name: string;
   email: string;
+  phoneCountryCode: string;
   phone: string;
   planId: string;
   couponCode?: string;

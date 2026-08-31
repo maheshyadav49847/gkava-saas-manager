@@ -13,6 +13,7 @@ export interface PlatformSettingsDto {
   supportEmail: string;
   privacyEmail: string;
   legalEmail: string;
+  contactPhoneCountryCode: string;
   contactPhone: string;
   cashfreeAppId?: string;
   cashfreeSecretKey?: string;

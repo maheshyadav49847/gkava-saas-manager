@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SubscriptionManager.Application.Features.Auth.Commands.Login;
@@ -58,6 +58,7 @@ namespace SubscriptionManager.Api.Controllers
             {
                 Name = string.IsNullOrEmpty(request.Name) ? request.Email : request.Name,
                 Email = request.Email,
+                PhoneCountryCode = request.PhoneCountryCode ?? "+91",
                 Phone = request.Phone ?? "",
                 PlanId = request.PlanId
             };
@@ -78,6 +79,7 @@ namespace SubscriptionManager.Api.Controllers
     {
         public string Name { get; set; }
         public string Email { get; set; }
+        public string PhoneCountryCode { get; set; } = "+91";
         public string Phone { get; set; }
         public Guid PlanId { get; set; }
         public Guid ApplicationId { get; set; } // Optional if not needed by CreateTenantCommand

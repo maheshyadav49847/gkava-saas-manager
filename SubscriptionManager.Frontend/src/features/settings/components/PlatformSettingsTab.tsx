@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Save, Loader2, Globe, Mail, CreditCard, Key } from 'lucide-react';
 import { getPlatformSettings, updatePlatformSettings } from '../api';
+import { countryCodes } from '../../../utils/countryCodes';
 
 export function PlatformSettingsTab() {
   const queryClient = useQueryClient();
@@ -11,6 +12,7 @@ export function PlatformSettingsTab() {
     supportEmail: '',
     privacyEmail: '',
     legalEmail: '',
+    contactPhoneCountryCode: '+91',
     contactPhone: '',
     cashfreeAppId: '',
     cashfreeSecretKey: '',
@@ -31,6 +33,7 @@ export function PlatformSettingsTab() {
         supportEmail: settings.supportEmail || '',
         privacyEmail: settings.privacyEmail || '',
         legalEmail: settings.legalEmail || '',
+        contactPhoneCountryCode: settings.contactPhoneCountryCode || '+91',
         contactPhone: settings.contactPhone || '',
         cashfreeAppId: settings.cashfreeAppId || '',
         cashfreeSecretKey: settings.cashfreeSecretKey || '',
@@ -166,17 +169,29 @@ export function PlatformSettingsTab() {
             <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-1">
               Contact Phone
             </label>
-            <div className="relative">
-              <input
-                type="text"
-                name="contactPhone"
-                id="contactPhone"
-                value={formData.contactPhone}
+            <div className="flex gap-2">
+              <select
+                name="contactPhoneCountryCode"
+                value={formData.contactPhoneCountryCode}
                 onChange={handleChange}
-                className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
-              />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Globe className="h-4 w-4 text-slate-400" />
+                className="w-24 py-2 px-3 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+              >
+                {countryCodes.map(c => (
+                  <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                ))}
+              </select>
+              <div className="relative flex-grow">
+                <input
+                  type="text"
+                  name="contactPhone"
+                  id="contactPhone"
+                  value={formData.contactPhone}
+                  onChange={handleChange}
+                  className="w-full pl-9 pr-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Globe className="h-4 w-4 text-slate-400" />
+                </div>
               </div>
             </div>
             <p className="mt-1 text-xs text-gray-500">Displayed on the Contact Us page.</p>

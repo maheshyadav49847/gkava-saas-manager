@@ -168,7 +168,7 @@ export const TenantsList = () => {
                         </div>
                         {tenant.phone && (
                           <div className="flex items-center text-xs text-[#425466]">
-                            <Phone className="w-3.5 h-3.5 mr-2 text-slate-400" /> {tenant.phone}
+                            <Phone className="w-3.5 h-3.5 mr-2 text-slate-400" /> {tenant.phoneCountryCode || '+91'} {tenant.phone}
                           </div>
                         )}
                       </div>

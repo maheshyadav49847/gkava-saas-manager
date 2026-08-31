@@ -26,6 +26,7 @@ public class GetContactMessagesQueryHandler : IRequestHandler<GetContactMessages
                 Id = x.Id,
                 Name = x.Name,
                 Email = x.Email,
+                PhoneCountryCode = x.PhoneCountryCode,
                 Phone = x.Phone,
                 Subject = x.Subject,
                 Message = x.Message,

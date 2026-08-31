@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace SubscriptionManager.Application.Features.Tenants.Queries.GetTenants
 {
@@ -7,6 +7,7 @@ namespace SubscriptionManager.Application.Features.Tenants.Queries.GetTenants
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
+        public string PhoneCountryCode { get; set; }
         public string Phone { get; set; }
         public string Status { get; set; }
         public string Plan { get; set; }

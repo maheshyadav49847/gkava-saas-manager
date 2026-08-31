@@ -13,6 +13,7 @@ export interface UpdateTenantDto {
   id: string;
   name: string;
   email: string;
+  phoneCountryCode: string;
   phone: string;
 }
 

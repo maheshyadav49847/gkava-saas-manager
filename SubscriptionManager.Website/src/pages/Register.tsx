@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Mail, Lock, User, Phone, ArrowRight, Layers, AlertCircle, CheckCircle } from 'lucide-react';
 import { registerSubscriber } from '../services/api';
+import { countryCodes } from '../utils/countryCodes';
 import './Auth.css';
 
 export function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,7 +22,7 @@ export function Register() {
     setError('');
     
     try {
-      await registerSubscriber({ name, email, phone, password });
+      await registerSubscriber({ name, email, phoneCountryCode, phone, password });
       navigate(`/login${location.search}`);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to register. Please try again.');
@@ -106,15 +108,29 @@ export function Register() {
             </div>
             
             <div className="form-group">
-              <label>Phone Number (Optional)</label>
-              <div className="input-with-icon">
-                <input 
-                  type="tel" 
-                  value={phone} 
-                  onChange={e => setPhone(e.target.value)} 
-                  placeholder="+1 (555) 000-0000"
-                />
-                <Phone className="input-icon" size={20} />
+              <label>Phone Number</label>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <select
+                    name="phoneCountryCode"
+                    id="phoneCountryCode"
+                    value={phoneCountryCode}
+                    onChange={e => setPhoneCountryCode(e.target.value)}
+                    className="w-24 px-4 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0F172A]"
+                  >
+                    {countryCodes.map(c => (
+                      <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                    ))}
+                  </select>
+                <div className="input-with-icon" style={{ flexGrow: 1 }}>
+                  <input 
+                    type="tel" 
+                    value={phone} 
+                    onChange={e => setPhone(e.target.value)} 
+                    placeholder="98765 43210"
+                    required
+                  />
+                  <Phone className="input-icon" size={20} />
+                </div>
               </div>
             </div>
             

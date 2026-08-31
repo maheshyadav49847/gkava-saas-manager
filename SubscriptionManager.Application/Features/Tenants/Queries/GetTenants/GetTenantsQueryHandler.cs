@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Application.Common.Interfaces;
 using System.Collections.Generic;
@@ -34,6 +34,7 @@ namespace SubscriptionManager.Application.Features.Tenants.Queries.GetTenants
                     Id = t.Id,
                     Name = t.Name,
                     Email = t.Email,
+                    PhoneCountryCode = t.PhoneCountryCode,
                     Phone = t.Phone,
                     Plan = activeSubscription?.Plan?.Name ?? "No Plan",
                     Status = activeSubscription?.Status.ToString() ?? "Trialing",

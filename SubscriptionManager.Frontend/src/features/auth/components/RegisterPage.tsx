@@ -1,8 +1,9 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Building, Phone, Loader2, AlertCircle, Check, UserPlus } from "lucide-react";
 import axios from 'axios';
 import { appsettings } from '../../../config/appsettings';
+import { countryCodes } from '../../../utils/countryCodes';
 
 export const RegisterPage = () => {
   const [searchParams] = useSearchParams();
@@ -11,6 +12,7 @@ export const RegisterPage = () => {
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
   
@@ -30,6 +32,7 @@ export const RegisterPage = () => {
       await axios.post(`${appsettings.apiUrl}/auth/register`, {
         name: company || name,
         email,
+        phoneCountryCode,
         phone,
         planId,
         applicationId: appId
@@ -134,18 +137,30 @@ export const RegisterPage = () => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-[#425466]  mb-1.5">Phone (Optional)</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <Phone className="h-5 w-5 text-slate-400" />
+            <label className="block text-sm font-medium text-[#425466]  mb-1.5">Phone Number</label>
+            <div className="flex gap-2">
+              <select
+                value={phoneCountryCode}
+                onChange={(e) => setPhoneCountryCode(e.target.value)}
+                className="w-24 px-3 py-2.5 bg-[#F6F9FC] border border-[#E3E8EE] rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540]"
+              >
+                {countryCodes.map(c => (
+                  <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                ))}
+              </select>
+              <div className="relative flex-grow">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <Phone className="h-5 w-5 text-slate-400" />
+                </div>
+                <input
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full pl-11 pr-4 py-2.5 bg-[#F6F9FC] border border-[#E3E8EE] rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540]"
+                  placeholder="555-0123"
+                />
               </div>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 bg-[#F6F9FC]  border border-[#E3E8EE]  rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540] "
-                placeholder="+1 555-0123"
-              />
             </div>
           </div>
 

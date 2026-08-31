@@ -39,7 +39,7 @@ export function ContactMessagesList() {
                       {msg.phone && (
                         <>
                           <svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current"><circle cx="1" cy="1" r="1" /></svg>
-                          <a href={`tel:${msg.phone}`} className="hover:underline">{msg.phone}</a>
+                          <a href={`tel:${msg.phoneCountryCode || '+91'}${msg.phone}`} className="hover:underline">{msg.phoneCountryCode || '+91'} {msg.phone}</a>
                         </>
                       )}
                     </div>

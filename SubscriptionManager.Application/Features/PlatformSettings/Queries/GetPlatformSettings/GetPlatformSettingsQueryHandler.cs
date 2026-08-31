@@ -31,6 +31,7 @@ public class GetPlatformSettingsQueryHandler : IRequestHandler<GetPlatformSettin
             SupportEmail = settings.SupportEmail,
             PrivacyEmail = settings.PrivacyEmail,
             LegalEmail = settings.LegalEmail,
+            ContactPhoneCountryCode = settings.ContactPhoneCountryCode,
             ContactPhone = settings.ContactPhone,
             CashfreeAppId = settings.CashfreeAppId,
             CashfreeSecretKey = string.IsNullOrEmpty(settings.CashfreeSecretKey) ? null : "***",

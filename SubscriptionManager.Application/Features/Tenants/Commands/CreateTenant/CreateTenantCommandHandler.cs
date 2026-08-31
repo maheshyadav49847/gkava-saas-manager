@@ -29,7 +29,10 @@ namespace SubscriptionManager.Application.Features.Tenants.Commands.CreateTenant
             {
                 Name = request.Name,
                 Email = request.Email,
-                Phone = request.Phone
+                PhoneCountryCode = request.PhoneCountryCode,
+                Phone = request.Phone,
+                PasswordHash = "TODO: Generate Hash", // Handle password logic properly later
+                CreatedAt = DateTime.UtcNow
             };
 
             var subscription = new Subscription

@@ -29,6 +29,7 @@ namespace SubscriptionManager.Application.Features.Tenants.Commands.UpdateTenant
 
             tenant.Name = request.Name;
             tenant.Email = request.Email;
+            tenant.PhoneCountryCode = request.PhoneCountryCode;
             tenant.Phone = request.Phone;
 
             await _context.SaveChangesAsync(cancellationToken);

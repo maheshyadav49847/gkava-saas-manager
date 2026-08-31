@@ -30,6 +30,7 @@ public class UpdatePlatformSettingsCommandHandler : IRequestHandler<UpdatePlatfo
                 SupportEmail = request.SupportEmail,
                 PrivacyEmail = request.PrivacyEmail,
                 LegalEmail = request.LegalEmail,
+                ContactPhoneCountryCode = request.ContactPhoneCountryCode,
                 ContactPhone = request.ContactPhone,
                 CashfreeAppId = request.CashfreeAppId,
                 CashfreeSecretKey = request.CashfreeSecretKey,
@@ -46,6 +47,7 @@ public class UpdatePlatformSettingsCommandHandler : IRequestHandler<UpdatePlatfo
             settings.SupportEmail = request.SupportEmail;
             settings.PrivacyEmail = request.PrivacyEmail;
             settings.LegalEmail = request.LegalEmail;
+            settings.ContactPhoneCountryCode = request.ContactPhoneCountryCode;
             settings.ContactPhone = request.ContactPhone;
             settings.CashfreeAppId = request.CashfreeAppId;
             if (!string.IsNullOrEmpty(request.CashfreeSecretKey) && request.CashfreeSecretKey != "***")

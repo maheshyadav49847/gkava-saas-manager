@@ -4,6 +4,7 @@ export interface ContactMessageDto {
     id: string;
     name: string;
     email: string;
+    phoneCountryCode: string;
     phone: string;
     subject: string;
     message: string;

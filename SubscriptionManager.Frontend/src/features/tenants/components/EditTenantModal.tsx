@@ -1,8 +1,9 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Loader2, Edit2, Save } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { updateTenant, UpdateTenantDto } from '../api';
 import { Tenant } from '../types';
+import { countryCodes } from '../../../utils/countryCodes';
 
 interface EditTenantModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export const EditTenantModal = ({ isOpen, onClose, onSuccess, tenant }: EditTena
     id: '',
     name: '',
     email: '',
+    phoneCountryCode: '+91',
     phone: ''
   });
 
@@ -26,6 +28,7 @@ export const EditTenantModal = ({ isOpen, onClose, onSuccess, tenant }: EditTena
         id: tenant.id,
         name: tenant.name,
         email: tenant.email,
+        phoneCountryCode: tenant.phoneCountryCode || '+91',
         phone: tenant.phone || ''
       });
     }
@@ -93,12 +96,23 @@ export const EditTenantModal = ({ isOpen, onClose, onSuccess, tenant }: EditTena
 
           <div>
             <label className="block text-sm font-medium text-[#425466]  mb-1">Phone Number</label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
-            />
+            <div className="flex gap-2">
+              <select
+                value={formData.phoneCountryCode}
+                onChange={(e) => setFormData({ ...formData, phoneCountryCode: e.target.value })}
+                className="w-24 px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+              >
+                {countryCodes.map(c => (
+                  <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                ))}
+              </select>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="flex-1 px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+              />
+            </div>
           </div>
 
           <div className="pt-4 border-t border-[#E3E8EE]">

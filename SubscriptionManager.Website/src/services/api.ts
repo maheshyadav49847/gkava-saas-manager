@@ -46,6 +46,7 @@ export interface PlatformSettings {
   supportEmail: string;
   privacyEmail: string;
   legalEmail: string;
+  contactPhoneCountryCode: string;
   contactPhone: string;
   updatedAt: string;
 }
@@ -102,20 +103,22 @@ export const getTeamMembers = async (): Promise<TeamMember[]> => {
 export interface ContactMessageDto {
   name: string;
   email: string;
+  phoneCountryCode: string;
   phone: string;
   subject: string;
   message: string;
 }
+
+export const registerSubscriber = async (data: { name: string; email: string; phoneCountryCode: string; phone: string; password: string; planId?: string; applicationId?: string }) => {
+  const response = await axios.post(`${API_BASE_URL}/SubscriberAuth/register`, data);
+  return response.data;
+};
 
 export const submitContactMessage = async (data: ContactMessageDto): Promise<{ message: string }> => {
   const response = await axios.post(`${API_BASE_URL}/Website/contact`, data);
   return response.data;
 };
 
-export const registerSubscriber = async (data: any) => {
-  const response = await axios.post(`${API_BASE_URL}/SubscriberAuth/register`, data);
-  return response.data;
-};
 
 export const loginSubscriber = async (data: any) => {
   const response = await axios.post(`${API_BASE_URL}/SubscriberAuth/login`, data);

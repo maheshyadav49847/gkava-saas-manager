@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { X, Loader2, Users, Plus } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { createTenant } from '../api';
@@ -6,6 +6,7 @@ import { CreateTenantDto } from '../types';
 import { getPlans } from '../../plans/api';
 import { couponsApi } from '../../coupons/api';
 import { CouponDto } from '../../coupons/types';
+import { countryCodes } from '../../../utils/countryCodes';
 
 interface CreateTenantModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
   const [formData, setFormData] = useState<CreateTenantDto>({
     name: '',
     email: '',
+    phoneCountryCode: '+91',
     phone: '',
     planId: '',
     couponCode: ''
@@ -45,7 +47,7 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
   const createMutation = useMutation({
     mutationFn: (data: CreateTenantDto) => createTenant(data),
     onSuccess: () => {
-      setFormData({ name: '', email: '', phone: '', planId: '', couponCode: '' });
+      setFormData({ name: '', email: '', phoneCountryCode: '+91', phone: '', planId: '', couponCode: '' });
       setAppliedCoupon(null);
       onSuccess();
       onClose();
@@ -114,13 +116,24 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
 
           <div>
             <label className="block text-sm font-medium text-[#425466]  mb-1">Phone Number</label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
-              placeholder="+1 (555) 000-0000"
-            />
+            <div className="flex gap-2">
+              <select
+                value={formData.phoneCountryCode}
+                onChange={(e) => setFormData({ ...formData, phoneCountryCode: e.target.value })}
+                className="w-24 px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+              >
+                {countryCodes.map(c => (
+                  <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                ))}
+              </select>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="flex-1 px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+                placeholder="555 000-0000"
+              />
+            </div>
           </div>
 
           <div>
