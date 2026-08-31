@@ -12,6 +12,8 @@ export function SubscriberDashboard() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'card'|'list'>('card');
   const { token, isAuthenticated, userName } = useAuth();
 
   const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({});
@@ -99,8 +101,6 @@ export function SubscriberDashboard() {
     }
   };
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<'card'|'list'>('card');
 
   const filteredSubs = data?.subscriptions?.filter((s: any) => 
     s.applicationName.toLowerCase().includes(searchQuery.toLowerCase()) || 

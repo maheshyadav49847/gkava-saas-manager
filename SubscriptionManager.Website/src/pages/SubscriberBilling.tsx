@@ -10,6 +10,7 @@ import './Dashboard.css';
 export function SubscriberBilling() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
   const { token, isAuthenticated, userName } = useAuth();
 
   const loadData = async () => {
@@ -49,7 +50,6 @@ export function SubscriberBilling() {
     }
   };
 
-  const [selectedInvoice, setSelectedInvoice] = useState<any>(null);
 
   const formatDate = (dateString: string) => {
     const d = new Date(dateString);
