@@ -17,12 +17,14 @@ public class SubscriberDashboardController : ControllerBase
     private readonly IAppDbContext _context;
     private readonly IPaymentService _paymentService;
     private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
+    private readonly IWebhookService _webhookService;
 
-    public SubscriberDashboardController(IAppDbContext context, IPaymentService paymentService, Microsoft.Extensions.Configuration.IConfiguration configuration)
+    public SubscriberDashboardController(IAppDbContext context, IPaymentService paymentService, Microsoft.Extensions.Configuration.IConfiguration configuration, IWebhookService webhookService)
     {
         _context = context;
         _paymentService = paymentService;
         _configuration = configuration;
+        _webhookService = webhookService;
     }
 
 
@@ -100,6 +102,46 @@ public class SubscriberDashboardController : ControllerBase
         
         var successUrl = $"{websiteUrl}/dashboard?success=true";
         var cancelUrl = $"{websiteUrl}/pricing?canceled=true";
+
+        if (plan.MonthlyPrice == 0)
+        {
+            var newSub = new SubscriptionManager.Domain.Entities.Subscription
+            {
+                Id = Guid.NewGuid(),
+                TenantId = tenantId,
+                PlanId = request.PlanId,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow.AddYears(1), // Let's give it 1 year by default for free plan
+                Status = SubscriptionManager.Domain.Enums.SubscriptionStatus.Active,
+                PaymentProviderSubscriptionId = "free_" + Guid.NewGuid().ToString("N"),
+                PaymentMethod = "Free",
+                PaymentDetails = "Free Plan"
+            };
+            
+            var invoice = new SubscriptionManager.Domain.Entities.Invoice 
+            {
+                Id = Guid.NewGuid(),
+                TenantId = tenantId,
+                Amount = 0,
+                Currency = "INR",
+                Status = SubscriptionManager.Domain.Enums.InvoiceStatus.Paid,
+                InvoiceDate = DateTime.UtcNow,
+                PaymentMethod = "Free",
+                PaymentDetails = "Free Plan"
+            };
+
+            _context.Subscriptions.Add(newSub);
+            _context.Invoices.Add(invoice);
+            await _context.SaveChangesAsync(default);
+
+            var planWithApp = await _context.Plans.Include(p => p.Application).FirstOrDefaultAsync(p => p.Id == request.PlanId);
+            if (planWithApp?.Application != null && !string.IsNullOrEmpty(planWithApp.Application.WebhookUrl) && tenant != null)
+            {
+                _ = _webhookService.NotifySubscriptionCreatedAsync(planWithApp.Application.WebhookUrl, tenant, planWithApp, newSub, planWithApp.Application.AppKey);
+            }
+
+            return Ok(new { Url = successUrl, Environment = "Free" });
+        }
 
         try
         {

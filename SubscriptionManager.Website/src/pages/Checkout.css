@@ -143,17 +143,17 @@
   transform: translate(-2px, -2px);
 }
 
-.input-with-icon {
+.checkout-form .input-with-icon {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.input-with-icon input {
+.checkout-form .input-with-icon input {
   padding-right: 48px;
 }
 
-.input-icon {
+.checkout-form .input-icon {
   position: absolute;
   right: 16px;
   color: #64748b;
