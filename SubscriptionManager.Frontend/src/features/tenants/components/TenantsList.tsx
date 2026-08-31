@@ -5,11 +5,13 @@ import { Tenant } from '../types';
 import { getTenants, deleteTenant } from '../api';
 import { CreateTenantModal } from './CreateTenantModal';
 import { EditTenantModal } from './EditTenantModal';
+import { TenantProfileDrawer } from './TenantProfileDrawer';
 
 export const TenantsList = () => {
   const queryClient = useQueryClient();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
+  const [selectedTenantId, setSelectedTenantId] = useState<string | null>(null);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -190,6 +192,13 @@ export const TenantsList = () => {
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button 
+                          onClick={() => setSelectedTenantId(tenant.id)}
+                          className="px-3 py-1.5 text-xs font-medium text-[#635BFF] bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 rounded-sm transition-colors"
+                          title="View Profile"
+                        >
+                          View Profile
+                        </button>
+                        <button 
                           onClick={() => setEditingTenant(tenant)}
                           className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Edit Tenant"
@@ -287,6 +296,7 @@ export const TenantsList = () => {
         onSuccess={() => queryClient.invalidateQueries({ queryKey: ['tenants'] })}
         tenant={editingTenant}
       />
+      <TenantProfileDrawer tenantId={selectedTenantId} isOpen={!!selectedTenantId} onClose={() => setSelectedTenantId(null)} />
     </div>
   );
 };

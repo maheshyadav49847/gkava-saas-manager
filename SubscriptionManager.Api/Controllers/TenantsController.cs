@@ -27,6 +27,14 @@ namespace SubscriptionManager.Api.Controllers
             var tenants = await _mediator.Send(new GetTenantsQuery());
             return Ok(tenants);
         }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SubscriptionManager.Application.Features.Tenants.Queries.GetTenantDetails.TenantProfileDto>> GetTenantDetails(Guid id)
+        {
+            var tenant = await _mediator.Send(new SubscriptionManager.Application.Features.Tenants.Queries.GetTenantDetails.GetTenantDetailsQuery { Id = id });
+            if (tenant == null) return NotFound();
+            return Ok(tenant);
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<Guid>> CreateTenant([FromBody] CreateTenantCommand command)

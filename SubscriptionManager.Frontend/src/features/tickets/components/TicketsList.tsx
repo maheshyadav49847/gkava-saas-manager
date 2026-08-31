@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { LifeBuoy, Search, Filter, Clock, User, AlertCircle, Paperclip, Send } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { appsettings } from '../../../config/appsettings';
@@ -31,6 +31,10 @@ export const TicketsList = () => {
   const [isInternalNote, setIsInternalNote] = useState(false);
   const [replyText, setReplyText] = useState('');
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [sortOrder, setSortOrder] = useState('Newest');
+
   // Fetch Tickets
   const { data: tickets, isLoading: ticketsLoading } = useQuery({
     queryKey: ['tickets'],
@@ -58,13 +62,17 @@ export const TicketsList = () => {
   // Mutations
   const replyMutation = useMutation({
     mutationFn: async (payload: { messageText: string, isInternalNote: boolean }) => {
-      await fetch(`http://localhost:5048/api/tickets/${activeTicketId}/reply`, {
+      await fetch(`http://localhost:5048/api/tickets/${activeTicketId}/messages`, {
         method: 'POST',
-        headers: {
+        headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}` 
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ 
+          messageText: payload.messageText, 
+          isInternalNote: payload.isInternalNote,
+          senderType: "Agent"
+        })
       });
     },
     onSuccess: () => {
@@ -74,7 +82,24 @@ export const TicketsList = () => {
     }
   });
 
+  const filteredTickets = useMemo(() => {
+    if (!tickets) return [];
+    let result = tickets.filter((t: any) => {
+      const matchesSearch = t.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            t.tenantName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            t.id?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = statusFilter === 'All' || t.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
 
+    result.sort((a: any, b: any) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return sortOrder === 'Newest' ? dateB - dateA : dateA - dateB;
+    });
+
+    return result;
+  }, [tickets, searchQuery, statusFilter, sortOrder]);
 
   const handleSendReply = () => {
     if (!replyText.trim() || !activeTicketId) return;
@@ -82,6 +107,13 @@ export const TicketsList = () => {
   };
 
   const activeTicket = tickets?.find((t: any) => t.id === activeTicketId);
+
+  // Auto-select first ticket if none selected
+  useEffect(() => {
+    if (filteredTickets.length > 0 && !activeTicketId) {
+      setActiveTicketId(filteredTickets[0].id);
+    }
+  }, [filteredTickets, activeTicketId]);
 
   return (
     <div className="h-[calc(100vh-8rem)] flex flex-col space-y-6">
@@ -106,29 +138,59 @@ export const TicketsList = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
               <input 
-                type="text" 
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search tickets..." 
                 className="w-full pl-9 pr-4 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
               />
             </div>
             <div className="flex gap-2">
-              <button className="flex-1 flex items-center justify-center gap-2 px-3 py-1.5 border border-[#E3E8EE] rounded-sm text-xs font-medium text-[#425466] hover:bg-[#F6F9FC] shadow-sm transition-colors bg-white">
-                <Filter size={14} />
-                Filter
-              </button>
-              <button className="flex-1 flex items-center justify-center gap-2 px-3 py-1.5 border border-[#E3E8EE] rounded-sm text-xs font-medium text-[#425466] hover:bg-[#F6F9FC] shadow-sm transition-colors bg-white">
-                <Clock size={14} />
-                Sort by Date
-              </button>
+              <div className="relative flex-1">
+                 <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} pointerEvents="none" />
+                 <select 
+                   value={statusFilter}
+                   onChange={(e) => setStatusFilter(e.target.value)}
+                   className="w-full pl-8 pr-6 py-1.5 border border-[#E3E8EE] rounded-sm text-xs font-medium text-[#425466] hover:bg-[#F6F9FC] shadow-sm transition-colors bg-white focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] appearance-none cursor-pointer"
+                 >
+                   <option value="All">All Status</option>
+                   <option value="Open">Open</option>
+                   <option value="PendingCustomer">Pending</option>
+                   <option value="Escalated">Escalated</option>
+                   <option value="Resolved">Resolved</option>
+                   <option value="Closed">Closed</option>
+                 </select>
+                 <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                   <svg width="8" height="5" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M1 1L5 5L9 1" stroke="#425466" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                   </svg>
+                 </div>
+              </div>
+              <div className="relative flex-1">
+                 <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} pointerEvents="none" />
+                 <select 
+                   value={sortOrder}
+                   onChange={(e) => setSortOrder(e.target.value)}
+                   className="w-full pl-8 pr-6 py-1.5 border border-[#E3E8EE] rounded-sm text-xs font-medium text-[#425466] hover:bg-[#F6F9FC] shadow-sm transition-colors bg-white focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] appearance-none cursor-pointer"
+                 >
+                   <option value="Newest">Newest First</option>
+                   <option value="Oldest">Oldest First</option>
+                 </select>
+                 <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                   <svg width="8" height="5" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M1 1L5 5L9 1" stroke="#425466" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                   </svg>
+                 </div>
+              </div>
             </div>
           </div>
           
           <div className="flex-1 overflow-y-auto">
             {ticketsLoading ? (
               <div className="p-4 text-center text-sm text-slate-500">Loading tickets...</div>
-            ) : tickets?.length === 0 ? (
+            ) : filteredTickets?.length === 0 ? (
               <div className="p-4 text-center text-sm text-slate-500">No tickets found.</div>
-            ) : tickets?.map((ticket: any) => (
+            ) : filteredTickets?.map((ticket: any) => (
               <div 
                 key={ticket.id}
                 onClick={() => setActiveTicketId(ticket.id)}
@@ -139,20 +201,16 @@ export const TicketsList = () => {
                 }`}
               >
                 <div className="flex justify-between items-start mb-1">
-                  <span className="text-xs font-semibold text-slate-500 font-mono">{ticket.id.split('-')[0]}</span>
-                  <span className="text-xs text-slate-400">{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                  <span className="text-sm font-semibold text-slate-900 truncate pr-2">{ticket.subject}</span>
+                  <span className="text-xs text-slate-500 whitespace-nowrap">{new Date(ticket.createdAt).toLocaleDateString()}</span>
                 </div>
-                <h4 className="text-sm font-medium text-[#0A2540] mb-1 line-clamp-1">{ticket.subject}</h4>
-                <div className="text-xs text-slate-500 mb-3 line-clamp-1 flex items-center gap-1">
-                  <User size={12} className="inline" />
-                  {ticket.tenantName}
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={`px-2 py-0.5 border rounded-sm text-[10px] font-semibold uppercase tracking-wider ${getPriorityBadgeClass(ticket.priority)}`}>
-                    {ticket.priority}
-                  </span>
-                  <span className={`px-2 py-0.5 border rounded-sm text-[10px] font-semibold uppercase tracking-wider ${getStatusBadgeClass(ticket.status)}`}>
+                <div className="text-xs text-slate-600 truncate mb-2">{ticket.tenantName}</div>
+                <div className="flex gap-2">
+                  <span className={`px-2 py-0.5 rounded-[4px] text-[10px] font-semibold border ${getStatusBadgeClass(ticket.status)}`}>
                     {ticket.status}
+                  </span>
+                  <span className={`px-2 py-0.5 rounded-[4px] text-[10px] font-semibold border ${getPriorityBadgeClass(ticket.priority)}`}>
+                    {ticket.priority}
                   </span>
                 </div>
               </div>
@@ -160,109 +218,105 @@ export const TicketsList = () => {
           </div>
         </div>
 
-        {/* Right Pane - Chat View */}
-        <div className="flex-1 flex flex-col bg-white min-w-0">
-          {!activeTicket ? (
-            <div className="flex-1 flex items-center justify-center text-sm text-slate-500">
-              Select a ticket to view details.
-            </div>
-          ) : (
-            <>
-              {/* Chat Header */}
-              <div className="p-4 border-b border-[#E3E8EE] flex justify-between items-start shrink-0">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="text-lg font-semibold text-[#0A2540]">{activeTicket.subject}</h3>
-                    <span className={`px-2.5 py-1 border rounded-sm text-xs font-semibold ${getStatusBadgeClass(activeTicket.status)}`}>
-                      {activeTicket.status}
-                    </span>
-                  </div>
-                  <div className="text-sm text-slate-500 flex items-center gap-4">
-                    <span className="flex items-center gap-1"><User size={14} /> {activeTicket.tenantName}</span>
-                    <span className="flex items-center gap-1"><AlertCircle size={14} /> {activeTicket.priority} Priority</span>
-                    <span className="font-mono text-xs">ID: {activeTicket.id}</span>
-                  </div>
-                </div>
-                <button className="text-sm text-[#635BFF] font-medium hover:underline">View Customer</button>
+        {/* Right Pane - Ticket Details & Chat */}
+        {activeTicket ? (
+          <div className="w-2/3 flex flex-col bg-white">
+            <div className="p-6 border-b border-[#E3E8EE] shrink-0">
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="text-lg font-semibold text-slate-900">{activeTicket.subject}</h3>
+                <span className={`px-2.5 py-1 rounded-sm text-xs font-semibold border ${getStatusBadgeClass(activeTicket.status)}`}>
+                  {activeTicket.status}
+                </span>
               </div>
+              <div className="flex gap-6 text-sm">
+                <div className="flex items-center gap-2 text-slate-600">
+                  <User size={14} className="text-slate-400" />
+                  <span className="font-medium">{activeTicket.tenantName}</span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-600">
+                  <AlertCircle size={14} className="text-slate-400" />
+                  Priority: <span className="font-medium">{activeTicket.priority}</span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-600">
+                  <Clock size={14} className="text-slate-400" />
+                  Created: <span className="font-medium">{new Date(activeTicket.createdAt).toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
 
-              {/* Chat Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-slate-50/30">
+            <div className="flex-1 overflow-y-auto p-6 bg-slate-50/50">
+              <div className="space-y-6">
                 {messagesLoading ? (
                   <div className="text-center text-sm text-slate-500">Loading messages...</div>
                 ) : messages?.map((msg: any) => (
-                  <div key={msg.id} className={`flex flex-col ${msg.senderId !== 'ADMIN' ? 'items-start' : 'items-end'}`}>
-                    <div className="flex items-baseline gap-2 mb-1">
-                      <span className="text-xs font-medium text-slate-700">{msg.senderName}</span>
-                      <span className="text-[10px] text-slate-400">{new Date(msg.createdAt).toLocaleString()}</span>
+                  <div key={msg.id} className={`flex gap-4 ${msg.senderType === 'Agent' ? 'flex-row-reverse' : ''}`}>
+                    <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center shrink-0">
+                      <User size={14} className="text-slate-500" />
                     </div>
-                    <div className={`max-w-[80%] rounded-sm p-3 text-sm shadow-sm ${
+                    <div className={`max-w-[75%] rounded-md p-4 shadow-sm border ${
                       msg.isInternalNote 
-                        ? 'bg-yellow-100 border border-yellow-300 text-yellow-900' 
-                        : msg.senderId !== 'ADMIN'
-                          ? 'bg-white border border-[#E3E8EE] text-[#0A2540]'
-                          : 'bg-[#635BFF] text-white'
+                        ? 'bg-amber-50 border-amber-200' 
+                        : msg.senderType === 'Agent' 
+                          ? 'bg-[#F6F9FC] border-[#E3E8EE]' 
+                          : 'bg-white border-[#E3E8EE]'
                     }`}>
-                      {msg.isInternalNote && <div className="text-[10px] font-bold uppercase tracking-wider text-yellow-700 mb-1 border-b border-yellow-200 pb-1">Internal Note</div>}
-                      {msg.messageText}
+                      <div className="flex justify-between items-end mb-2 gap-4">
+                        <span className="font-semibold text-sm text-slate-900">
+                          {msg.senderType === 'Agent' ? 'Support Agent' : activeTicket.tenantName}
+                          {msg.isInternalNote && <span className="ml-2 text-xs text-amber-700 font-medium">(Internal Note)</span>}
+                        </span>
+                        <span className="text-xs text-slate-400">{new Date(msg.createdAt).toLocaleString()}</span>
+                      </div>
+                      <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{msg.messageText}</p>
                     </div>
                   </div>
                 ))}
               </div>
+            </div>
 
-              {/* Chat Input */}
-              <div className="p-4 border-t border-[#E3E8EE] shrink-0 bg-white">
-                <div className="flex gap-4 mb-2">
-                  <label className="flex items-center gap-2 text-sm cursor-pointer">
-                    <input 
-                      type="radio" 
-                      checked={!isInternalNote} 
-                      onChange={() => setIsInternalNote(false)}
-                      className="text-[#635BFF] focus:ring-[#635BFF]"
-                    />
-                    <span className={!isInternalNote ? 'font-medium text-[#0A2540]' : 'text-slate-500'}>Public Reply</span>
-                  </label>
-                  <label className="flex items-center gap-2 text-sm cursor-pointer">
-                    <input 
-                      type="radio" 
-                      checked={isInternalNote} 
-                      onChange={() => setIsInternalNote(true)}
-                      className="text-yellow-600 focus:ring-yellow-600"
-                    />
-                    <span className={isInternalNote ? 'font-medium text-[#0A2540]' : 'text-slate-500'}>Internal Note</span>
-                  </label>
-                </div>
-                
-                <div className={`border rounded-sm shadow-sm overflow-hidden flex flex-col transition-colors ${
-                  isInternalNote ? 'border-yellow-300 bg-yellow-50 focus-within:ring-2 focus-within:ring-yellow-500/20 focus-within:border-yellow-500' : 'border-[#E3E8EE] bg-white focus-within:ring-2 focus-within:ring-[#635BFF]/20 focus-within:border-[#635BFF]'
-                }`}>
-                  <textarea 
-                    rows={3} 
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                    placeholder={isInternalNote ? "Type an internal note (customer won't see this)..." : "Type your reply to the customer..."}
-                    className="w-full p-3 text-sm focus:outline-none resize-none bg-transparent placeholder:text-slate-400 text-[#0A2540]"
-                  />
-                  <div className="p-2 border-t flex justify-between items-center opacity-70 hover:opacity-100 transition-opacity" style={{ borderColor: isInternalNote ? '#fde047' : '#E3E8EE' }}>
-                    <button className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100/50 rounded-sm">
+            <div className="p-4 border-t border-[#E3E8EE] bg-white shrink-0">
+              <div className="border border-[#E3E8EE] rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-[#635BFF]/20 focus-within:border-[#635BFF] transition-all">
+                <textarea 
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  placeholder="Type your reply here..."
+                  className="w-full p-3 text-sm resize-none focus:outline-none min-h-[100px] text-slate-700"
+                />
+                <div className="bg-slate-50 border-t border-[#E3E8EE] p-2 flex justify-between items-center">
+                  <div className="flex items-center gap-4 px-2">
+                    <label className="flex items-center gap-2 text-sm text-slate-600 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={isInternalNote}
+                        onChange={(e) => setIsInternalNote(e.target.checked)}
+                        className="rounded border-slate-300 text-[#635BFF] focus:ring-[#635BFF]"
+                      />
+                      Internal Note
+                    </label>
+                    <button className="text-slate-400 hover:text-slate-600 transition-colors" title="Attach file">
                       <Paperclip size={16} />
                     </button>
-                    <button 
-                      onClick={handleSendReply}
-                      disabled={replyMutation.isPending}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm shadow-sm text-sm font-medium text-white transition-colors disabled:opacity-50 ${
-                      isInternalNote ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-[#635BFF] hover:bg-[#5249e5]'
-                    }`}>
-                      <Send size={14} />
-                      {replyMutation.isPending ? 'Sending...' : isInternalNote ? 'Add Note' : 'Send Reply'}
-                    </button>
                   </div>
+                  <button 
+                    onClick={handleSendReply}
+                    disabled={replyMutation.isPending || !replyText.trim()}
+                    className="flex items-center gap-2 px-4 py-1.5 bg-[#0A2540] hover:bg-slate-800 text-white rounded-sm text-sm font-medium transition-colors disabled:opacity-50"
+                  >
+                    <Send size={14} />
+                    {replyMutation.isPending ? 'Sending...' : 'Send Reply'}
+                  </button>
                 </div>
               </div>
-            </>
-          )}
-        </div>
+            </div>
+          </div>
+        ) : (
+          <div className="w-2/3 flex flex-col items-center justify-center bg-slate-50/50 text-slate-400">
+            <LifeBuoy size={48} className="mb-4 opacity-20" />
+            <p className="text-sm">Select a ticket to view details</p>
+          </div>
+        )}
       </div>
+
       <CreateTicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );

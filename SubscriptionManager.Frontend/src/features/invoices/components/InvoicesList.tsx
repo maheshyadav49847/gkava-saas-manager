@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Receipt, Download, Send, Search, Filter } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { appsettings } from '../../../config/appsettings';
@@ -17,6 +17,8 @@ const getStatusBadgeClass = (status: string) => {
 export const InvoicesList = () => {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
 
   const { data: invoices, isLoading } = useQuery({
     queryKey: ['invoices'],
@@ -48,6 +50,17 @@ export const InvoicesList = () => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['invoices'] })
   });
 
+  const filteredInvoices = useMemo(() => {
+    if (!invoices) return [];
+    return invoices.filter((inv: any) => {
+      const matchesSearch = inv.invoiceNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            inv.tenantName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            inv.tenantEmail?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = statusFilter === 'All' || inv.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [invoices, searchQuery, statusFilter]);
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -69,15 +82,32 @@ export const InvoicesList = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input 
-              type="text" 
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search invoices..." 
               className="w-full pl-9 pr-4 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
             />
           </div>
-          <button className="flex items-center justify-center gap-2 px-3 py-2 border border-[#E3E8EE] rounded-sm text-sm text-[#425466] hover:bg-[#F6F9FC] transition-colors bg-white shadow-sm">
-            <Filter size={16} />
-            Filter
-          </button>
+          <div className="relative">
+             <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} pointerEvents="none" />
+             <select 
+               value={statusFilter}
+               onChange={(e) => setStatusFilter(e.target.value)}
+               className="pl-9 pr-8 py-2 border border-[#E3E8EE] rounded-sm text-sm text-[#425466] hover:bg-[#F6F9FC] transition-colors bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] appearance-none cursor-pointer"
+             >
+               <option value="All">All Statuses</option>
+               <option value="Paid">Paid</option>
+               <option value="Open">Open</option>
+               <option value="Draft">Draft</option>
+               <option value="Void">Void</option>
+             </select>
+             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+               <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                 <path d="M1 1L5 5L9 1" stroke="#425466" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+               </svg>
+             </div>
+          </div>
         </div>
         
         <div className="overflow-x-auto">
@@ -96,9 +126,9 @@ export const InvoicesList = () => {
             <tbody className="divide-y divide-[#E3E8EE] text-sm">
               {isLoading ? (
                 <tr><td colSpan={7} className="p-4 text-center text-slate-500">Loading invoices...</td></tr>
-              ) : invoices?.length === 0 ? (
+              ) : filteredInvoices?.length === 0 ? (
                 <tr><td colSpan={7} className="p-4 text-center text-slate-500">No invoices found.</td></tr>
-              ) : invoices?.map((inv: any) => (
+              ) : filteredInvoices?.map((inv: any) => (
                 <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="p-4 font-medium text-slate-900 font-mono text-xs">{inv.invoiceNumber || inv.id.split('-')[0]}</td>
                   <td className="p-4 text-slate-600">

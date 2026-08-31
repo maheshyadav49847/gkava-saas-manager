@@ -5,6 +5,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { createTenant } from '../api';
 import { CreateTenantDto } from '../types';
 import { getPlans } from '../../plans/api';
+import { getApplications } from '../../applications/api';
 import { couponsApi } from '../../coupons/api';
 import { CouponDto } from '../../coupons/types';
 
@@ -23,16 +24,20 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
     planId: '',
     couponCode: ''
   });
+  const [selectedAppId, setSelectedAppId] = useState('');
   const [couponError, setCouponError] = useState<string | null>(null);
   const [appliedCoupon, setAppliedCoupon] = useState<CouponDto | null>(null);
 
   
   const { data: countries = [] } = useQuery({ queryKey: ['countries'], queryFn: getCountries });
+  const { data: applications = [] } = useQuery({ queryKey: ['applications'], queryFn: getApplications, enabled: isOpen });
   const { data: plans = [] } = useQuery({
     queryKey: ['plans'],
     queryFn: getPlans,
     enabled: isOpen,
   });
+
+  const filteredPlans = plans.filter(p => p.applicationId === selectedAppId);
 
   const validateCouponMutation = useMutation({
     mutationFn: (code: string) => couponsApi.validateCoupon(code),
@@ -139,15 +144,34 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
           </div>
 
           <div>
+            <label className="block text-sm font-medium text-[#425466]  mb-1">Select Product / Application</label>
+            <select
+              required
+              value={selectedAppId}
+              onChange={(e) => {
+                setSelectedAppId(e.target.value);
+                setFormData({ ...formData, planId: '' }); // reset plan when app changes
+              }}
+              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+            >
+              <option value="">Choose a product...</option>
+              {applications.map((app: any) => (
+                <option key={app.id} value={app.id}>{app.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
             <label className="block text-sm font-medium text-[#425466]  mb-1">Initial Plan</label>
             <select
               required
+              disabled={!selectedAppId}
               value={formData.planId}
               onChange={(e) => setFormData({ ...formData, planId: e.target.value })}
-              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+              className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] disabled:bg-slate-50 disabled:text-slate-400"
             >
-              <option value="">Select a plan</option>
-              {plans.map(plan => (
+              <option value="">{selectedAppId ? "Select a plan..." : "Select a product first"}</option>
+              {filteredPlans.map((plan: any) => (
                 <option key={plan.id} value={plan.id}>{plan.name} - ₹{plan.monthlyPrice}/mo</option>
               ))}
             </select>
