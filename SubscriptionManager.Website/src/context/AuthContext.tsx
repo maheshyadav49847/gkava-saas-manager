@@ -1,10 +1,23 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   token: string | null;
+  userName: string | null;
   login: (token: string) => void;
   logout: () => void;
+}
+
+function decodeJwtPayload(token: string): Record<string, any> | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const payload = parts[1];
+    const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    return JSON.parse(decoded);
+  } catch {
+    return null;
+  }
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,6 +35,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [token]);
 
+  const userName = useMemo(() => {
+    if (!token) return null;
+    const payload = decodeJwtPayload(token);
+    if (!payload) return null;
+    // ASP.NET Core uses the full URI for ClaimTypes.Name
+    return payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] 
+      || payload['name'] 
+      || payload['unique_name'] 
+      || null;
+  }, [token]);
+
   const login = (newToken: string) => {
     setToken(newToken);
   };
@@ -31,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, token, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, token, userName, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -10,7 +10,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, userName, logout } = useAuth();
 
   // Close menus when route changes
   useEffect(() => {
@@ -100,28 +100,29 @@ export function Header() {
                   onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                 >
                   <div className="avatar">
-                    <User size={18} />
+                    {userName ? userName.charAt(0).toUpperCase() : <User size={18} />}
                   </div>
-                  <span className="profile-name">My Account</span>
+                  <span className="profile-name">{userName || 'Account'}</span>
                 </button>
 
                 {isProfileMenuOpen && (
                   <div className="profile-dropdown">
                     <div className="profile-dropdown-header">
-                      <p className="profile-dropdown-title">Signed In</p>
+                      <p className="profile-dropdown-title">Signed in as</p>
+                      <p style={{ fontSize: '0.95rem', fontWeight: 600, color: '#0f172a', marginTop: '0.15rem' }}>{userName}</p>
                     </div>
                     <ul className="profile-dropdown-list">
                       <li>
-                        <Link to="/dashboard" className="profile-dropdown-item">
+                        <button onClick={() => { setIsProfileMenuOpen(false); navigate('/dashboard'); }} className="profile-dropdown-item">
                           <LayoutDashboard size={16} />
                           <span>Dashboard</span>
-                        </Link>
+                        </button>
                       </li>
                       <li>
-                        <Link to="/dashboard?tab=billing" className="profile-dropdown-item">
+                        <button onClick={() => { setIsProfileMenuOpen(false); navigate('/pricing'); }} className="profile-dropdown-item">
                           <Settings size={16} />
                           <span>Billing & Plans</span>
-                        </Link>
+                        </button>
                       </li>
                       <li className="profile-dropdown-divider"></li>
                       <li>
