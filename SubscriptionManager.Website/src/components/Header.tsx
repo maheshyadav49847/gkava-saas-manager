@@ -119,7 +119,7 @@ export function Header() {
                         </button>
                       </li>
                       <li>
-                        <button onClick={() => { setIsProfileMenuOpen(false); navigate('/dashboard#billing'); }} className="profile-dropdown-item">
+                        <button onClick={() => { setIsProfileMenuOpen(false); navigate('/billing'); }} className="profile-dropdown-item">
                           <Settings size={16} />
                           <span>Billing & Invoices</span>
                         </button>

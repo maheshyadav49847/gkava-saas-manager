@@ -15,6 +15,7 @@ import { Cookies } from './pages/Cookies';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { SubscriberDashboard } from './pages/SubscriberDashboard';
+import { SubscriberBilling } from './pages/SubscriberBilling';
 
 import { Checkout } from './pages/Checkout';
 
@@ -35,6 +36,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<SubscriberDashboard />} />
+          <Route path="/billing" element={<SubscriberBilling />} />
           <Route path="/checkout" element={<Checkout />} />
         </Routes>
       </main>
