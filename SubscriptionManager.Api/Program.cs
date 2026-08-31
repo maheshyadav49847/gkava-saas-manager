@@ -1,4 +1,4 @@
-﻿using SubscriptionManager.Application.Common.Interfaces;
+using SubscriptionManager.Application.Common.Interfaces;
 using SubscriptionManager.Infrastructure.Data;
 using SubscriptionManager.Api.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +30,7 @@ var corsOrigins = builder.Configuration.GetSection("CorsOrigins").Get<string[]>(
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("StrictCorsPolicy", policy =>
     {
         if (corsOrigins.Length > 0)
         {
@@ -124,6 +124,7 @@ builder.Services.AddTransient<IEmailService, SubscriptionManager.Infrastructure.
 
 var app = builder.Build();
 
+app.UseCors("StrictCorsPolicy");
 app.UseExceptionHandler(); // Global Exception Handler
 
 app.MapHealthChecks("/health");
@@ -143,7 +144,6 @@ app.UseSerilogRequestLogging();
 app.UseRateLimiter(); // Add Rate Limiter
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
