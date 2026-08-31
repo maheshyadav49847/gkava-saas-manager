@@ -128,18 +128,20 @@ export const CreateCouponModalView = ({ isOpen, onClose, onSuccess }: CreateCoup
                 selected={formData.expiryDate ? new Date(formData.expiryDate) : null}
                 onChange={(date: Date | null) => {
                   if (date) {
-                    const d = new Date(date);
-                    d.setUTCHours(23, 59, 59, 999);
-                    setFormData({ ...formData, expiryDate: d.toISOString() });
+                    setFormData({ ...formData, expiryDate: date.toISOString() });
                   } else {
                     setFormData({ ...formData, expiryDate: null });
                   }
                 }}
                 minDate={new Date()}
                 className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
-                placeholderText="Select expiry date"
+                placeholderText="Select expiry date and time"
                 isClearable
-                dateFormat="yyyy-MM-dd"
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                timeCaption="Time"
+                dateFormat="yyyy-MM-dd h:mm aa"
               />
             </div>
 

@@ -186,10 +186,10 @@ export const CouponsList = () => {
                       {getStatusBadge(coupon)}
                     </td>
                     <td className="p-4 text-sm text-[#425466]">
-                      {coupon.currentUses} / {coupon.maxUses || 'âˆž'}
+                      {coupon.currentUses} / {coupon.maxUses || '∞'}
                     </td>
                     <td className="p-4 text-sm text-[#425466]">
-                      {coupon.expiryDate ? format(new Date(coupon.expiryDate), 'MMM d, yyyy') : 'No expiry'}
+                      {coupon.expiryDate ? format(new Date(coupon.expiryDate), 'MMM d, yyyy h:mm a') : 'No expiry'}
                     </td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
