@@ -121,7 +121,7 @@ export function Register() {
                     id="phoneCountryCode"
                     value={phoneCountryCode}
                     onChange={e => setPhoneCountryCode(e.target.value)}
-                    className="w-24 px-4 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0F172A]"
+                    style={{ width: '100px', flexShrink: 0, padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1', outline: 'none' }}
                   >
                     {countries.map(c => (
                       <option key={c.id} value={c.phoneCode}>{c.phoneCode} ({c.id})</option>

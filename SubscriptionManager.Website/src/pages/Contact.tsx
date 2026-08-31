@@ -192,7 +192,8 @@ export function Contact() {
                     id="phoneCountryCode"
                     value={formData.phoneCountryCode}
                     onChange={(e) => setFormData({ ...formData, phoneCountryCode: e.target.value })}
-                    className="w-24 px-3 py-3 bg-white border border-[#E3E8EE] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+                    className="form-input"
+                    style={{ width: '100px', flexShrink: 0, padding: '0.75rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
                   >
                     {countries.map(c => (
                       <option key={c.id} value={c.phoneCode}>{c.phoneCode} ({c.id})</option>

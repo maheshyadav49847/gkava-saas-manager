@@ -38,5 +38,5 @@ export interface CountryDto {
 
 export const getCountries = async (): Promise<CountryDto[]> => {
     const response = await apiClient.get('/countries');
-    return response.data;
+    return response as any;
 };
