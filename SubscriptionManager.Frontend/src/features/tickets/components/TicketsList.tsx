@@ -202,7 +202,7 @@ export const TicketsList = () => {
               >
                 <div className="flex justify-between items-start mb-1">
                   <span className="text-sm font-semibold text-slate-900 truncate pr-2">{ticket.subject}</span>
-                  <span className="text-xs text-slate-500 whitespace-nowrap">{new Date(ticket.createdAt).toLocaleDateString()}</span>
+                  <span className="text-xs text-slate-500 whitespace-nowrap">{new Date(ticket.createdAt).toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
                 <div className="text-xs text-slate-600 truncate mb-2">{ticket.tenantName}</div>
                 <div className="flex gap-2">

@@ -49,7 +49,7 @@ export function ContactMessagesList() {
                 <div className="flex items-center gap-x-4 sm:flex-col sm:items-end sm:gap-y-2">
                   <div className="flex items-center gap-x-1.5 text-xs text-gray-500">
                     <Calendar className="h-4 w-4" />
-                    <time dateTime={msg.createdAt}>{new Date(msg.createdAt).toLocaleDateString()}</time>
+                    <time dateTime={msg.createdAt}>{new Date(msg.createdAt).toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</time>
                   </div>
                 </div>
               </div>

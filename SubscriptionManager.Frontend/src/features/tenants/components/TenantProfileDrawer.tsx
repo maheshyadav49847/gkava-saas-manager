@@ -121,7 +121,7 @@ export const TenantProfileDrawer = ({ tenantId, isOpen, onClose }: { tenantId: s
                         </div>
                         <div>
                           <p className="text-xs text-slate-500 mb-0.5">Member Since</p>
-                          <p className="text-sm font-medium text-slate-900">{new Date(tenant.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                          <p className="text-sm font-medium text-slate-900">{new Date(tenant.createdAt).toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                         </div>
                       </div>
                     </div>
@@ -201,7 +201,7 @@ export const TenantProfileDrawer = ({ tenantId, isOpen, onClose }: { tenantId: s
                               <div className="bg-slate-50 rounded p-3 flex justify-between items-center border border-[#E3E8EE]">
                                 <div>
                                   <p className="text-xs text-slate-500 mb-0.5 font-medium">Current Period Ends</p>
-                                  <p className="text-sm font-bold text-slate-700">{new Date(sub.endDate).toLocaleDateString()}</p>
+                                  <p className="text-sm font-bold text-slate-700">{new Date(sub.endDate).toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                                 </div>
                                 <div className="text-right">
                                   <p className="text-xs text-slate-500 mb-0.5 font-medium">Auto-Renew</p>

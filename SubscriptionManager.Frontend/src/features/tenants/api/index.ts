@@ -24,3 +24,12 @@ export const updateTenant = (id: string, data: UpdateTenantDto): Promise<void> =
 export const deleteTenant = (id: string): Promise<void> => {
   return apiClient.delete(`/tenants/${id}`);
 };
+
+
+export const suspendTenant = (id: string, suspend: boolean): Promise<void> => {
+  return apiClient.post(`/tenants/${id}/suspend`, suspend);
+};
+
+export const resetTenantPassword = (id: string): Promise<void> => {
+  return apiClient.post(`/tenants/${id}/reset-password`);
+};

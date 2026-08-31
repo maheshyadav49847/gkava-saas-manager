@@ -136,7 +136,7 @@ export const InvoicesList = () => {
                     <div className="text-xs text-slate-500">{inv.tenantEmail}</div>
                   </td>
                   <td className="p-4 text-[#0A2540] font-medium">{inv.currency} {inv.amount.toFixed(2)}</td>
-                  <td className="p-4 text-slate-500">{new Date(inv.invoiceDate).toLocaleDateString()}</td>
+                  <td className="p-4 text-slate-500">{new Date(inv.invoiceDate).toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
                   <td className="p-4 text-slate-600">
                     {inv.paymentMethod ? (
                       <div className="flex flex-col">

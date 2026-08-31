@@ -12,6 +12,7 @@ namespace SubscriptionManager.Application.Features.Tenants.Queries.GetTenantDeta
         public string Phone { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public string? PaymentProviderCustomerId { get; set; }
+        public bool IsSuspended { get; set; }
         public List<TenantSubscriptionDto> Subscriptions { get; set; } = new();
     }
 

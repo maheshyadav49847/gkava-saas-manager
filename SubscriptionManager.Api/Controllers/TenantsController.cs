@@ -56,6 +56,23 @@ namespace SubscriptionManager.Api.Controllers
             return NoContent();
         }
 
+        
+        [HttpPost("{id}/suspend")]
+        public async Task<ActionResult> SuspendTenant(Guid id, [FromBody] bool suspend = true)
+        {
+            var result = await _mediator.Send(new SubscriptionManager.Application.Features.Tenants.Commands.SuspendTenant.SuspendTenantCommand { Id = id, Suspend = suspend });
+            if (!result) return NotFound();
+            return NoContent();
+        }
+
+        [HttpPost("{id}/reset-password")]
+        public async Task<ActionResult> ResetPassword(Guid id)
+        {
+            var result = await _mediator.Send(new SubscriptionManager.Application.Features.Tenants.Commands.ResetPassword.ResetPasswordCommand { Id = id });
+            if (!result) return NotFound();
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTenant(Guid id)
         {

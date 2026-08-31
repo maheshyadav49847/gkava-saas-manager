@@ -35,6 +35,7 @@ namespace SubscriptionManager.Application.Features.Tenants.Queries.GetTenantDeta
                 Phone = tenant.Phone,
                 CreatedAt = tenant.CreatedAt,
                 PaymentProviderCustomerId = tenant.PaymentProviderCustomerId,
+                IsSuspended = tenant.IsSuspended,
                 Subscriptions = tenant.Subscriptions.Select(s => new TenantSubscriptionDto
                 {
                     Id = s.Id,

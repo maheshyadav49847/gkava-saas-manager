@@ -10,6 +10,8 @@ public class Tenant : SubscriptionManager.Domain.Common.BaseAuditableEntity
     public string PasswordHash { get; set; } = string.Empty;
     public string? PaymentProviderCustomerId { get; set; } // e.g. Stripe Customer ID
     
+    public bool IsSuspended { get; set; } = false;
+
     // Navigation properties
     public virtual ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
 }

@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { 
   Package, Calendar, Activity, Link as LinkIcon, 
-  Copy, CheckCircle2, XCircle, Receipt, Loader2, Info
+  Copy, CheckCircle2, XCircle, Receipt, Loader2, Eye, EyeOff, Info
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -204,17 +204,23 @@ export function SubscriberDashboard() {
                   <div className="sub-integration">
                     <div className="sub-integration-title">Integration Credentials</div>
                     
-                    <div className="key-box">
-                      <span style={{ userSelect: 'all', fontSize: visibleKeys[sub.id] ? '0.75rem' : '0.85rem' }}>
+                    <div className="key-box" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ 
+                        userSelect: 'all', 
+                        fontSize: visibleKeys[sub.id] ? '0.75rem' : '0.85rem',
+                        wordBreak: 'break-all',
+                        flex: 1,
+                        minWidth: 0
+                      }}>
                         {visibleKeys[sub.id] ? sub.applicationKey : maskKey(sub.applicationKey)}
                       </span>
-                      <div style={{ display: 'flex', gap: '4px' }}>
+                      <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
                         <button 
                           className="copy-btn" 
                           onClick={() => toggleKeyVisibility(sub.id)}
-                          title="View App Key"
+                          title={visibleKeys[sub.id] ? "Hide App Key" : "View App Key"}
                         >
-                          <Info size={16} />
+                          {visibleKeys[sub.id] ? <EyeOff size={16} /> : <Eye size={16} />}
                         </button>
                         <button 
                           className="copy-btn" 

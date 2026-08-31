@@ -184,7 +184,7 @@ export const TenantsList = () => {
                         </span>
                       </td>
                       <td className="p-4 hidden md:table-cell text-sm text-[#425466]">
-                        {new Date(tenant.joinDate).toLocaleDateString()}
+                        {new Date(tenant.joinDate).toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </td>
                       <td className="p-4 text-right">
                         <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>

@@ -1,8 +1,24 @@
-import { useQuery } from '@tanstack/react-query';
-import { Mail, Phone, CalendarDays, CreditCard, AlertCircle, Pause, Power, Key, Loader2, RefreshCw, Smartphone, Landmark } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Mail, Phone, CalendarDays, CreditCard, AlertCircle, Pause, Play, Power, Key, Loader2, RefreshCw, Smartphone, Landmark } from 'lucide-react';
 import { appsettings } from '../../../config/appsettings';
+import { suspendTenant, resetTenantPassword } from '../api';
 
 export const ExpandedTenantRow = ({ tenantId }: { tenantId: string }) => {
+  const queryClient = useQueryClient();
+
+  const suspendMutation = useMutation({
+    mutationFn: (suspend: boolean) => suspendTenant(tenantId, suspend),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tenantDetails', tenantId] });
+      queryClient.invalidateQueries({ queryKey: ['tenants'] });
+    }
+  });
+
+  const resetMutation = useMutation({
+    mutationFn: () => resetTenantPassword(tenantId),
+    onSuccess: () => alert('Password reset email sent!')
+  });
+
   const { data: tenant, isLoading } = useQuery({
     queryKey: ['tenantDetails', tenantId],
     queryFn: async () => {
@@ -57,7 +73,7 @@ export const ExpandedTenantRow = ({ tenantId }: { tenantId: string }) => {
                   <Phone className="w-3.5 h-3.5 mr-2 text-slate-400" /> {tenant.phoneCountryCode || '+91'} {tenant.phone}
                 </div>
                 <div className="flex items-center text-sm text-[#425466]">
-                  <CalendarDays className="w-3.5 h-3.5 mr-2 text-slate-400" /> Joined {new Date(tenant.createdAt).toLocaleDateString()}
+                  <CalendarDays className="w-3.5 h-3.5 mr-2 text-slate-400" /> Joined {new Date(tenant.createdAt).toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </div>
               </div>
             </div>
@@ -98,28 +114,34 @@ export const ExpandedTenantRow = ({ tenantId }: { tenantId: string }) => {
             </div>
             <div className="p-3 grid grid-cols-2 gap-2">
               <button 
-                onClick={() => alert('Change Plan: This will open a modal to select a new product/plan. API endpoint pending.')}
+                onClick={() => alert('Change Plan modal coming soon.')}
                 className="flex flex-col items-center justify-center p-2 rounded bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100 transition-colors gap-1"
               >
                 <RefreshCw className="w-4 h-4" />
                 <span className="text-[10px] font-bold">Change Plan</span>
               </button>
               <button 
-                onClick={() => alert('Suspend Tenant: This will disable the tenant account and pause billing. API endpoint pending.')}
-                className="flex flex-col items-center justify-center p-2 rounded bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-100 transition-colors gap-1"
+                onClick={() => suspendMutation.mutate(!tenant.isSuspended)}
+                disabled={suspendMutation.isPending}
+                className={`flex flex-col items-center justify-center p-2 rounded transition-colors gap-1 border ${
+                  tenant.isSuspended 
+                    ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border-emerald-100' 
+                    : 'bg-amber-50 text-amber-700 hover:bg-amber-100 border-amber-100'
+                }`}
               >
-                <Pause className="w-4 h-4" />
-                <span className="text-[10px] font-bold">Suspend</span>
+                {suspendMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : (tenant.isSuspended ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />)}
+                <span className="text-[10px] font-bold">{tenant.isSuspended ? 'Restore' : 'Suspend'}</span>
               </button>
               <button 
-                onClick={() => alert('Reset Password: This will trigger a password reset email to the tenant admin. API endpoint pending.')}
+                onClick={() => resetMutation.mutate()}
+                disabled={resetMutation.isPending}
                 className="flex flex-col items-center justify-center p-2 rounded bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200 transition-colors gap-1"
               >
-                <Key className="w-4 h-4" />
+                {resetMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
                 <span className="text-[10px] font-bold">Reset Pass</span>
               </button>
               <button 
-                onClick={() => alert('Cancel Subscription: This will cancel the active subscription at period end. API endpoint pending.')}
+                onClick={() => alert('Cancel Subscription modal coming soon.')}
                 className="flex flex-col items-center justify-center p-2 rounded bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-100 transition-colors gap-1"
               >
                 <Power className="w-4 h-4" />
@@ -174,8 +196,8 @@ export const ExpandedTenantRow = ({ tenantId }: { tenantId: string }) => {
                           )}
                         </td>
                         <td className="p-3">
-                          <p className="text-xs text-slate-600">{new Date(sub.startDate).toLocaleDateString()} -</p>
-                          <p className="text-xs font-semibold text-slate-900">{new Date(sub.endDate).toLocaleDateString()}</p>
+                          <p className="text-xs text-slate-600">{new Date(sub.startDate).toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} -</p>
+                          <p className="text-xs font-semibold text-slate-900">{new Date(sub.endDate).toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                         </td>
                         <td className="p-3 text-right">
                           <p className="font-bold text-slate-900">₹{sub.planPrice}</p>
