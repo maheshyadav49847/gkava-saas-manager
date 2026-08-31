@@ -69,7 +69,7 @@ public class CountriesController : ControllerBase
                 var id = GetCsvValue(csv, headerRecord, "Id", "ISO3166-1-Alpha-2", "alpha-2", "cca2", "Code");
                 var name = GetCsvValue(csv, headerRecord, "Name", "CLDR display name", "official_name_en", "Country", "name_en");
                 var phone = GetCsvValue(csv, headerRecord, "PhoneCode", "Dial", "calling_code", "Phone");
-                var currCode = GetCsvValue(csv, headerRecord, "CurrencyCode", "ISO4217-currency_alphabetic", "currency_code", "Currency");
+                var currCode = GetCsvValue(csv, headerRecord, "CurrencyCode", "ISO4217-currency_alphabetic_code", "ISO4217-currency_alphabetic", "currency_code", "Currency");
                 var currSym = GetCsvValue(csv, headerRecord, "CurrencySymbol", "currency_symbol", "Symbol");
 
                 if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(name)) 
