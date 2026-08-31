@@ -149,6 +149,7 @@ export const PlansList = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[#F6F9FC] border-b border-[#E3E8EE] text-xs uppercase tracking-wider text-[#425466] font-semibold">
+                <th className="p-4">Application</th>
                 <th className="p-4">Plan Name</th>
                 <th className="p-4">Monthly Price</th>
                 <th className="p-4">Yearly Price</th>
@@ -160,7 +161,7 @@ export const PlansList = () => {
             <tbody className="divide-y divide-[#E3E8EE] bg-white">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="p-8 text-center text-[#425466]">Loading plans...</td>
+                  <td colSpan={7} className="p-8 text-center text-[#425466]">Loading plans...</td>
                 </tr>
               ) : paginatedPlans.length === 0 ? (
                 <tr>
@@ -175,6 +176,11 @@ export const PlansList = () => {
               ) : (
                 paginatedPlans.map((plan) => (
                   <tr key={plan.id} className="hover:bg-[#F6F9FC] transition-colors">
+                    <td className="p-4">
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-medium bg-[#E3E8EE]/50 text-[#425466]">
+                        {plan.applicationName || 'Unknown App'}
+                      </span>
+                    </td>
                     <td className="p-4">
                       <div className="flex flex-col">
                         <span className="font-semibold text-[#0A2540]">{plan.name}</span>

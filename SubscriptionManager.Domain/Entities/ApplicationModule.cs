@@ -1,6 +1,6 @@
 namespace SubscriptionManager.Domain.Entities;
 
-public class ApplicationModule
+public class ApplicationModule : SubscriptionManager.Domain.Common.BaseAuditableEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid ApplicationId { get; set; }

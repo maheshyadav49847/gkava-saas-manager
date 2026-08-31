@@ -2,7 +2,7 @@ using SubscriptionManager.Domain.Enums;
 
 namespace SubscriptionManager.Domain.Entities;
 
-public class Coupon
+public class Coupon : SubscriptionManager.Domain.Common.BaseAuditableEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     
@@ -21,8 +21,4 @@ public class Coupon
     public int CurrentUses { get; set; }
     
     public bool IsActive { get; set; } = true;
-    
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    
-    public DateTime? UpdatedAt { get; set; }
 }

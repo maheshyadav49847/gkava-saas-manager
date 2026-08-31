@@ -2,7 +2,7 @@ using System;
 
 namespace SubscriptionManager.Domain.Entities;
 
-public class TicketMessage
+public class TicketMessage : SubscriptionManager.Domain.Common.BaseAuditableEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid TicketId { get; set; }
@@ -10,7 +10,6 @@ public class TicketMessage
     public string SenderName { get; set; } = string.Empty;
     public bool IsInternalNote { get; set; }
     public string MessageText { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public virtual Ticket Ticket { get; set; } = null!;
 }

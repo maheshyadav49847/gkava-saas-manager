@@ -56,6 +56,22 @@ public class AuditInterceptor : SaveChangesInterceptor
                 }
             }
 
+            if (entry.Entity is SubscriptionManager.Domain.Common.BaseAuditableEntity auditableEntity)
+            {
+                var userId = "System"; // TODO: Extract from IHttpContextAccessor if available
+
+                if (entry.State == EntityState.Added)
+                {
+                    auditableEntity.CreatedAt = DateTime.UtcNow;
+                    auditableEntity.CreatedBy = userId;
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    auditableEntity.UpdatedAt = DateTime.UtcNow;
+                    auditableEntity.UpdatedBy = userId;
+                }
+            }
+
             var detailsJson = System.Text.Json.JsonSerializer.Serialize(changes);
 
             var auditLog = new AuditLog
@@ -63,7 +79,7 @@ public class AuditInterceptor : SaveChangesInterceptor
                 Id = Guid.NewGuid(),
                 Action = entry.State.ToString(),
                 EntityName = entry.Entity.GetType().Name,
-                UserId = "System", // Or extract from HttpContext/Claims if available
+                UserId = "System", 
                 Details = detailsJson,
                 Timestamp = DateTime.UtcNow
             };

@@ -4,7 +4,7 @@ using SubscriptionManager.Domain.Enums;
 
 namespace SubscriptionManager.Domain.Entities;
 
-public class Invoice
+public class Invoice : SubscriptionManager.Domain.Common.BaseAuditableEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid TenantId { get; set; }
@@ -15,8 +15,9 @@ public class Invoice
     public DateTime? DueDate { get; set; }
     public string? StripeInvoiceId { get; set; }
     public string? PdfUrl { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; }
+    
+    public string? PaymentMethod { get; set; }
+    public string? PaymentDetails { get; set; }
 
     public virtual Tenant Tenant { get; set; } = null!;
     public virtual ICollection<InvoiceLineItem> LineItems { get; set; } = new List<InvoiceLineItem>();

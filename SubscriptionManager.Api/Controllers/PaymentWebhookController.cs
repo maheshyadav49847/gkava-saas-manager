@@ -94,7 +94,7 @@ public class PaymentWebhookController : ControllerBase
             {
                 if (!string.IsNullOrEmpty(subscriptionId) && subscriptionId.StartsWith("sub_"))
                 {
-                    await HandleSubscriptionSuccessAsync(subscriptionId);
+                    await HandleSubscriptionSuccessAsync(subscriptionId, root);
                 }
                 else 
                 {
@@ -127,11 +127,39 @@ public class PaymentWebhookController : ControllerBase
         }
     }
 
-    private async Task HandleSubscriptionSuccessAsync(string cashfreeSubscriptionId)
+    private async Task HandleSubscriptionSuccessAsync(string cashfreeSubscriptionId, JsonElement root)
     {
         var parts = cashfreeSubscriptionId.Split('_');
         if (parts.Length >= 3 && Guid.TryParse(parts[1], out var tenantId) && Guid.TryParse(parts[2], out var planId))
         {
+            string paymentMethod = "Gateway";
+            string paymentDetails = "";
+            
+            // Extract Payment details from Cashfree payload
+            try 
+            {
+                if (root.TryGetProperty("data", out var dataProp) && dataProp.TryGetProperty("payment_method", out var pmProp))
+                {
+                    if (pmProp.TryGetProperty("card", out var cardProp)) {
+                        paymentMethod = "Card";
+                        var network = cardProp.TryGetProperty("card_network", out var n) ? n.GetString() : "";
+                        var last4 = cardProp.TryGetProperty("card_number", out var n4) ? n4.GetString() : "";
+                        paymentDetails = $"{network} **** {last4}".Trim();
+                    }
+                    else if (pmProp.TryGetProperty("upi", out var upiProp)) {
+                        paymentMethod = "UPI";
+                        paymentDetails = upiProp.TryGetProperty("upi_id", out var id) ? id.GetString() : "";
+                    }
+                    else if (pmProp.TryGetProperty("netbanking", out var nbProp)) {
+                        paymentMethod = "NetBanking";
+                        paymentDetails = nbProp.TryGetProperty("bank_name", out var bn) ? bn.GetString() : "";
+                    }
+                }
+            }
+            catch { }
+
+            var plan = await _context.Plans.Include(p => p.Application).FirstOrDefaultAsync(p => p.Id == planId);
+
             // Check if this subscription is already processed
             var existingSub = await _context.Subscriptions.FirstOrDefaultAsync(s => s.PaymentProviderSubscriptionId == cashfreeSubscriptionId);
             if (existingSub != null)
@@ -149,12 +177,28 @@ public class PaymentWebhookController : ControllerBase
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddMonths(1),
                 Status = SubscriptionStatus.Active,
-                PaymentProviderSubscriptionId = cashfreeSubscriptionId
+                PaymentProviderSubscriptionId = cashfreeSubscriptionId,
+                PaymentMethod = paymentMethod,
+                PaymentDetails = paymentDetails
             };
+            
+            var invoice = new SubscriptionManager.Domain.Entities.Invoice 
+            {
+                Id = Guid.NewGuid(),
+                TenantId = tenantId,
+                Amount = plan?.MonthlyPrice ?? 0,
+                Currency = "INR",
+                Status = InvoiceStatus.Paid,
+                InvoiceDate = DateTime.UtcNow,
+                PaymentMethod = paymentMethod,
+                PaymentDetails = paymentDetails
+            };
+            
             _context.Subscriptions.Add(newSub);
+            _context.Invoices.Add(invoice);
+            
             await _context.SaveChangesAsync(default);
 
-            var plan = await _context.Plans.Include(p => p.Application).FirstOrDefaultAsync(p => p.Id == planId);
             var tenant = await _context.Tenants.FirstOrDefaultAsync(t => t.Id == tenantId);
             
             if (plan?.Application != null && !string.IsNullOrEmpty(plan.Application.WebhookUrl) && tenant != null)
@@ -166,7 +210,7 @@ public class PaymentWebhookController : ControllerBase
                 // Fallback for legacy compatibility
                 _ = _webhookService.NotifySubscriptionCreatedAsync(plan.Application.WebsiteUrl, tenant, plan, newSub, plan.Application.AppKey);
             }
-            _logger.LogInformation("Successfully provisioned subscription for Tenant {TenantId} on Plan {PlanId}", tenantId, planId);
+            _logger.LogInformation("Successfully provisioned subscription and invoice for Tenant {TenantId} on Plan {PlanId}", tenantId, planId);
         }
     }
 }

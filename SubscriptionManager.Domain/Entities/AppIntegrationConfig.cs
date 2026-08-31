@@ -1,4 +1,4 @@
-﻿using System;  namespace SubscriptionManager.Domain.Entities;  public class AppIntegrationConfig {     public Guid Id { get; set; }     public Guid ApplicationId { get; set; }          public string? TargetApiUrl { get; set; }     public string? TargetApiSecretEncrypted { get; set; }          public string? Meta_AppId { get; set; }
+﻿using System;  namespace SubscriptionManager.Domain.Entities;  public class AppIntegrationConfig : SubscriptionManager.Domain.Common.BaseAuditableEntity {     public Guid Id { get; set; }     public Guid ApplicationId { get; set; }          public string? TargetApiUrl { get; set; }     public string? TargetApiSecretEncrypted { get; set; }          public string? Meta_AppId { get; set; }
     public bool Meta_AppId_IsSensitive { get; set; }         public string? Meta_ConfigId { get; set; }
     public bool Meta_ConfigId_IsSensitive { get; set; }         public string? Meta_SystemUserToken { get; set; }
     public bool Meta_SystemUserToken_IsSensitive { get; set; } = true;         public string? WhatsApp_WebhookVerifyToken { get; set; }

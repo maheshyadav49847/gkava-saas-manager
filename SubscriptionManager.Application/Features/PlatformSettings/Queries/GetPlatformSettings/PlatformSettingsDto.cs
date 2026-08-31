@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace SubscriptionManager.Application.Features.PlatformSettings.Queries.GetPlatformSettings;
 
@@ -12,5 +12,5 @@ public class PlatformSettingsDto
     public string? CashfreeAppId { get; set; }
     public string? CashfreeSecretKey { get; set; }
     public string CashfreeEnvironment { get; set; } = string.Empty;
-    public DateTime UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 }

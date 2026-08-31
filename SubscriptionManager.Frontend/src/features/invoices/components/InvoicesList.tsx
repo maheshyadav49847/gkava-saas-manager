@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { Receipt, Download, Send, Search, Filter } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { appsettings } from '../../../config/appsettings';
@@ -88,15 +88,16 @@ export const InvoicesList = () => {
                 <th className="p-4 font-medium">Customer/Tenant</th>
                 <th className="p-4 font-medium">Amount</th>
                 <th className="p-4 font-medium">Date</th>
+                <th className="p-4 font-medium">Payment Method</th>
                 <th className="p-4 font-medium">Status</th>
                 <th className="p-4 font-medium text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E3E8EE] text-sm">
               {isLoading ? (
-                <tr><td colSpan={6} className="p-4 text-center text-slate-500">Loading invoices...</td></tr>
+                <tr><td colSpan={7} className="p-4 text-center text-slate-500">Loading invoices...</td></tr>
               ) : invoices?.length === 0 ? (
-                <tr><td colSpan={6} className="p-4 text-center text-slate-500">No invoices found.</td></tr>
+                <tr><td colSpan={7} className="p-4 text-center text-slate-500">No invoices found.</td></tr>
               ) : invoices?.map((inv: any) => (
                 <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="p-4 font-medium text-slate-900 font-mono text-xs">{inv.id.split('-')[0]}...</td>
@@ -106,6 +107,16 @@ export const InvoicesList = () => {
                   </td>
                   <td className="p-4 text-[#0A2540] font-medium">{inv.currency} {inv.amount.toFixed(2)}</td>
                   <td className="p-4 text-slate-500">{new Date(inv.invoiceDate).toLocaleDateString()}</td>
+                  <td className="p-4 text-slate-600">
+                    {inv.paymentMethod ? (
+                      <div className="flex flex-col">
+                        <span className="font-medium text-slate-700">{inv.paymentMethod}</span>
+                        {inv.paymentDetails && <span className="text-xs text-slate-500">{inv.paymentDetails}</span>}
+                      </div>
+                    ) : (
+                      <span className="text-slate-400 italic">Not paid</span>
+                    )}
+                  </td>
                   <td className="p-4">
                     <span className={`px-2.5 py-1 rounded-sm text-xs font-semibold border ${getStatusBadgeClass(inv.status)}`}>
                       {inv.status}

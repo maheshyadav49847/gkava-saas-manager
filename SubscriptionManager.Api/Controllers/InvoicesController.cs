@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Application.Common.Interfaces;
@@ -41,6 +41,8 @@ public class InvoicesController : ControllerBase
                 i.InvoiceDate,
                 i.DueDate,
                 i.PdfUrl,
+                i.PaymentMethod,
+                i.PaymentDetails,
                 LineItemsCount = i.LineItems.Count
             })
             .ToListAsync();

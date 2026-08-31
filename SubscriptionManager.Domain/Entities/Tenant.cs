@@ -1,6 +1,6 @@
 namespace SubscriptionManager.Domain.Entities;
 
-public class Tenant
+public class Tenant : SubscriptionManager.Domain.Common.BaseAuditableEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;

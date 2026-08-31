@@ -2,7 +2,7 @@ using System;
 
 namespace SubscriptionManager.Domain.Entities
 {
-    public class AdminUser
+    public class AdminUser : SubscriptionManager.Domain.Common.BaseAuditableEntity
     {
         public Guid Id { get; set; }
         public string Email { get; set; }

@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SubscriptionManager.Application.Common.Interfaces;
 using System.Linq;
@@ -21,18 +21,22 @@ namespace SubscriptionManager.Application.Features.Plans.Queries.GetPlans
         {
             var plans = await _context.Plans
                 .Include(p => p.Features)
-                .OrderBy(p => p.MonthlyPrice)
+                .Include(p => p.Application)
+                .OrderBy(p => p.Application.Name)
+                .ThenByDescending(p => p.CreatedAt)
                 .ToListAsync(cancellationToken);
 
             return plans.Select(p => new PlanDto
             {
                 Id = p.Id,
                 ApplicationId = p.ApplicationId,
+                ApplicationName = p.Application?.Name ?? "Unknown App",
                 Name = p.Name,
                 Description = p.Description,
                 MonthlyPrice = p.MonthlyPrice,
                 YearlyPrice = p.YearlyPrice,
                 IsPopular = p.IsPopular,
+                CreatedAt = p.CreatedAt,
                 Features = p.Features.Select(f => f.FeatureName).ToArray()
             }).ToList();
         }

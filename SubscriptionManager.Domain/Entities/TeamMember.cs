@@ -2,7 +2,7 @@ using System;
 
 namespace SubscriptionManager.Domain.Entities;
 
-public class TeamMember
+public class TeamMember : SubscriptionManager.Domain.Common.BaseAuditableEntity
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
