@@ -24,6 +24,11 @@ namespace SubscriptionManager.Application.Features.Coupons.Commands.CreateCoupon
                 throw new ArgumentException("A coupon with this code already exists.");
             }
 
+            if (request.ExpiryDate.HasValue && request.ExpiryDate.Value.ToUniversalTime() < DateTime.UtcNow)
+            {
+                throw new ArgumentException("Expiry date cannot be in the past.");
+            }
+
             var coupon = new Coupon
             {
                 Code = request.Code.ToUpper(),

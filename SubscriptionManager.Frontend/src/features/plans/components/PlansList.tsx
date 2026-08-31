@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Edit2, Trash2, ListTodo, AlertCircle, Search, Star } from 'lucide-react';
+import { Plus, Edit2, Trash2, ListTodo, AlertCircle, Search, Star, X, Loader2 } from 'lucide-react';
 import { Plan } from '../types';
 import { getPlans, deletePlan } from '../api';
 import { CreatePlanModal } from './CreatePlanModal';
@@ -16,6 +16,9 @@ export const PlansList = () => {
   const [selectedAppFilter, setSelectedAppFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  
+  const [deletingPlan, setDeletingPlan] = useState<Plan | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { data: plans = [], isLoading: isPlansLoading, isError, error } = useQuery({
     queryKey: ['plans'],
@@ -33,16 +36,19 @@ export const PlansList = () => {
     mutationFn: deletePlan,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['plans'] });
+      setIsDeleteModalOpen(false);
+      setDeletingPlan(null);
     },
-    onError: (err) => {
+    onError: (err: any) => {
       console.error('Failed to delete plan:', err);
-      alert('Failed to delete plan. It might be in use.');
+      const errorMsg = err.response?.data?.detail || err.response?.data || 'Failed to delete plan. It might be in use.';
+      alert(typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg));
     }
   });
 
-  const handleDelete = (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this plan? This action cannot be undone.')) return;
-    deleteMutation.mutate(id);
+  const handleDelete = () => {
+    if (!deletingPlan) return;
+    deleteMutation.mutate(deletingPlan.id);
   };
 
   const filteredPlans = useMemo(() => {
@@ -228,8 +234,10 @@ export const PlansList = () => {
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button 
-                          onClick={() => handleDelete(plan.id)}
-                          disabled={deleteMutation.isPending && deleteMutation.variables === plan.id}
+                          onClick={() => {
+                            setDeletingPlan(plan);
+                            setIsDeleteModalOpen(true);
+                          }}
                           className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           title="Delete Plan"
                         >
@@ -278,6 +286,49 @@ export const PlansList = () => {
           </div>
         </div>
       </div>
+
+      {/* Delete Modal */}
+      {isDeleteModalOpen && deletingPlan && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-sm shadow-xl w-full max-w-md overflow-hidden border border-[#E3E8EE] animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-[#E3E8EE]">
+              <h3 className="text-lg font-bold text-rose-600 flex items-center gap-2">
+                <Trash2 className="w-5 h-5" /> Delete Plan
+              </h3>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-[#425466]">
+                Are you sure you want to delete <strong>{deletingPlan.name}</strong>? This action cannot be undone.
+              </p>
+              <div className="flex items-center justify-end gap-3 pt-4">
+                <button 
+                  type="button" 
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="px-4 py-2 text-sm font-medium flex items-center gap-2 text-[#425466] bg-transparent hover:bg-[#F6F9FC] border-2 border-[#E3E8EE] rounded-sm transition-colors"
+                >
+                  <X className="w-4 h-4" /> Cancel
+                </button>
+                <button 
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={deleteMutation.isPending}
+                  className="px-4 py-2 text-sm font-medium flex items-center gap-2 text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-sm transition-colors disabled:opacity-50"
+                >
+                  {deleteMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" /> Deleting...
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" /> Yes, Delete
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <CreatePlanModal 
         isOpen={isCreateModalOpen}

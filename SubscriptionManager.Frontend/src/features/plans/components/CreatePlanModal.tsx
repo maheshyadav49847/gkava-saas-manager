@@ -30,6 +30,20 @@ export const CreatePlanModal = ({ isOpen, onClose, onSuccess }: CreatePlanModalP
   });
 
   useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        applicationId: '00000000-0000-0000-0000-000000000000',
+        name: '',
+        description: '',
+        monthlyPrice: 0,
+        yearlyPrice: 0,
+        isPopular: false,
+        features: ['']
+      });
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     if (applications.length > 0 && formData.applicationId === '00000000-0000-0000-0000-000000000000') {
       setFormData(prev => ({ ...prev, applicationId: applications[0].id }));
     }

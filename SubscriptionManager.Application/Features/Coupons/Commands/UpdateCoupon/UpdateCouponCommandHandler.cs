@@ -28,6 +28,11 @@ namespace SubscriptionManager.Application.Features.Coupons.Commands.UpdateCoupon
                 throw new ArgumentException("Another coupon with this code already exists.");
             }
 
+            if (request.ExpiryDate.HasValue && request.ExpiryDate.Value.ToUniversalTime() < DateTime.UtcNow)
+            {
+                throw new ArgumentException("Expiry date cannot be in the past.");
+            }
+
             coupon.Code = request.Code.ToUpper();
             coupon.DiscountType = request.DiscountType;
             coupon.DiscountValue = request.DiscountValue;
