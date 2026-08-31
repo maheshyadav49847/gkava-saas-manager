@@ -90,7 +90,7 @@ export function PlatformSettingsTab() {
       const res = await apiClient.post('/countries/import', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      alert(res.data.Message || 'Import successful!');
+      alert((res as any).message || (res as any).Message || 'Import successful!');
       queryClient.invalidateQueries({ queryKey: ['countries'] });
     } catch (error) {
       console.error('Failed to import CSV', error);
