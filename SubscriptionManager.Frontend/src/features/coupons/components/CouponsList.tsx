@@ -171,9 +171,14 @@ export const CouponsList = () => {
                 paginatedCoupons.map((coupon) => (
                   <tr key={coupon.id} className={`hover:bg-[#F6F9FC] transition-colors ${!coupon.isActive ? 'opacity-60' : ''}`}>
                     <td className="p-4">
-                      <span className="font-mono font-bold text-[#0A2540] bg-slate-100 px-2.5 py-1 rounded-sm">
-                        {coupon.code}
-                      </span>
+                      <div className="flex flex-col gap-1 items-start">
+                        <span className="font-mono font-bold text-[#0A2540] bg-slate-100 px-2.5 py-1 rounded-sm">
+                          {coupon.code}
+                        </span>
+                        {coupon.description && (
+                          <span className="text-xs text-slate-500">{coupon.description}</span>
+                        )}
+                      </div>
                     </td>
                     <td className="p-4">
                       <span className="font-semibold text-[#0A2540]">

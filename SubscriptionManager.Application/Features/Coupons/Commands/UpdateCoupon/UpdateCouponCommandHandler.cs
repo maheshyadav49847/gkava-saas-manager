@@ -34,6 +34,7 @@ namespace SubscriptionManager.Application.Features.Coupons.Commands.UpdateCoupon
             }
 
             coupon.Code = request.Code.ToUpper();
+            coupon.Description = request.Description;
             coupon.DiscountType = request.DiscountType;
             coupon.DiscountValue = request.DiscountValue;
             coupon.ExpiryDate = request.ExpiryDate?.ToUniversalTime();

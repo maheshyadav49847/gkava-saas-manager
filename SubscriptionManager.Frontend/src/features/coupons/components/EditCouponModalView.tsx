@@ -30,6 +30,7 @@ export const EditCouponModalView = ({ isOpen, onClose, onSuccess, coupon }: Edit
       setFormData({
         id: coupon.id,
         code: coupon.code,
+        description: coupon.description || '',
         discountType: coupon.discountType,
         discountValue: coupon.discountValue,
         maxUses: coupon.maxUses,
@@ -85,6 +86,17 @@ export const EditCouponModalView = ({ isOpen, onClose, onSuccess, coupon }: Edit
                 onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                 className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
                 placeholder="e.g. SUMMER20"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#425466] mb-1">Description (Optional)</label>
+              <input
+                type="text"
+                value={formData.description || ''}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+                placeholder="e.g. 20% off for Summer Sale"
               />
             </div>
 

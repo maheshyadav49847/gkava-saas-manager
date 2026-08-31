@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using SubscriptionManager.Domain.Enums;
 using System;
 
@@ -7,6 +7,7 @@ namespace SubscriptionManager.Application.Features.Coupons.Commands.CreateCoupon
     public class CreateCouponCommand : IRequest<Guid>
     {
         public string Code { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public DiscountType DiscountType { get; set; }
         public decimal DiscountValue { get; set; }
         public DateTime? ExpiryDate { get; set; }

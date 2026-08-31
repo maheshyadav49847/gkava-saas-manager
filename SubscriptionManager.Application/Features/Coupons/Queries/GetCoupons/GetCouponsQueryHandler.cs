@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using SubscriptionManager.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -25,6 +25,7 @@ namespace SubscriptionManager.Application.Features.Coupons.Queries.GetCoupons
                 {
                     Id = c.Id,
                     Code = c.Code,
+                    Description = c.Description,
                     DiscountType = c.DiscountType.ToString(),
                     DiscountValue = c.DiscountValue,
                     ExpiryDate = c.ExpiryDate,

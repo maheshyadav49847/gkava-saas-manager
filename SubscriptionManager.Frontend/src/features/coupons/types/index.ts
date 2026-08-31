@@ -1,6 +1,7 @@
 export interface CouponDto {
   id: string;
   code: string;
+  description?: string;
   discountType: 'Percentage' | 'FixedAmount';
   discountValue: number;
   expiryDate: string | null;
@@ -13,6 +14,7 @@ export interface CouponDto {
 
 export interface CreateCouponDto {
   code: string;
+  description?: string;
   discountType: 'Percentage' | 'FixedAmount';
   discountValue: number;
   expiryDate: string | null;
@@ -23,6 +25,7 @@ export interface CreateCouponDto {
 export interface UpdateCouponDto {
   id: string;
   code: string;
+  description?: string;
   discountType: 'Percentage' | 'FixedAmount';
   discountValue: number;
   expiryDate: string | null;

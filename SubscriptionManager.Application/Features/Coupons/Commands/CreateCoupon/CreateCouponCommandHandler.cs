@@ -32,6 +32,7 @@ namespace SubscriptionManager.Application.Features.Coupons.Commands.CreateCoupon
             var coupon = new Coupon
             {
                 Code = request.Code.ToUpper(),
+                Description = request.Description,
                 DiscountType = request.DiscountType,
                 DiscountValue = request.DiscountValue,
                 ExpiryDate = request.ExpiryDate?.ToUniversalTime(),

@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using SubscriptionManager.Domain.Enums;
 using System;
 
@@ -8,6 +8,7 @@ namespace SubscriptionManager.Application.Features.Coupons.Commands.UpdateCoupon
     {
         public Guid Id { get; set; }
         public string Code { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public DiscountType DiscountType { get; set; }
         public decimal DiscountValue { get; set; }
         public DateTime? ExpiryDate { get; set; }

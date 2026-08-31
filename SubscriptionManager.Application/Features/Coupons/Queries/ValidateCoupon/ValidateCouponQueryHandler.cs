@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using SubscriptionManager.Application.Common.Interfaces;
 using SubscriptionManager.Application.Features.Coupons.Queries.GetCoupons;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +46,7 @@ namespace SubscriptionManager.Application.Features.Coupons.Queries.ValidateCoupo
             {
                 Id = coupon.Id,
                 Code = coupon.Code,
+                Description = coupon.Description,
                 DiscountType = coupon.DiscountType.ToString(),
                 DiscountValue = coupon.DiscountValue,
                 ExpiryDate = coupon.ExpiryDate,

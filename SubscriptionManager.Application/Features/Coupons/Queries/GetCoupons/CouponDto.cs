@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace SubscriptionManager.Application.Features.Coupons.Queries.GetCoupons
 {
@@ -6,6 +6,7 @@ namespace SubscriptionManager.Application.Features.Coupons.Queries.GetCoupons
     {
         public Guid Id { get; set; }
         public string Code { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public string DiscountType { get; set; } = string.Empty;
         public decimal DiscountValue { get; set; }
         public DateTime? ExpiryDate { get; set; }
