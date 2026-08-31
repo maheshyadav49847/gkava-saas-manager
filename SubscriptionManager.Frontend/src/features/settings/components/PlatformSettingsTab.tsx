@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { getCountries } from '@/lib/apiClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Save, Loader2, Globe, Mail, CreditCard, Key } from 'lucide-react';
 import { getPlatformSettings, updatePlatformSettings } from '../api';
-import { countryCodes } from '../../../utils/countryCodes';
 
 export function PlatformSettingsTab() {
   const queryClient = useQueryClient();
@@ -22,6 +22,8 @@ export function PlatformSettingsTab() {
     gstNumber: ''
   });
 
+  
+  const { data: countries = [] } = useQuery({ queryKey: ['countries'], queryFn: getCountries });
   const { data: settings, isLoading, isError } = useQuery({
     queryKey: ['platformSettings'],
     queryFn: getPlatformSettings,
@@ -176,8 +178,8 @@ export function PlatformSettingsTab() {
                 onChange={handleChange}
                 className="w-24 py-2 px-3 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
               >
-                {countryCodes.map(c => (
-                  <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                {countries.map(c => (
+                  <option key={c.id} value={c.phoneCode}>{c.phoneCode} ({c.id})</option>
                 ))}
               </select>
               <div className="relative flex-grow">

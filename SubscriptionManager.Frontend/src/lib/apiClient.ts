@@ -27,3 +27,16 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export interface CountryDto {
+    id: string;
+    name: string;
+    phoneCode: string;
+    currencyCode: string;
+    currencySymbol: string;
+}
+
+export const getCountries = async (): Promise<CountryDto[]> => {
+    const response = await apiClient.get('/countries');
+    return response.data;
+};

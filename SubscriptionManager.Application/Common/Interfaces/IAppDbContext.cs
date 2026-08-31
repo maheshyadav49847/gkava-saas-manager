@@ -28,6 +28,7 @@ public interface IAppDbContext
     DbSet<AppIntegrationConfig> AppIntegrationConfigs { get; }
     DbSet<AppIntegrationHistory> AppIntegrationHistories { get; }
     DbSet<ContactMessage> ContactMessages { get; }
+    DbSet<Country> Countries { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

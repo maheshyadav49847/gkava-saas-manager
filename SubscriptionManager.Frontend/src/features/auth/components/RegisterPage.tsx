@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Building, Phone, Loader2, AlertCircle, Check, UserPlus } from "lucide-react";
 import axios from 'axios';
+import { getCountries, CountryDto } from '@/lib/apiClient';
 import { appsettings } from '../../../config/appsettings';
-import { countryCodes } from '../../../utils/countryCodes';
 
 export const RegisterPage = () => {
   const [searchParams] = useSearchParams();
@@ -14,6 +14,11 @@ export const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
   const [phone, setPhone] = useState('');
+  const [countries, setCountries] = useState<CountryDto[]>([]);
+
+  useEffect(() => {
+    getCountries().then(setCountries).catch(console.error);
+  }, []);
   const [company, setCompany] = useState('');
   
   const [error, setError] = useState('');
@@ -144,8 +149,8 @@ export const RegisterPage = () => {
                 onChange={(e) => setPhoneCountryCode(e.target.value)}
                 className="w-24 px-3 py-2.5 bg-[#F6F9FC] border border-[#E3E8EE] rounded-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 text-[#0A2540]"
               >
-                {countryCodes.map(c => (
-                  <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                {countries.map(c => (
+                  <option key={c.id} value={c.phoneCode}>{c.phoneCode} ({c.id})</option>
                 ))}
               </select>
               <div className="relative flex-grow">

@@ -33,6 +33,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<AppIntegrationConfig> AppIntegrationConfigs { get; set; } = null!;
     public DbSet<AppIntegrationHistory> AppIntegrationHistories { get; set; } = null!;
     public DbSet<ContactMessage> ContactMessages { get; set; } = null!;
+    public DbSet<Country> Countries { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -185,6 +186,21 @@ public class AppDbContext : DbContext, IAppDbContext
         
 
         
+
+        
+        // Seed Countries
+        modelBuilder.Entity<Country>().HasData(
+            new Country { Id = "IN", Name = "India", PhoneCode = "+91", CurrencyCode = "INR", CurrencySymbol = "₹" },
+            new Country { Id = "US", Name = "United States", PhoneCode = "+1", CurrencyCode = "USD", CurrencySymbol = "$" },
+            new Country { Id = "UK", Name = "United Kingdom", PhoneCode = "+44", CurrencyCode = "GBP", CurrencySymbol = "£" },
+            new Country { Id = "AU", Name = "Australia", PhoneCode = "+61", CurrencyCode = "AUD", CurrencySymbol = "$" },
+            new Country { Id = "AE", Name = "United Arab Emirates", PhoneCode = "+971", CurrencyCode = "AED", CurrencySymbol = "د.إ" },
+            new Country { Id = "CA", Name = "Canada", PhoneCode = "+1", CurrencyCode = "CAD", CurrencySymbol = "$" },
+            new Country { Id = "SG", Name = "Singapore", PhoneCode = "+65", CurrencyCode = "SGD", CurrencySymbol = "$" },
+            new Country { Id = "DE", Name = "Germany", PhoneCode = "+49", CurrencyCode = "EUR", CurrencySymbol = "€" },
+            new Country { Id = "FR", Name = "France", PhoneCode = "+33", CurrencyCode = "EUR", CurrencySymbol = "€" },
+            new Country { Id = "JP", Name = "Japan", PhoneCode = "+81", CurrencyCode = "JPY", CurrencySymbol = "¥" }
+        );
 
         // Seed Admin User
         modelBuilder.Entity<AdminUser>().HasData(new AdminUser

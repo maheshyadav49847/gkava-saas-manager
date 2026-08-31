@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { X, Loader2, Edit2, Save } from 'lucide-react';
-import { useMutation } from '@tanstack/react-query';
+import { getCountries } from '@/lib/apiClient';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { updateTenant, UpdateTenantDto } from '../api';
 import { Tenant } from '../types';
-import { countryCodes } from '../../../utils/countryCodes';
 
 interface EditTenantModalProps {
   isOpen: boolean;
@@ -34,6 +34,8 @@ export const EditTenantModal = ({ isOpen, onClose, onSuccess, tenant }: EditTena
     }
   }, [isOpen, tenant]);
 
+  
+  const { data: countries = [] } = useQuery({ queryKey: ['countries'], queryFn: getCountries });
   const updateMutation = useMutation({
     mutationFn: (data: UpdateTenantDto) => {
       if (!tenant) throw new Error('No tenant selected');
@@ -102,8 +104,8 @@ export const EditTenantModal = ({ isOpen, onClose, onSuccess, tenant }: EditTena
                 onChange={(e) => setFormData({ ...formData, phoneCountryCode: e.target.value })}
                 className="w-24 px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
               >
-                {countryCodes.map(c => (
-                  <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                {countries.map(c => (
+                  <option key={c.id} value={c.phoneCode}>{c.phoneCode} ({c.id})</option>
                 ))}
               </select>
               <input

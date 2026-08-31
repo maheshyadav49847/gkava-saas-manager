@@ -147,3 +147,16 @@ export const unsubscribeFromPlan = async (subscriptionId: string, token: string)
   );
   return response.data;
 };
+
+export interface CountryDto {
+    id: string;
+    name: string;
+    phoneCode: string;
+    currencyCode: string;
+    currencySymbol: string;
+}
+
+export const getCountries = async (): Promise<CountryDto[]> => {
+    const response = await axios.get(`${API_BASE_URL}/countries`);
+    return response.data;
+};

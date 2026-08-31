@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { X, Loader2, Users, Plus } from 'lucide-react';
+import { getCountries } from '@/lib/apiClient';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { createTenant } from '../api';
 import { CreateTenantDto } from '../types';
 import { getPlans } from '../../plans/api';
 import { couponsApi } from '../../coupons/api';
 import { CouponDto } from '../../coupons/types';
-import { countryCodes } from '../../../utils/countryCodes';
 
 interface CreateTenantModalProps {
   isOpen: boolean;
@@ -26,6 +26,8 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
   const [couponError, setCouponError] = useState<string | null>(null);
   const [appliedCoupon, setAppliedCoupon] = useState<CouponDto | null>(null);
 
+  
+  const { data: countries = [] } = useQuery({ queryKey: ['countries'], queryFn: getCountries });
   const { data: plans = [] } = useQuery({
     queryKey: ['plans'],
     queryFn: getPlans,
@@ -122,8 +124,8 @@ export const CreateTenantModal = ({ isOpen, onClose, onSuccess }: CreateTenantMo
                 onChange={(e) => setFormData({ ...formData, phoneCountryCode: e.target.value })}
                 className="w-24 px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
               >
-                {countryCodes.map(c => (
-                  <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                {countries.map(c => (
+                  <option key={c.id} value={c.phoneCode}>{c.phoneCode} ({c.id})</option>
                 ))}
               </select>
               <input

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Mail, MapPin, Phone, CheckCircle2, Loader2 } from 'lucide-react';
-import { getPlatformSettings, submitContactMessage, type PlatformSettings, type ContactMessageDto } from '../services/api';
-import { countryCodes } from '../utils/countryCodes';
+import { getPlatformSettings, submitContactMessage, getCountries, type CountryDto, type PlatformSettings, type ContactMessageDto } from '../services/api';
+
 import './Contact.css';
 
 export function Contact() {
@@ -15,6 +15,11 @@ export function Contact() {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [countries, setCountries] = useState<CountryDto[]>([]);
+
+  useEffect(() => {
+    getCountries().then(setCountries).catch(console.error);
+  }, []);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -189,8 +194,8 @@ export function Contact() {
                     onChange={(e) => setFormData({ ...formData, phoneCountryCode: e.target.value })}
                     className="w-24 px-3 py-3 bg-white border border-[#E3E8EE] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
                   >
-                    {countryCodes.map(c => (
-                      <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                    {countries.map(c => (
+                      <option key={c.id} value={c.phoneCode}>{c.phoneCode} ({c.id})</option>
                     ))}
                   </select>
                   <input

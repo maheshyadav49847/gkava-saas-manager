@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { Mail, Lock, User, Phone, ArrowRight, Layers, AlertCircle, CheckCircle } from 'lucide-react';
-import { registerSubscriber } from '../services/api';
-import { countryCodes } from '../utils/countryCodes';
+import { registerSubscriber, getCountries } from '../services/api';
+import type { CountryDto } from '../services/api';
+
 import './Auth.css';
 
 export function Register() {
@@ -10,6 +11,11 @@ export function Register() {
   const [email, setEmail] = useState('');
   const [phoneCountryCode, setPhoneCountryCode] = useState('+91');
   const [phone, setPhone] = useState('');
+  const [countries, setCountries] = useState<CountryDto[]>([]);
+
+  useEffect(() => {
+    getCountries().then(setCountries).catch(console.error);
+  }, []);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -117,8 +123,8 @@ export function Register() {
                     onChange={e => setPhoneCountryCode(e.target.value)}
                     className="w-24 px-4 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0F172A]"
                   >
-                    {countryCodes.map(c => (
-                      <option key={c.code + c.country} value={c.code}>{c.code}</option>
+                    {countries.map(c => (
+                      <option key={c.id} value={c.phoneCode}>{c.phoneCode} ({c.id})</option>
                     ))}
                   </select>
                 <div className="input-with-icon" style={{ flexGrow: 1 }}>
