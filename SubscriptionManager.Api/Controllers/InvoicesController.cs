@@ -32,6 +32,7 @@ public class InvoicesController : ControllerBase
             .OrderByDescending(i => i.InvoiceDate)
             .Select(i => new {
                 i.Id,
+                i.InvoiceNumber,
                 i.TenantId,
                 TenantName = i.Tenant.Name,
                 TenantEmail = i.Tenant.Email,
@@ -62,6 +63,7 @@ public class InvoicesController : ControllerBase
 
         return Ok(new {
             invoice.Id,
+            invoice.InvoiceNumber,
             invoice.TenantId,
             TenantName = invoice.Tenant.Name,
             invoice.Amount,
@@ -108,6 +110,7 @@ public class InvoicesController : ControllerBase
         var invoice = new Invoice
         {
             Id = Guid.NewGuid(),
+            InvoiceNumber = await Helpers.InvoiceNumberGenerator.GenerateNextAsync(_context),
             TenantId = request.TenantId,
             Amount = totalAmount,
             Currency = request.Currency,

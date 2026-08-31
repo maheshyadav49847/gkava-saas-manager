@@ -100,7 +100,7 @@ export const InvoicesList = () => {
                 <tr><td colSpan={7} className="p-4 text-center text-slate-500">No invoices found.</td></tr>
               ) : invoices?.map((inv: any) => (
                 <tr key={inv.id} className="hover:bg-slate-50/50 transition-colors group">
-                  <td className="p-4 font-medium text-slate-900 font-mono text-xs">{inv.id.split('-')[0]}...</td>
+                  <td className="p-4 font-medium text-slate-900 font-mono text-xs">{inv.invoiceNumber || inv.id.split('-')[0]}</td>
                   <td className="p-4 text-slate-600">
                     <div className="font-medium text-[#0A2540]">{inv.tenantName}</div>
                     <div className="text-xs text-slate-500">{inv.tenantEmail}</div>

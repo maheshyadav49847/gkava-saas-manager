@@ -185,6 +185,7 @@ public class PaymentWebhookController : ControllerBase
             var invoice = new SubscriptionManager.Domain.Entities.Invoice 
             {
                 Id = Guid.NewGuid(),
+                InvoiceNumber = await Helpers.InvoiceNumberGenerator.GenerateNextAsync(_context),
                 TenantId = tenantId,
                 Amount = plan?.MonthlyPrice ?? 0,
                 Currency = "INR",

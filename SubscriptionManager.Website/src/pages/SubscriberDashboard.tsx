@@ -25,6 +25,14 @@ export function SubscriberDashboard() {
     loadData();
   }, [token]);
 
+  useEffect(() => {
+    if (window.location.hash === '#billing' && data) {
+      setTimeout(() => {
+        document.getElementById('billing')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [window.location.hash, data]);
+
   const handleUnsubscribe = async (subId: string) => {
     if (!token) return;
     if (!window.confirm("Are you sure you want to cancel this subscription?")) return;
@@ -115,6 +123,59 @@ export function SubscriberDashboard() {
             <div className="card empty-state">
               <p>You don't have any active subscriptions yet.</p>
               <a href="/pricing" className="btn btn-primary">Browse Plans</a>
+            </div>
+          )}
+        </section>
+
+        <section className="dashboard-section" id="billing">
+          <h2>Billing & Invoices</h2>
+          {data?.invoices && data.invoices.length > 0 ? (
+            <div className="card" style={{ padding: 0, overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                    <th style={{ padding: '12px 16px', fontSize: '0.85rem', color: '#64748b' }}>Invoice #</th>
+                    <th style={{ padding: '12px 16px', fontSize: '0.85rem', color: '#64748b' }}>Date</th>
+                    <th style={{ padding: '12px 16px', fontSize: '0.85rem', color: '#64748b' }}>Amount</th>
+                    <th style={{ padding: '12px 16px', fontSize: '0.85rem', color: '#64748b' }}>Status</th>
+                    <th style={{ padding: '12px 16px', fontSize: '0.85rem', color: '#64748b' }}>Payment Method</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.invoices.map((inv: any) => (
+                    <tr key={inv.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ padding: '12px 16px', fontFamily: 'monospace', fontSize: '0.9rem', color: '#0f172a' }}>
+                        {inv.invoiceNumber || inv.id.split('-')[0]}
+                      </td>
+                      <td style={{ padding: '12px 16px', fontSize: '0.9rem', color: '#475569' }}>
+                        {new Date(inv.invoiceDate).toLocaleDateString()}
+                      </td>
+                      <td style={{ padding: '12px 16px', fontSize: '0.9rem', fontWeight: 500 }}>
+                        {inv.amount === 0 ? 'Free' : `${inv.currency} ${inv.amount.toFixed(2)}`}
+                      </td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <span className={`status-badge status-${inv.status.toLowerCase()}`}>
+                          {inv.status}
+                        </span>
+                      </td>
+                      <td style={{ padding: '12px 16px', fontSize: '0.9rem', color: '#475569' }}>
+                        {inv.paymentMethod ? (
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ textTransform: 'capitalize', fontWeight: 500 }}>{inv.paymentMethod}</span>
+                            {inv.paymentDetails && inv.paymentDetails !== inv.paymentMethod && (
+                              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{inv.paymentDetails}</span>
+                            )}
+                          </div>
+                        ) : 'N/A'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="card empty-state">
+              <p>No billing history available.</p>
             </div>
           )}
         </section>

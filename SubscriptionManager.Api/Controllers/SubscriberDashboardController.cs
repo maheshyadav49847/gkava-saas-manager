@@ -60,10 +60,26 @@ public class SubscriberDashboardController : ControllerBase
             .Select(t => new { t.Name, t.Email, t.Phone })
             .FirstOrDefaultAsync();
 
+        var invoices = await _context.Invoices
+            .Where(i => i.TenantId == tenantId)
+            .OrderByDescending(i => i.InvoiceDate)
+            .Select(i => new {
+                i.Id,
+                i.InvoiceNumber,
+                i.Amount,
+                i.Currency,
+                Status = i.Status.ToString(),
+                i.InvoiceDate,
+                i.PaymentMethod,
+                i.PaymentDetails
+            })
+            .ToListAsync();
+
         return Ok(new
         {
             Profile = profile,
-            Subscriptions = subscriptions
+            Subscriptions = subscriptions,
+            Invoices = invoices
         });
     }
 
@@ -133,6 +149,7 @@ public class SubscriberDashboardController : ControllerBase
             var invoice = new SubscriptionManager.Domain.Entities.Invoice 
             {
                 Id = Guid.NewGuid(),
+                InvoiceNumber = await Helpers.InvoiceNumberGenerator.GenerateNextAsync(_context),
                 TenantId = tenantId,
                 Amount = 0,
                 Currency = "INR",

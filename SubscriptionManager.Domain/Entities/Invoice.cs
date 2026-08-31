@@ -7,6 +7,7 @@ namespace SubscriptionManager.Domain.Entities;
 public class Invoice : SubscriptionManager.Domain.Common.BaseAuditableEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
+    public string InvoiceNumber { get; set; } = string.Empty;
     public Guid TenantId { get; set; }
     public decimal Amount { get; set; }
     public string Currency { get; set; } = string.Empty;
