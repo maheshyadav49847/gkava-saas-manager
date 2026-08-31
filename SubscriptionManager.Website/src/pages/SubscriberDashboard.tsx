@@ -14,6 +14,25 @@ export function SubscriberDashboard() {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const { token, isAuthenticated, userName } = useAuth();
 
+  const [visibleKeys, setVisibleKeys] = useState<Record<string, boolean>>({});
+
+  const toggleKeyVisibility = (id: string) => {
+    setVisibleKeys(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const maskKey = (key: string) => {
+    if (!key) return '';
+    return 'sk_live_' + '•'.repeat(24);
+  };
+
+  const formatDate = (dateString: string) => {
+    const d = new Date(dateString);
+    return d.toLocaleString('en-IN', { 
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+  };
+
   const loadData = async () => {
     if (!token) return;
     try {
@@ -80,6 +99,14 @@ export function SubscriberDashboard() {
     }
   };
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'card'|'list'>('card');
+
+  const filteredSubs = data?.subscriptions?.filter((s: any) => 
+    s.applicationName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    s.planName.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
+
   return (
     <div className="dashboard-layout">
       {/* Header Banner */}
@@ -110,89 +137,177 @@ export function SubscriberDashboard() {
       <div className="dashboard-container" style={{ paddingTop: '1.5rem' }}>
         
         {/* Active Subscriptions Section */}
-        <div className="dashboard-section-title">
-          <Package size={20} color="#635BFF" />
-          <span>Your Subscriptions</span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <div className="dashboard-section-title" style={{ margin: 0 }}>
+            <Package size={20} color="#635BFF" />
+            <span>Your Subscriptions</span>
+          </div>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <input 
+              type="text" 
+              placeholder="Search apps or plans..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid #E2E8F0', outline: 'none', fontSize: '0.9rem', width: '250px' }}
+            />
+            <div style={{ display: 'flex', background: '#F1F5F9', borderRadius: '8px', padding: '0.25rem' }}>
+              <button 
+                onClick={() => setViewMode('card')}
+                style={{ padding: '0.25rem 0.75rem', borderRadius: '6px', border: 'none', cursor: 'pointer', background: viewMode === 'card' ? '#FFFFFF' : 'transparent', boxShadow: viewMode === 'card' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none', fontWeight: 500, color: viewMode === 'card' ? '#0F172A' : '#64748B' }}
+              >
+                Card
+              </button>
+              <button 
+                onClick={() => setViewMode('list')}
+                style={{ padding: '0.25rem 0.75rem', borderRadius: '6px', border: 'none', cursor: 'pointer', background: viewMode === 'list' ? '#FFFFFF' : 'transparent', boxShadow: viewMode === 'list' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none', fontWeight: 500, color: viewMode === 'list' ? '#0F172A' : '#64748B' }}
+              >
+                List
+              </button>
+            </div>
+          </div>
         </div>
 
-        {data?.subscriptions && data.subscriptions.length > 0 ? (
-          <div className="subscription-grid">
-            {data.subscriptions.map((sub: any) => (
-              <div key={sub.id} className="sub-card">
-                <div className="sub-header">
-                  <div className="sub-app-info">
-                    <div className="app-icon">
-                      <Package size={20} />
+        {filteredSubs.length > 0 ? (
+          viewMode === 'card' ? (
+            <div className="subscription-grid">
+              {filteredSubs.map((sub: any) => (
+                <div key={sub.id} className="sub-card">
+                  <div className="sub-header">
+                    <div className="sub-app-info">
+                      <div className="app-icon">
+                        <Package size={20} />
+                      </div>
+                      <div>
+                        <h3 className="sub-app-name">{sub.applicationName}</h3>
+                        <p className="sub-plan-name">{sub.planName}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="sub-app-name">{sub.applicationName}</h3>
-                      <p className="sub-plan-name">{sub.planName}</p>
+                    <span className={`status-badge ${sub.status.toLowerCase()}`}>
+                      {getStatusIcon(sub.status)}
+                      {sub.status}
+                    </span>
+                  </div>
+
+                  <div className="sub-meta">
+                    <div className="meta-row">
+                      <span className="meta-label"><Calendar size={14} /> Start</span>
+                      <span className="meta-value">{formatDate(sub.startDate)}</span>
+                    </div>
+                    <div className="meta-row">
+                      <span className="meta-label"><Calendar size={14} /> End</span>
+                      <span className="meta-value">{formatDate(sub.endDate)}</span>
                     </div>
                   </div>
-                  <span className={`status-badge ${sub.status.toLowerCase()}`}>
-                    {getStatusIcon(sub.status)}
-                    {sub.status}
-                  </span>
-                </div>
 
-                <div className="sub-meta">
-                  <div className="meta-row">
-                    <span className="meta-label"><Calendar size={14} /> Start Date</span>
-                    <span className="meta-value">{new Date(sub.startDate).toLocaleDateString()}</span>
-                  </div>
-                  <div className="meta-row">
-                    <span className="meta-label"><Calendar size={14} /> End Date</span>
-                    <span className="meta-value">{new Date(sub.endDate).toLocaleDateString()}</span>
-                  </div>
-                </div>
+                  <div className="sub-divider" />
 
-                <div className="sub-divider" />
-
-                <div className="sub-integration">
-                  <div className="sub-integration-title">Integration Credentials</div>
-                  
-                  <div className="key-box">
-                    <span>{sub.applicationKey}</span>
-                    <button 
-                      className="copy-btn" 
-                      onClick={() => copyToClipboard(sub.applicationKey, sub.id)}
-                      title="Copy App Key"
-                    >
-                      {copiedKey === sub.id ? <CheckCircle2 size={16} color="#059669" /> : <Copy size={16} />}
-                    </button>
-                  </div>
-                  
-                  {sub.websiteUrl && (
-                    <div className="key-box" style={{ marginTop: '0.5rem', background: 'transparent', border: 'none', padding: 0 }}>
-                      <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <LinkIcon size={14} /> 
-                        <a href={sub.websiteUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#635BFF', textDecoration: 'none' }}>
-                          {sub.websiteUrl.replace(/^https?:\/\//, '')}
-                        </a>
+                  <div className="sub-integration">
+                    <div className="sub-integration-title">Integration Credentials</div>
+                    
+                    <div className="key-box">
+                      <span style={{ userSelect: 'all', fontSize: visibleKeys[sub.id] ? '0.75rem' : '0.85rem' }}>
+                        {visibleKeys[sub.id] ? sub.applicationKey : maskKey(sub.applicationKey)}
                       </span>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        <button 
+                          className="copy-btn" 
+                          onClick={() => toggleKeyVisibility(sub.id)}
+                          title="View App Key"
+                        >
+                          <Info size={16} />
+                        </button>
+                        <button 
+                          className="copy-btn" 
+                          onClick={() => copyToClipboard(sub.applicationKey, sub.id)}
+                          title="Copy App Key"
+                        >
+                          {copiedKey === sub.id ? <CheckCircle2 size={16} color="#059669" /> : <Copy size={16} />}
+                        </button>
+                      </div>
                     </div>
-                  )}
-                </div>
+                    
+                    {sub.websiteUrl && (
+                      <div className="key-box" style={{ marginTop: '0.5rem', background: 'transparent', border: 'none', padding: 0 }}>
+                        <span style={{ color: '#64748B', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <LinkIcon size={14} /> 
+                          <a href={sub.websiteUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#635BFF', textDecoration: 'none' }}>
+                            {sub.websiteUrl.replace(/^https?:\/\//, '')}
+                          </a>
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
-                <div className="sub-actions">
-                  {sub.status.toLowerCase() === 'active' && !sub.cancelAtPeriodEnd && (
-                    <button 
-                      onClick={() => handleUnsubscribe(sub.id)}
-                      className="btn-cancel"
-                    >
-                      Cancel Subscription
-                    </button>
-                  )}
-                  {sub.status.toLowerCase() === 'active' && sub.cancelAtPeriodEnd && (
-                    <div className="cancel-notice">
-                      <Info size={14} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-bottom' }} />
-                      Cancels at period end
-                    </div>
-                  )}
+                  <div className="sub-actions">
+                    {sub.status.toLowerCase() === 'active' && !sub.cancelAtPeriodEnd && (
+                      <button 
+                        onClick={() => handleUnsubscribe(sub.id)}
+                        className="btn-cancel"
+                      >
+                        Cancel Subscription
+                      </button>
+                    )}
+                    {sub.status.toLowerCase() === 'active' && sub.cancelAtPeriodEnd && (
+                      <div className="cancel-notice">
+                        <Info size={14} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'text-bottom' }} />
+                        Cancels at period end
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="dashboard-card" style={{ padding: 0, overflowX: 'auto' }}>
+              <table className="billing-table">
+                <thead>
+                  <tr>
+                    <th>App & Plan</th>
+                    <th>Status</th>
+                    <th>Valid Period</th>
+                    <th>App Key</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredSubs.map((sub: any) => (
+                    <tr key={sub.id}>
+                      <td>
+                        <div style={{ fontWeight: 600, color: '#0F172A' }}>{sub.applicationName}</div>
+                        <div style={{ fontSize: '0.8rem', color: '#635BFF' }}>{sub.planName}</div>
+                      </td>
+                      <td>
+                        <span className={`status-badge ${sub.status.toLowerCase()}`}>
+                          {getStatusIcon(sub.status)}
+                          {sub.status}
+                        </span>
+                      </td>
+                      <td style={{ fontSize: '0.85rem' }}>
+                        <div>{formatDate(sub.startDate)}</div>
+                        <div style={{ color: '#64748B' }}>to {formatDate(sub.endDate)}</div>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontFamily: 'monospace', fontSize: '0.75rem', background: '#F1F5F9', padding: '4px 8px', borderRadius: '4px' }}>
+                            {visibleKeys[sub.id] ? sub.applicationKey : maskKey(sub.applicationKey)}
+                          </span>
+                          <button onClick={() => toggleKeyVisibility(sub.id)} className="copy-btn"><Info size={14}/></button>
+                          <button onClick={() => copyToClipboard(sub.applicationKey, sub.id)} className="copy-btn">
+                            {copiedKey === sub.id ? <CheckCircle2 size={14} color="#059669" /> : <Copy size={14} />}
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        {sub.status.toLowerCase() === 'active' && !sub.cancelAtPeriodEnd && (
+                          <button onClick={() => handleUnsubscribe(sub.id)} style={{ background:'none', border:'none', color:'#DC2626', cursor:'pointer', fontWeight:500, fontSize:'0.85rem' }}>Cancel</button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
         ) : (
           <div className="dashboard-card empty-state">
             <Package size={48} />

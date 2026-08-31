@@ -50,7 +50,7 @@ public class SubscriberDashboardController : ControllerBase
                 s.CancelAtPeriodEnd,
                 PlanName = s.Plan.Name,
                 ApplicationName = s.Plan.Application.Name,
-                ApplicationKey = s.Plan.Application.AppKey,
+                ApplicationKey = s.SubscriptionKey,
                 WebsiteUrl = s.Plan.Application.WebsiteUrl
             })
             .ToListAsync();
@@ -71,7 +71,13 @@ public class SubscriberDashboardController : ControllerBase
                 Status = i.Status.ToString(),
                 i.InvoiceDate,
                 i.PaymentMethod,
-                i.PaymentDetails
+                i.PaymentDetails,
+                LineItems = i.LineItems.Select(li => new {
+                    li.Description,
+                    li.Amount,
+                    li.Quantity,
+                    li.TaxAmount
+                })
             })
             .ToListAsync();
 
@@ -141,6 +147,7 @@ public class SubscriberDashboardController : ControllerBase
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddYears(1), // Let's give it 1 year by default for free plan
                 Status = SubscriptionManager.Domain.Enums.SubscriptionStatus.Active,
+                SubscriptionKey = "sk_live_" + Guid.NewGuid().ToString("N"),
                 PaymentProviderSubscriptionId = "free_" + Guid.NewGuid().ToString("N"),
                 PaymentMethod = "Free",
                 PaymentDetails = "Free Plan"
@@ -156,7 +163,18 @@ public class SubscriberDashboardController : ControllerBase
                 Status = SubscriptionManager.Domain.Enums.InvoiceStatus.Paid,
                 InvoiceDate = DateTime.UtcNow,
                 PaymentMethod = "Free",
-                PaymentDetails = "Free Plan"
+                PaymentDetails = "Free Plan",
+                LineItems = new List<SubscriptionManager.Domain.Entities.InvoiceLineItem>
+                {
+                    new SubscriptionManager.Domain.Entities.InvoiceLineItem
+                    {
+                        Id = Guid.NewGuid(),
+                        Description = $"Subscription to {plan.Name}",
+                        Amount = 0,
+                        Quantity = 1,
+                        TaxAmount = 0
+                    }
+                }
             };
 
             _context.Subscriptions.Add(newSub);
@@ -166,7 +184,7 @@ public class SubscriberDashboardController : ControllerBase
             var planWithApp = await _context.Plans.Include(p => p.Application).FirstOrDefaultAsync(p => p.Id == request.PlanId);
             if (planWithApp?.Application != null && !string.IsNullOrEmpty(planWithApp.Application.WebhookUrl) && tenant != null)
             {
-                _ = _webhookService.NotifySubscriptionCreatedAsync(planWithApp.Application.WebhookUrl, tenant, planWithApp, newSub, planWithApp.Application.AppKey);
+                _ = _webhookService.NotifySubscriptionCreatedAsync(planWithApp.Application.WebhookUrl, tenant, planWithApp, newSub, newSub.SubscriptionKey);
             }
 
             return Ok(new { Url = successUrl, Environment = "Free" });

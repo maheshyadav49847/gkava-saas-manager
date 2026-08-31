@@ -177,6 +177,7 @@ public class PaymentWebhookController : ControllerBase
                 StartDate = DateTime.UtcNow,
                 EndDate = DateTime.UtcNow.AddMonths(1),
                 Status = SubscriptionStatus.Active,
+                SubscriptionKey = "sk_live_" + Guid.NewGuid().ToString("N"),
                 PaymentProviderSubscriptionId = cashfreeSubscriptionId,
                 PaymentMethod = paymentMethod,
                 PaymentDetails = paymentDetails
@@ -192,7 +193,18 @@ public class PaymentWebhookController : ControllerBase
                 Status = InvoiceStatus.Paid,
                 InvoiceDate = DateTime.UtcNow,
                 PaymentMethod = paymentMethod,
-                PaymentDetails = paymentDetails
+                PaymentDetails = paymentDetails,
+                LineItems = new List<SubscriptionManager.Domain.Entities.InvoiceLineItem>
+                {
+                    new SubscriptionManager.Domain.Entities.InvoiceLineItem
+                    {
+                        Id = Guid.NewGuid(),
+                        Description = plan != null ? $"Subscription to {plan.Name}" : "Subscription Plan",
+                        Amount = plan?.MonthlyPrice ?? 0,
+                        Quantity = 1,
+                        TaxAmount = 0
+                    }
+                }
             };
             
             _context.Subscriptions.Add(newSub);
@@ -204,12 +216,12 @@ public class PaymentWebhookController : ControllerBase
             
             if (plan?.Application != null && !string.IsNullOrEmpty(plan.Application.WebhookUrl) && tenant != null)
             {
-                _ = _webhookService.NotifySubscriptionCreatedAsync(plan.Application.WebhookUrl, tenant, plan, newSub, plan.Application.AppKey);
+                _ = _webhookService.NotifySubscriptionCreatedAsync(plan.Application.WebhookUrl, tenant, plan, newSub, newSub.SubscriptionKey);
             }
             else if (plan?.Application != null && !string.IsNullOrEmpty(plan.Application.WebsiteUrl) && tenant != null)
             {
                 // Fallback for legacy compatibility
-                _ = _webhookService.NotifySubscriptionCreatedAsync(plan.Application.WebsiteUrl, tenant, plan, newSub, plan.Application.AppKey);
+                _ = _webhookService.NotifySubscriptionCreatedAsync(plan.Application.WebsiteUrl, tenant, plan, newSub, newSub.SubscriptionKey);
             }
             _logger.LogInformation("Successfully provisioned subscription and invoice for Tenant {TenantId} on Plan {PlanId}", tenantId, planId);
         }

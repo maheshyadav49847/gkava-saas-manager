@@ -105,6 +105,8 @@ public class AppDbContext : DbContext, IAppDbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Status).HasConversion<string>(); // Store enum as string
             entity.HasIndex(e => e.TenantId);
+            entity.Property(e => e.SubscriptionKey).IsRequired().HasMaxLength(200);
+            entity.HasIndex(e => e.SubscriptionKey).IsUnique();
             
             entity.HasOne(e => e.Tenant)
                 .WithMany(t => t.Subscriptions)

@@ -15,6 +15,8 @@ public class Subscription : SubscriptionManager.Domain.Common.BaseAuditableEntit
     public DateTime EndDate { get; set; }
     public SubscriptionStatus Status { get; set; }
     
+    public string SubscriptionKey { get; set; } = string.Empty;
+    
     public bool CancelAtPeriodEnd { get; set; }
     public string? PaymentProviderSubscriptionId { get; set; } // Stripe Sub ID
     
