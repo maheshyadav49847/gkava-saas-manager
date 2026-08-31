@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { X, Loader2, Tag, Plus } from 'lucide-react';
 import { couponsApi } from '../api';
 import { CreateCouponDto } from '../types';
@@ -112,7 +112,16 @@ export const CreateCouponModalView = ({ isOpen, onClose, onSuccess }: CreateCoup
               <input
                 type="date"
                 value={formData.expiryDate ? new Date(formData.expiryDate).toISOString().split('T')[0] : ''}
-                onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                onChange={(e) => {
+                  const dateVal = e.target.value;
+                  if (dateVal) {
+                    const d = new Date(dateVal);
+                    d.setUTCHours(23, 59, 59, 999);
+                    setFormData({ ...formData, expiryDate: d.toISOString() });
+                  } else {
+                    setFormData({ ...formData, expiryDate: null });
+                  }
+                }}
                 className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
               />
             </div>

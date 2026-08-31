@@ -43,14 +43,15 @@ export const ApplicationList = () => {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: CreateApplicationDTO) => createApplication(data),
+    mutationFn: createApplication,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applications'] });
       setIsModalOpen(false);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Failed to create application", error);
-      alert("Error creating application");
+      const message = error.response?.data?.detail || error.response?.data?.title || error.response?.data || "Error creating application";
+      alert(typeof message === 'string' ? message : JSON.stringify(message));
     }
   });
 
@@ -61,9 +62,10 @@ export const ApplicationList = () => {
       setIsEditModalOpen(false);
       setEditingApp(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Failed to update application", error);
-      alert("Error updating application");
+      const message = error.response?.data?.detail || error.response?.data?.title || error.response?.data || "Error updating application";
+      alert(typeof message === 'string' ? message : JSON.stringify(message));
     }
   });
 

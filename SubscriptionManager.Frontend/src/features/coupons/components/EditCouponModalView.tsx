@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { X, Loader2, Edit2, Save } from 'lucide-react';
 import { couponsApi } from '../api';
@@ -132,12 +132,21 @@ export const EditCouponModalView = ({ isOpen, onClose, onSuccess, coupon }: Edit
 
             <div>
               <label className="block text-sm font-medium text-[#425466]  mb-1">Expiry Date (Optional)</label>
-              <input
-                type="date"
-                value={formData.expiryDate ? new Date(formData.expiryDate).toISOString().split('T')[0] : ''}
-                onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value ? new Date(e.target.value).toISOString() : null })}
-                className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
-              />
+                <input
+                  type="date"
+                  value={formData.expiryDate ? new Date(formData.expiryDate).toISOString().split('T')[0] : ''}
+                  onChange={(e) => {
+                    const dateVal = e.target.value;
+                    if (dateVal) {
+                      const d = new Date(dateVal);
+                      d.setUTCHours(23, 59, 59, 999);
+                      setFormData({ ...formData, expiryDate: d.toISOString() });
+                    } else {
+                      setFormData({ ...formData, expiryDate: null });
+                    }
+                  }}
+                  className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540] placeholder:text-slate-400"
+                />
             </div>
 
             <div className="flex items-center gap-2 pt-2">

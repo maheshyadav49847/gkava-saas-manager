@@ -17,6 +17,7 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
   const [previewExpanded, setPreviewExpanded] = useState(false);
   const [formData, setFormData] = useState<Partial<Application>>({
     name: '',
+    subtitle: '',
     websiteUrl: '',
     webhookUrl: '',
     description: '',
@@ -54,10 +55,20 @@ export function ApplicationStudio({ application, onSave, onCancel }: Application
   };
 
   const handleSave = () => {
+    const cleanData = {
+      ...formData,
+      subtitle: formData.subtitle || '',
+      websiteUrl: formData.websiteUrl || '',
+      webhookUrl: formData.webhookUrl || '',
+      description: formData.description || '',
+      imageBase64: formData.imageBase64 || '',
+      modules: formData.modules || []
+    };
+    
     if (application) {
-      saveMutation.mutate(formData as UpdateApplicationDTO);
+      saveMutation.mutate(cleanData as UpdateApplicationDTO);
     } else {
-      saveMutation.mutate(formData as CreateApplicationDTO);
+      saveMutation.mutate(cleanData as CreateApplicationDTO);
     }
   };
 
