@@ -73,6 +73,23 @@ namespace SubscriptionManager.Api.Controllers
             return NoContent();
         }
 
+        
+        [HttpPost("{id}/cancel-subscription")]
+        public async Task<ActionResult> CancelSubscription(Guid id)
+        {
+            var result = await _mediator.Send(new SubscriptionManager.Application.Features.Tenants.Commands.CancelSubscription.CancelSubscriptionCommand { TenantId = id });
+            if (!result) return NotFound();
+            return NoContent();
+        }
+
+        [HttpPost("{id}/change-plan")]
+        public async Task<ActionResult> ChangePlan(Guid id, [FromBody] Guid newPlanId)
+        {
+            var result = await _mediator.Send(new SubscriptionManager.Application.Features.Tenants.Commands.ChangePlan.ChangePlanCommand { TenantId = id, NewPlanId = newPlanId });
+            if (!result) return NotFound();
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTenant(Guid id)
         {

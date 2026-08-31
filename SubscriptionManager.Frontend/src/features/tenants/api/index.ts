@@ -33,3 +33,14 @@ export const suspendTenant = (id: string, suspend: boolean): Promise<void> => {
 export const resetTenantPassword = (id: string): Promise<void> => {
   return apiClient.post(`/tenants/${id}/reset-password`);
 };
+
+
+export const cancelTenantSubscription = (id: string): Promise<void> => {
+  return apiClient.post(`/tenants/${id}/cancel-subscription`);
+};
+
+export const changeTenantPlan = (id: string, newPlanId: string): Promise<void> => {
+  return apiClient.post(`/tenants/${id}/change-plan`, `"${newPlanId}"`, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+};

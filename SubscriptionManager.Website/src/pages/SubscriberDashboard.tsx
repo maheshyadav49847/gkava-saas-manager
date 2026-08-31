@@ -297,7 +297,9 @@ export function SubscriberDashboard() {
                           <span style={{ fontFamily: 'monospace', fontSize: '0.75rem', background: '#F1F5F9', padding: '4px 8px', borderRadius: '4px' }}>
                             {visibleKeys[sub.id] ? sub.applicationKey : maskKey(sub.applicationKey)}
                           </span>
-                          <button onClick={() => toggleKeyVisibility(sub.id)} className="copy-btn"><Info size={14}/></button>
+                          <button onClick={() => toggleKeyVisibility(sub.id)} className="copy-btn">
+                            {visibleKeys[sub.id] ? <EyeOff size={14} /> : <Eye size={14} />}
+                          </button>
                           <button onClick={() => copyToClipboard(sub.applicationKey, sub.id)} className="copy-btn">
                             {copiedKey === sub.id ? <CheckCircle2 size={14} color="#059669" /> : <Copy size={14} />}
                           </button>

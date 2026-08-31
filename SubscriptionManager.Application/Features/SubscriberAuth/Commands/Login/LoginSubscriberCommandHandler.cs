@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SubscriptionManager.Application.Common.Interfaces;
@@ -30,6 +30,11 @@ namespace SubscriptionManager.Application.Features.SubscriberAuth.Commands.Login
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
                 throw new UnauthorizedAccessException("Invalid email or password.");
+            }
+
+            if (user.IsSuspended)
+            {
+                throw new UnauthorizedAccessException("ACCOUNT_SUSPENDED");
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();

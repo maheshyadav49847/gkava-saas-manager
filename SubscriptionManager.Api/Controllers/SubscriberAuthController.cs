@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SubscriptionManager.Application.Features.Auth.Commands.Login;
@@ -43,8 +43,12 @@ public class SubscriberAuthController : ControllerBase
             var response = await _mediator.Send(command);
             return Ok(response);
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException ex)
         {
+            if (ex.Message == "ACCOUNT_SUSPENDED")
+            {
+                return StatusCode(403, new { error = "Your account has been suspended. Please contact support to resume your account." });
+            }
             return Unauthorized(new { error = "Invalid email or password." });
         }
     }

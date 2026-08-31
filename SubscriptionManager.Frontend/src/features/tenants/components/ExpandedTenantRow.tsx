@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Mail, Phone, CalendarDays, CreditCard, AlertCircle, Pause, Play, Power, Key, Loader2, RefreshCw, Smartphone, Landmark } from 'lucide-react';
 import { appsettings } from '../../../config/appsettings';
-import { suspendTenant, resetTenantPassword } from '../api';
+import { suspendTenant, resetTenantPassword, cancelTenantSubscription, changeTenantPlan } from '../api';
+
 
 export const ExpandedTenantRow = ({ tenantId }: { tenantId: string }) => {
   const queryClient = useQueryClient();
@@ -13,6 +14,28 @@ export const ExpandedTenantRow = ({ tenantId }: { tenantId: string }) => {
       queryClient.invalidateQueries({ queryKey: ['tenants'] });
     }
   });
+
+
+  const cancelSubMutation = useMutation({
+    mutationFn: () => cancelTenantSubscription(tenantId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tenantDetails', tenantId] });
+      alert('Subscription will cancel at period end.');
+    }
+  });
+
+  const changePlanMutation = useMutation({
+    mutationFn: (newPlanId: string) => changeTenantPlan(tenantId, newPlanId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tenantDetails', tenantId] });
+      alert('Plan changed successfully!');
+    }
+  });
+
+  const handleChangePlan = () => {
+    const planId = prompt("Enter new Plan ID (UUID):");
+    if (planId) changePlanMutation.mutate(planId);
+  };
 
   const resetMutation = useMutation({
     mutationFn: () => resetTenantPassword(tenantId),
@@ -113,11 +136,13 @@ export const ExpandedTenantRow = ({ tenantId }: { tenantId: string }) => {
               <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Quick Actions</h4>
             </div>
             <div className="p-3 grid grid-cols-2 gap-2">
+
               <button 
-                onClick={() => alert('Change Plan modal coming soon.')}
+                onClick={handleChangePlan}
+                disabled={changePlanMutation.isPending}
                 className="flex flex-col items-center justify-center p-2 rounded bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100 transition-colors gap-1"
               >
-                <RefreshCw className="w-4 h-4" />
+                {changePlanMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
                 <span className="text-[10px] font-bold">Change Plan</span>
               </button>
               <button 
@@ -141,12 +166,14 @@ export const ExpandedTenantRow = ({ tenantId }: { tenantId: string }) => {
                 <span className="text-[10px] font-bold">Reset Pass</span>
               </button>
               <button 
-                onClick={() => alert('Cancel Subscription modal coming soon.')}
+                onClick={() => { if(window.confirm('Cancel this subscription?')) cancelSubMutation.mutate(); }}
+                disabled={cancelSubMutation.isPending}
                 className="flex flex-col items-center justify-center p-2 rounded bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-100 transition-colors gap-1"
               >
-                <Power className="w-4 h-4" />
+                {cancelSubMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Power className="w-4 h-4" />}
                 <span className="text-[10px] font-bold">Cancel Sub</span>
               </button>
+
             </div>
           </div>
 
