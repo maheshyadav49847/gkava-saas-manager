@@ -1,6 +1,6 @@
 import { X, Building, Mail, Phone, CalendarDays, CreditCard, ExternalLink, Package } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { appsettings } from '../../../../config/appsettings';
+import { appsettings } from '../../../config/appsettings';
 
 export const TenantProfileDrawer = ({ tenantId, isOpen, onClose }: { tenantId: string | null, isOpen: boolean, onClose: () => void }) => {
   const { data: tenant, isLoading } = useQuery({
