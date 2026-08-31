@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using SubscriptionManager.Application.Common.Interfaces;
 using System.Linq;
 using System.Threading;
@@ -35,6 +35,9 @@ public class GetPlatformSettingsQueryHandler : IRequestHandler<GetPlatformSettin
             CashfreeAppId = settings.CashfreeAppId,
             CashfreeSecretKey = string.IsNullOrEmpty(settings.CashfreeSecretKey) ? null : "***",
             CashfreeEnvironment = settings.CashfreeEnvironment ?? "SANDBOX",
+            CompanyName = settings.CompanyName,
+            CompanyAddress = settings.CompanyAddress,
+            GstNumber = settings.GstNumber,
             UpdatedAt = settings.UpdatedAt
         };
     }

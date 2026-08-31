@@ -17,5 +17,8 @@ export interface PlatformSettingsDto {
   cashfreeAppId?: string;
   cashfreeSecretKey?: string;
   cashfreeEnvironment?: string;
+  companyName?: string;
+  companyAddress?: string;
+  gstNumber?: string;
   updatedAt: string;
 }

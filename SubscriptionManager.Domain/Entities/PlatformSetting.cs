@@ -12,4 +12,8 @@ public class PlatformSetting : SubscriptionManager.Domain.Common.BaseAuditableEn
     public string? CashfreeAppId { get; set; }
     public string? CashfreeSecretKey { get; set; }
     public string CashfreeEnvironment { get; set; } = "SANDBOX"; // SANDBOX or PRODUCTION
+    
+    public string CompanyName { get; set; } = "SAAS Platform Inc.";
+    public string CompanyAddress { get; set; } = "123 Tech Park, Phase 1\nSan Francisco, CA 94107";
+    public string? GstNumber { get; set; }
 }

@@ -22,6 +22,7 @@ namespace SubscriptionManager.Application.Features.ContactMessages.Commands.Subm
             {
                 Name = request.Name,
                 Email = request.Email,
+                Phone = request.Phone,
                 Subject = request.Subject,
                 Message = request.Message,
                 CreatedAt = DateTime.UtcNow,

@@ -81,9 +81,17 @@ public class SubscriberDashboardController : ControllerBase
             })
             .ToListAsync();
 
+        var platformSettings = await _context.PlatformSettings.FirstOrDefaultAsync();
+        var companyInfo = new {
+            CompanyName = platformSettings?.CompanyName ?? "SAAS Platform Inc.",
+            CompanyAddress = platformSettings?.CompanyAddress ?? "123 Tech Park, Phase 1\nSan Francisco, CA 94107",
+            GstNumber = platformSettings?.GstNumber
+        };
+
         return Ok(new
         {
             Profile = profile,
+            CompanyInfo = companyInfo,
             Subscriptions = subscriptions,
             Invoices = invoices
         });

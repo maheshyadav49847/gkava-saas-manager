@@ -1,4 +1,4 @@
-﻿import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import DashboardLayout from "./layouts/DashboardLayout";
 import { ApplicationList } from "./features/applications";
@@ -14,6 +14,7 @@ import { TeamMembersList } from "./features/team-members";
 import { AuditLogsList } from "./features/audit-logs/components/AuditLogsList";
 import { InvoicesList } from "./features/invoices/components/InvoicesList";
 import { TicketsList } from "./features/tickets/components/TicketsList";
+import { ContactMessagesList } from "./features/contact-messages";
 
 export function AppRoutes() {
   return (
@@ -41,6 +42,7 @@ export function AppRoutes() {
         <Route path="/audit-logs" element={<AuditLogsList />} />
         <Route path="/invoices" element={<InvoicesList />} />
         <Route path="/support" element={<TicketsList />} />
+        <Route path="/contact-messages" element={<ContactMessagesList />} />
       </Route>
     </Routes>
   );

@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using SubscriptionManager.Application.Common.Interfaces;
 using SubscriptionManager.Domain.Entities;
 using System;
@@ -34,6 +34,9 @@ public class UpdatePlatformSettingsCommandHandler : IRequestHandler<UpdatePlatfo
                 CashfreeAppId = request.CashfreeAppId,
                 CashfreeSecretKey = request.CashfreeSecretKey,
                 CashfreeEnvironment = request.CashfreeEnvironment ?? "SANDBOX",
+                CompanyName = request.CompanyName ?? "SAAS Platform Inc.",
+                CompanyAddress = request.CompanyAddress ?? "123 Tech Park, Phase 1\nSan Francisco, CA 94107",
+                GstNumber = request.GstNumber,
                 UpdatedAt = DateTime.UtcNow
             };
             _context.PlatformSettings.Add(settings);
@@ -50,6 +53,9 @@ public class UpdatePlatformSettingsCommandHandler : IRequestHandler<UpdatePlatfo
                 settings.CashfreeSecretKey = request.CashfreeSecretKey;
             }
             settings.CashfreeEnvironment = request.CashfreeEnvironment ?? "SANDBOX";
+            if (!string.IsNullOrEmpty(request.CompanyName)) settings.CompanyName = request.CompanyName;
+            if (!string.IsNullOrEmpty(request.CompanyAddress)) settings.CompanyAddress = request.CompanyAddress;
+            settings.GstNumber = request.GstNumber;
             settings.UpdatedAt = DateTime.UtcNow;
         }
 

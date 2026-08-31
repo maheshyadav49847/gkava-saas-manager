@@ -8,6 +8,7 @@ export function Contact() {
   const [formData, setFormData] = useState<ContactMessageDto>({
     name: '',
     email: '',
+    phone: '',
     subject: '',
     message: ''
   });
@@ -23,7 +24,7 @@ export function Contact() {
     try {
       await submitContactMessage(formData);
       setIsSuccess(true);
-      setFormData({ name: '', email: '', subject: '', message: '' });
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
     } catch (err) {
       console.error(err);
       setError('Failed to send message. Please try again later.');
@@ -174,6 +175,19 @@ export function Contact() {
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
                 </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="contact-phone">Mobile Number</label>
+                <input
+                  id="contact-phone"
+                  type="tel"
+                  required
+                  className="form-input"
+                  placeholder="+91 98765 43210"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                />
               </div>
 
               <div className="form-group">

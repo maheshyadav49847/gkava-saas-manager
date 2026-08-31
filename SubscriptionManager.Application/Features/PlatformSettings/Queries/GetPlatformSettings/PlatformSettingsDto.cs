@@ -12,5 +12,8 @@ public class PlatformSettingsDto
     public string? CashfreeAppId { get; set; }
     public string? CashfreeSecretKey { get; set; }
     public string CashfreeEnvironment { get; set; } = string.Empty;
+    public string CompanyName { get; set; } = string.Empty;
+    public string CompanyAddress { get; set; } = string.Empty;
+    public string? GstNumber { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }

@@ -102,6 +102,7 @@ export const getTeamMembers = async (): Promise<TeamMember[]> => {
 export interface ContactMessageDto {
   name: string;
   email: string;
+  phone: string;
   subject: string;
   message: string;
 }

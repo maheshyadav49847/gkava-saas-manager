@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 
 namespace SubscriptionManager.Application.Features.PlatformSettings.Commands.UpdatePlatformSettings;
 
@@ -11,4 +11,7 @@ public class UpdatePlatformSettingsCommand : IRequest<bool>
     public string? CashfreeAppId { get; set; }
     public string? CashfreeSecretKey { get; set; }
     public string? CashfreeEnvironment { get; set; }
+    public string? CompanyName { get; set; }
+    public string? CompanyAddress { get; set; }
+    public string? GstNumber { get; set; }
 }

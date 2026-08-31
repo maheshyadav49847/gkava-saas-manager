@@ -187,8 +187,11 @@ export function SubscriberBilling() {
                   </span>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <h3 style={{ margin: 0, color: '#635BFF', fontSize: '1.25rem' }}>SAAS Platform Inc.</h3>
-                  <p style={{ margin: '0.25rem 0 0 0', color: '#64748B', fontSize: '0.9rem' }}>123 Tech Park, Phase 1<br/>San Francisco, CA 94107</p>
+                  <h3 style={{ margin: 0, color: '#635BFF', fontSize: '1.25rem' }}>{data?.companyInfo?.companyName || "SAAS Platform Inc."}</h3>
+                  <p style={{ margin: '0.25rem 0 0 0', color: '#64748B', fontSize: '0.9rem', whiteSpace: 'pre-line' }}>{data?.companyInfo?.companyAddress || "123 Tech Park, Phase 1\nSan Francisco, CA 94107"}</p>
+                  {data?.companyInfo?.gstNumber && (
+                    <p style={{ margin: '0.25rem 0 0 0', color: '#64748B', fontSize: '0.9rem', fontWeight: 600 }}>GSTIN: {data.companyInfo.gstNumber}</p>
+                  )}
                 </div>
               </div>
 

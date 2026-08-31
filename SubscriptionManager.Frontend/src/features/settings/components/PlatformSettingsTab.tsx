@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Save, Loader2, Globe, Mail, CreditCard, Key } from 'lucide-react';
 import { getPlatformSettings, updatePlatformSettings } from '../api';
@@ -14,7 +14,10 @@ export function PlatformSettingsTab() {
     contactPhone: '',
     cashfreeAppId: '',
     cashfreeSecretKey: '',
-    cashfreeEnvironment: 'SANDBOX'
+    cashfreeEnvironment: 'SANDBOX',
+    companyName: '',
+    companyAddress: '',
+    gstNumber: ''
   });
 
   const { data: settings, isLoading, isError } = useQuery({
@@ -31,7 +34,10 @@ export function PlatformSettingsTab() {
         contactPhone: settings.contactPhone || '',
         cashfreeAppId: settings.cashfreeAppId || '',
         cashfreeSecretKey: settings.cashfreeSecretKey || '',
-        cashfreeEnvironment: settings.cashfreeEnvironment || 'SANDBOX'
+        cashfreeEnvironment: settings.cashfreeEnvironment || 'SANDBOX',
+        companyName: settings.companyName || '',
+        companyAddress: settings.companyAddress || '',
+        gstNumber: settings.gstNumber || ''
       });
     }
   }, [settings]);
@@ -55,7 +61,7 @@ export function PlatformSettingsTab() {
     updateMutation.mutate(formData);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -174,6 +180,66 @@ export function PlatformSettingsTab() {
               </div>
             </div>
             <p className="mt-1 text-xs text-gray-500">Displayed on the Contact Us page.</p>
+          </div>
+        </div>
+
+        <div className="pt-6 border-t border-gray-200">
+          <div className="mb-6">
+            <h3 className="text-lg font-medium leading-6 text-gray-900 flex items-center">
+              <Globe className="h-5 w-5 mr-2 text-gray-400" />
+              Company / Billing Information
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              This information will be displayed on subscriber invoices.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
+            <div className="sm:col-span-2">
+              <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
+                Company Name
+              </label>
+              <input
+                type="text"
+                name="companyName"
+                id="companyName"
+                value={formData.companyName}
+                onChange={handleChange}
+                placeholder="e.g. SAAS Platform Inc."
+                className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+              />
+            </div>
+            
+            <div className="sm:col-span-2">
+              <label htmlFor="companyAddress" className="block text-sm font-medium text-gray-700 mb-1">
+                Company Address
+              </label>
+              <textarea
+                name="companyAddress"
+                id="companyAddress"
+                rows={3}
+                value={formData.companyAddress}
+                onChange={handleChange}
+                placeholder="123 Tech Park, Phase 1&#10;San Francisco, CA 94107"
+                className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="gstNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                GST / Tax Registration Number (Optional)
+              </label>
+              <input
+                type="text"
+                name="gstNumber"
+                id="gstNumber"
+                value={formData.gstNumber}
+                onChange={handleChange}
+                placeholder="e.g. 22AAAAA0000A1Z5"
+                className="w-full px-3 py-2 text-sm bg-white border border-[#E3E8EE] rounded-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#635BFF]/20 focus:border-[#635BFF] transition-colors text-[#0A2540]"
+              />
+              <p className="mt-1 text-xs text-gray-500">If left blank, GSTIN will not be displayed on invoices.</p>
+            </div>
           </div>
         </div>
 

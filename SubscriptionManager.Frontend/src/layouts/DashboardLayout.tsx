@@ -1,4 +1,4 @@
-﻿import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Users, Blocks, ListTodo, LogOut, Home, ChevronRight, ChevronDown, User, Tag, ChevronLeft, Settings, Search, Bell, Activity, Receipt, MessageSquare } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useState, useRef, useEffect } from 'react';
@@ -16,6 +16,7 @@ const navigation = [
 
 const websiteNavigation = [
   { name: "Platform Settings", href: "/settings", icon: Settings },
+  { name: "Contact Messages", href: "/contact-messages", icon: MessageSquare },
   { name: "Team Members", href: "/team-members", icon: User },
   { name: "Audit Logs", href: "/audit-logs", icon: Activity },
 ];
