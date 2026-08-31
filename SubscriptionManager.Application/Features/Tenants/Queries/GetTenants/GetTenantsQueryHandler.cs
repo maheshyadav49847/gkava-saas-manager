@@ -22,6 +22,7 @@ namespace SubscriptionManager.Application.Features.Tenants.Queries.GetTenants
             var tenants = await _context.Tenants
                 .Include(t => t.Subscriptions)
                     .ThenInclude(s => s.Plan)
+                        .ThenInclude(p => p.Application)
                 .OrderBy(t => t.Name)
                 .ToListAsync(cancellationToken);
 
@@ -38,7 +39,10 @@ namespace SubscriptionManager.Application.Features.Tenants.Queries.GetTenants
                     Phone = t.Phone,
                     Plan = activeSubscription?.Plan?.Name ?? "No Plan",
                     Status = activeSubscription?.Status.ToString() ?? "Trialing",
-                    JoinDate = activeSubscription?.StartDate ?? System.DateTime.UtcNow
+                    JoinDate = activeSubscription?.StartDate ?? t.CreatedAt,
+                    PaymentMethod = activeSubscription?.PaymentMethod ?? "None",
+                    PaymentDetails = activeSubscription?.PaymentDetails,
+                    ApplicationName = activeSubscription?.Plan?.Application?.Name ?? "Unknown"
                 };
             }).ToList();
         }

@@ -1,17 +1,17 @@
-import { Search, Building, Mail, Phone, CalendarDays, Plus, Users, AlertCircle, Edit2, Trash2, X, Loader2 } from 'lucide-react';
+import React from 'react';
+import { Search, Building, ChevronDown, ChevronRight, Mail, Phone, CreditCard, FileText, Plus, Users, AlertCircle, Edit2, Trash2, X, Loader2 } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Tenant } from '../types';
 import { getTenants, deleteTenant } from '../api';
 import { CreateTenantModal } from './CreateTenantModal';
 import { EditTenantModal } from './EditTenantModal';
-import { TenantProfileDrawer } from './TenantProfileDrawer';
 
 export const TenantsList = () => {
   const queryClient = useQueryClient();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
-  const [selectedTenantId, setSelectedTenantId] = useState<string | null>(null);
+  const [expandedTenantId, setExpandedTenantId] = useState<string | null>(null);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -129,10 +129,11 @@ export const TenantsList = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[#F6F9FC] border-b border-[#E3E8EE] text-xs uppercase tracking-wider text-[#425466] font-semibold">
+                <th className="w-10 p-4"></th>
                 <th className="p-4">Tenant Info</th>
-                <th className="p-4 hidden md:table-cell">Contact</th>
-                <th className="p-4">Status & Plan</th>
-                <th className="p-4">Join Date</th>
+                <th className="p-4 hidden md:table-cell">Product & Plan</th>
+                <th className="p-4">Status</th>
+                <th className="p-4 hidden md:table-cell">Join Date</th>
                 <th className="p-4 text-right">Actions</th>
               </tr>
             </thead>
@@ -150,74 +151,108 @@ export const TenantsList = () => {
                   </td>
                 </tr>
               ) : (
-                paginatedTenants.map((tenant) => (
-                  <tr key={tenant.id} className="hover:bg-[#F6F9FC] transition-colors">
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-sm bg-[#F6F9FC] flex items-center justify-center text-[#0A2540] shrink-0 border border-[#E3E8EE]">
-                          <Building className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-[#0A2540]">{tenant.name}</div>
-                          <div className="text-xs text-[#425466] md:hidden mt-0.5">{tenant.email}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4 hidden md:table-cell">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center text-sm text-[#425466]">
-                          <Mail className="w-3.5 h-3.5 mr-2 text-slate-400" /> {tenant.email}
-                        </div>
-                        {tenant.phone && (
-                          <div className="flex items-center text-xs text-[#425466]">
-                            <Phone className="w-3.5 h-3.5 mr-2 text-slate-400" /> {tenant.phoneCountryCode || '+91'} {tenant.phone}
+                                paginatedTenants.map((tenant: any) => (
+                  <React.Fragment key={tenant.id}>
+                    <tr 
+                      className={`hover:bg-[#F6F9FC] transition-colors cursor-pointer ${expandedTenantId === tenant.id ? 'bg-[#F6F9FC]' : ''}`}
+                      onClick={() => setExpandedTenantId(expandedTenantId === tenant.id ? null : tenant.id)}
+                    >
+                      <td className="p-4 text-slate-400">
+                        {expandedTenantId === tenant.id ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-sm bg-white flex items-center justify-center text-[#0A2540] shrink-0 border border-[#E3E8EE] shadow-sm">
+                            <Building className="w-5 h-5" />
                           </div>
-                        )}
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex flex-col items-start gap-1.5">
+                          <div>
+                            <div className="font-semibold text-[#0A2540]">{tenant.name}</div>
+                            <div className="text-xs text-[#425466] md:hidden mt-0.5">{tenant.email}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4 hidden md:table-cell">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-semibold text-[#0A2540]">{tenant.applicationName || 'N/A'}</span>
+                          <span className="text-xs font-medium text-[#425466]">{tenant.plan}</span>
+                        </div>
+                      </td>
+                      <td className="p-4">
                         <span className={`px-2.5 py-1 rounded-sm text-xs font-semibold border ${getStatusColor(tenant.status)}`}>
                           {tenant.status}
                         </span>
-                        <span className="text-xs font-medium text-[#425466]">{tenant.plan}</span>
-                      </div>
-                    </td>
-                    <td className="p-4 whitespace-nowrap text-sm text-[#425466]">
-                      <div className="flex items-center gap-2">
-                        <CalendarDays className="w-4 h-4 text-slate-400" />
+                      </td>
+                      <td className="p-4 hidden md:table-cell text-sm text-[#425466]">
                         {new Date(tenant.joinDate).toLocaleDateString()}
-                      </div>
-                    </td>
-                    <td className="p-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => setSelectedTenantId(tenant.id)}
-                          className="px-3 py-1.5 text-xs font-medium text-[#635BFF] bg-indigo-50 border border-indigo-100 hover:bg-indigo-100 rounded-sm transition-colors"
-                          title="View Profile"
-                        >
-                          View Profile
-                        </button>
-                        <button 
-                          onClick={() => setEditingTenant(tenant)}
-                          className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          title="Edit Tenant"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
+                      </td>
+                      <td className="p-4 text-right">
+                        <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                          <button 
+                            onClick={() => setEditingTenant(tenant)}
+                            className="p-1.5 text-slate-400 hover:text-[#635BFF] hover:bg-indigo-50 border border-[#E3E8EE] rounded-sm transition-colors"
+                            title="Edit Tenant"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
                           <button 
                             onClick={() => {
                               setDeletingTenant(tenant);
                               setIsDeleteModalOpen(true);
                             }}
-                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-[#E3E8EE] rounded-sm transition-colors"
                             title="Delete Tenant"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
-                      </div>
-                    </td>
-                  </tr>
+                        </div>
+                      </td>
+                    </tr>
+                    {expandedTenantId === tenant.id && (
+                      <tr className="bg-slate-50 border-b border-[#E3E8EE]">
+                        <td colSpan={6} className="p-0">
+                          <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 animate-in slide-in-from-top-2 duration-200">
+                            {/* Contact Details */}
+                            <div className="bg-white p-4 rounded-sm border border-[#E3E8EE] shadow-sm">
+                              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Contact Information</h4>
+                              <div className="space-y-3">
+                                <div className="flex items-center text-sm text-[#425466]">
+                                  <Mail className="w-4 h-4 mr-2 text-slate-400" /> {tenant.email}
+                                </div>
+                                <div className="flex items-center text-sm text-[#425466]">
+                                  <Phone className="w-4 h-4 mr-2 text-slate-400" /> {tenant.phoneCountryCode || '+91'} {tenant.phone}
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Payment Details */}
+                            <div className="bg-white p-4 rounded-sm border border-[#E3E8EE] shadow-sm">
+                              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Payment Details</h4>
+                              <div className="space-y-3">
+                                <div className="flex items-center text-sm text-[#425466]">
+                                  <CreditCard className="w-4 h-4 mr-2 text-slate-400" /> 
+                                  <span className="font-medium">{tenant.paymentMethod}</span>
+                                </div>
+                                <div className="flex items-center text-sm text-[#425466]">
+                                  <FileText className="w-4 h-4 mr-2 text-slate-400" /> 
+                                  <span className="font-mono text-xs bg-slate-100 px-1.5 py-0.5 rounded">{tenant.paymentDetails || 'No details available'}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Subscription Details */}
+                            <div className="bg-white p-4 rounded-sm border border-[#E3E8EE] shadow-sm">
+                              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Active Subscription</h4>
+                              <div className="space-y-1">
+                                <p className="text-sm font-semibold text-[#0A2540]">{tenant.applicationName}</p>
+                                <p className="text-sm text-[#635BFF]">{tenant.plan}</p>
+                                <p className="text-xs text-slate-500 mt-2">Started: {new Date(tenant.joinDate).toLocaleDateString()}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))
               )}
             </tbody>
@@ -296,7 +331,7 @@ export const TenantsList = () => {
         onSuccess={() => queryClient.invalidateQueries({ queryKey: ['tenants'] })}
         tenant={editingTenant}
       />
-      <TenantProfileDrawer tenantId={selectedTenantId} isOpen={!!selectedTenantId} onClose={() => setSelectedTenantId(null)} />
+      
     </div>
   );
 };
