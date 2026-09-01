@@ -123,4 +123,35 @@ public class CountriesController : ControllerBase
         }
         return string.Empty;
     }
+
+    [HttpGet("public")]
+    [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+    public async Task<IActionResult> GetPublicCountries([FromHeader(Name = "x-app-key")] string appKey)
+    {
+        if (string.IsNullOrWhiteSpace(appKey))
+        {
+            return Unauthorized(new { error = "App Key is missing. Please provide x-app-key header." });
+        }
+
+        // Validate that the key belongs to a registered SaaS Application
+        bool isValidApp = await _context.Applications.AnyAsync(a => a.AppKey == appKey);
+        
+        if (!isValidApp)
+        {
+            return Unauthorized(new { error = "Invalid App Key. Access denied." });
+        }
+
+        var countries = await _context.Countries
+            .OrderBy(c => c.Name)
+            .Select(c => new {
+                countryName = c.Name,
+                dialCode = c.PhoneCode,
+                currencyCode = c.CurrencyCode,
+                currencySymbol = c.CurrencySymbol,
+                isoCode = c.Id
+            })
+            .ToListAsync();
+
+        return Ok(countries);
+    }
 }
