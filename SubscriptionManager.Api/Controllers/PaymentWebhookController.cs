@@ -21,6 +21,8 @@ public class PaymentWebhookController : ControllerBase
     private readonly IWebhookService _webhookService;
     private readonly ILogger<PaymentWebhookController> _logger;
 
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, System.Threading.SemaphoreSlim> _webhookLocks = new();
+
     public PaymentWebhookController(IAppDbContext context, IWebhookService webhookService, ILogger<PaymentWebhookController> logger)
     {
         _context = context;
@@ -129,6 +131,10 @@ public class PaymentWebhookController : ControllerBase
 
     private async Task HandleSubscriptionSuccessAsync(string cashfreeSubscriptionId, JsonElement root)
     {
+        var semaphore = _webhookLocks.GetOrAdd(cashfreeSubscriptionId, _ => new System.Threading.SemaphoreSlim(1, 1));
+        await semaphore.WaitAsync();
+        try
+        {
         var parts = cashfreeSubscriptionId.Split('_');
         if (parts.Length >= 3 && Guid.TryParse(parts[1], out var tenantId) && Guid.TryParse(parts[2], out var planId))
         {
@@ -224,6 +230,12 @@ public class PaymentWebhookController : ControllerBase
                 _ = _webhookService.NotifySubscriptionCreatedAsync(plan.Application.WebsiteUrl, tenant, plan, newSub, newSub.SubscriptionKey);
             }
             _logger.LogInformation("Successfully provisioned subscription and invoice for Tenant {TenantId} on Plan {PlanId}", tenantId, planId);
+        }
+        }
+        finally
+        {
+            semaphore.Release();
+            _webhookLocks.TryRemove(cashfreeSubscriptionId, out _);
         }
     }
 }

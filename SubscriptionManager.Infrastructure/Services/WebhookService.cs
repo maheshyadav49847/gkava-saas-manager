@@ -88,6 +88,60 @@ public class WebhookService : IWebhookService
         }
     }
 
+
+    public async Task NotifySubscriptionStatusChangedAsync(string webhookUrl, string eventType, SubscriptionManager.Domain.Entities.Tenant tenant, SubscriptionManager.Domain.Entities.Subscription subscription, string applicationKey)
+    {
+        if (string.IsNullOrWhiteSpace(webhookUrl))
+        {
+            return;
+        }
+
+        try
+        {
+            var payload = new
+            {
+                @event = eventType,
+                applicationKey = applicationKey,
+                timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                data = new 
+                {
+                    tenant = new 
+                    {
+                        id = tenant.Id,
+                        name = tenant.Name,
+                        email = tenant.Email,
+                        isSuspended = tenant.IsSuspended
+                    },
+                    subscription = new 
+                    {
+                        id = subscription.Id,
+                        status = subscription.Status.ToString()
+                    }
+                }
+            };
+
+            var jsonPayload = JsonSerializer.Serialize(payload);
+            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            if (!string.IsNullOrWhiteSpace(applicationKey))
+            {
+                _httpClient.DefaultRequestHeaders.Remove("X-Signature");
+                _httpClient.DefaultRequestHeaders.Add("X-Signature", applicationKey);
+            }
+
+            var response = await _httpClient.PostAsync(webhookUrl, content);
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"[Webhook Warning] Failed to notify {webhookUrl} of status change. Status: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Webhook Error] Error sending status change webhook to {webhookUrl}: {ex.Message}");
+        }
+    }
+
     public async Task<bool> SendWebhookAsync(string url, string secret, string payload)
     {
         try
