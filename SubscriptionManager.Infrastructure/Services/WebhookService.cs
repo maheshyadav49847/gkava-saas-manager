@@ -38,6 +38,7 @@ public class WebhookService : IWebhookService
                         id = tenant.Id,
                         name = tenant.Name,
                         email = tenant.Email,
+                        phoneCountryCode = tenant.PhoneCountryCode,
                         phone = tenant.Phone,
                         passwordHash = tenant.PasswordHash
                     },
@@ -110,6 +111,7 @@ public class WebhookService : IWebhookService
                         id = tenant.Id,
                         name = tenant.Name,
                         email = tenant.Email,
+                        phoneCountryCode = tenant.PhoneCountryCode,
                         isSuspended = tenant.IsSuspended
                     },
                     subscription = new 
