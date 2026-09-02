@@ -268,8 +268,8 @@ export function Home() {
                   <Link to={`/products`} className="corporate-btn-primary">
                     Learn More
                   </Link>
-                  {app.webhookUrl && (
-                    <a href={app.webhookUrl} target="_blank" rel="noreferrer" className="corporate-link">
+                  {app.websiteUrl && (
+                    <a href={app.websiteUrl} target="_blank" rel="noreferrer" className="corporate-link">
                       Visit Website <ArrowRight size={16} />
                     </a>
                   )}
